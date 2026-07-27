@@ -1,0 +1,22 @@
+<div class="flex min-h-screen bg-slate-50 text-slate-900">
+  <aside class="w-60 shrink-0 border-r border-slate-200 bg-white">
+    <div class="px-5 py-5 text-sm font-semibold tracking-wide text-slate-500 uppercase">
+      Tekne Sahibi
+    </div>
+    <nav class="flex flex-col gap-1 px-3">
+      @for (item of navItems; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="bg-slate-100 font-medium text-slate-900"
+          [routerLinkActiveOptions]="{ exact: item.exact }"
+          class="rounded-md px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
+          >{{ item.label }}</a
+        >
+      }
+    </nav>
+  </aside>
+
+  <main class="flex-1 p-8">
+    <router-outlet />
+  </main>
+</div>
