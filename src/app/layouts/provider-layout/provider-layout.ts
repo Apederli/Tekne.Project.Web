@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ROUTE_PARTNER } from '../../core/routes.const';
+
+const ROOT = `/${ROUTE_PARTNER.main}`;
 
 @Component({
   selector: 'app-provider-layout',
@@ -8,9 +11,9 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 })
 export class ProviderLayout {
   protected readonly navItems = [
-    { path: '/provider', label: 'Genel Bakış', exact: true },
-    { path: '/provider/teknelerim', label: 'Teknelerim', exact: false },
-    { path: '/provider/musaitlik', label: 'Müsaitlik & Fiyat', exact: false },
-    { path: '/provider/rezervasyonlar', label: 'Rezervasyonlar', exact: false },
+    { path: ROOT, label: 'Genel Bakış', exact: true },
+    { path: `${ROOT}/${ROUTE_PARTNER.boats}`, label: 'Teknelerim', exact: false },
+    { path: `${ROOT}/${ROUTE_PARTNER.availability}`, label: 'Müsaitlik & Fiyat', exact: false },
+    { path: `${ROOT}/${ROUTE_PARTNER.reservations}`, label: 'Rezervasyonlar', exact: false },
   ];
 }

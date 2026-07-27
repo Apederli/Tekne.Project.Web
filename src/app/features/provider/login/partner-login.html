@@ -1,0 +1,48 @@
+<div class="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+  <div class="w-full max-w-sm">
+    <h1 class="text-2xl font-semibold text-slate-900">Tekne Sahibi Girişi</h1>
+    <p class="mt-2 text-sm text-slate-600">Teknelerinizi ve rezervasyonlarınızı yönetin.</p>
+
+    <form class="mt-8 flex flex-col gap-5" (submit)="$event.preventDefault(); signIn()">
+      <div class="flex flex-col gap-1.5">
+        <label for="email" class="text-sm font-medium text-slate-700">E-posta</label>
+        <input
+          id="email"
+          type="email"
+          autocomplete="email"
+          [formField]="loginForm.email"
+          class="rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
+        />
+        @if (loginForm.email().touched() && loginForm.email().errors().length > 0) {
+          <p class="text-sm text-red-600">{{ loginForm.email().errors()[0].message }}</p>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="password" class="text-sm font-medium text-slate-700">Şifre</label>
+        <input
+          id="password"
+          type="password"
+          autocomplete="current-password"
+          [formField]="loginForm.password"
+          class="rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
+        />
+        @if (loginForm.password().touched() && loginForm.password().errors().length > 0) {
+          <p class="text-sm text-red-600">{{ loginForm.password().errors()[0].message }}</p>
+        }
+      </div>
+
+      @if (serverError(); as error) {
+        <p role="alert" class="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{{ error }}</p>
+      }
+
+      <button
+        type="submit"
+        [disabled]="loginForm().submitting()"
+        class="rounded-md bg-slate-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
+      >
+        {{ loginForm().submitting() ? 'Giriş yapılıyor…' : 'Giriş yap' }}
+      </button>
+    </form>
+  </div>
+</div>

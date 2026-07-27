@@ -31,7 +31,7 @@ Kendi `CLAUDE.md`'si var ve iş modelini (aktörler, konum hiyerarşisi, rezerva
 
 İki noktaya dikkat:
 
-- **Terminoloji farkı:** backend'de tekne sahibi **`Partner`**, bu projede **`provider`**. API modelleri karşılanırken bu eşleme bilinçli yapılmalı.
+- **Terminoloji farkı:** backend'de tekne sahibi **`Partner`**, bu projenin kodunda **`provider`** (URL'i ise `/partner`). API modelleri karşılanırken bu eşleme bilinçli yapılmalı.
 - **Konum modeli:** `City` → `Harbor` hiyerarşisi. Bir tekne tek bir şehirde hizmet verir, o şehrin birden çok limanından kalkabilir; `PrimaryHarborId` teknenin bağlı olduğu ana noktadır ve listelemede gösterilen konumdur.
 
 ## Mimari
@@ -42,15 +42,19 @@ Tek Angular uygulaması, üç erişim alanı. Ayrı uygulamalara bölünmedi ç�
 |---|---|---|---|
 | market | `/` | herkese açık | anasayfa SSG, listeleme/detay SSR, oturum sayfaları CSR |
 | admin | `/admin` | `roleGuard('admin')` | tamamen CSR |
-| provider | `/provider` | `roleGuard('provider')` | tamamen CSR |
+| provider | `/partner` | `roleGuard('provider')` | tamamen CSR |
+
+Provider alanının **URL'i `/partner`, kodu `provider`** — backend `Partner` dediği için adres çubuğu ona uyduruldu, klasör/sınıf/rol adları henüz çevrilmedi. Yeni link yazarken URL tarafında `partner` kullan.
 
 Her alan kendi `*.routes.ts` dosyasından lazy yükleniyor ve kendi layout'una sarılıyor.
 
 ### Route eklerken uyulması gerekenler
 
-1. **`app.routes.ts` içindeki sıra anlamlı.** `admin` ve `provider`, market'in `path: ''` girdisinden **önce** gelmeli — aksi hâlde `''` prefix eşleşmesi onları yutar.
+1. **`app.routes.ts` içindeki sıra anlamlı.** `admin` ve `partner`, market'in `path: ''` girdisinden **önce** gelmeli — aksi hâlde `''` prefix eşleşmesi onları yutar.
 
 2. **`app.routes.server.ts` ile birlikte güncelle.** Sondaki `**` girdisi her şeyi `RenderMode.Server`'a düşürür; yeni route'un render modunu bilinçli yazmazsan sessizce SSR olur.
+
+   **URL segmentlerini `src/app/core/routes.const.ts`'e yaz, string literal kullanma.** Aynı segment `*.routes.ts`, layout `routerLink`'leri ve `app.routes.server.ts` olmak üzere üç yerde geçiyor; sabitler bunların ayrışmasını engelliyor. Alan başına ayrı obje: `ROUTE_MARKET`, `ROUTE_ADMIN`, `ROUTE_PARTNER`.
 
 3. **Oturuma bağlı her sayfa `RenderMode.Client`.** Sunucu render'ı sırasında kullanıcı oturumu yok; kişiye özel içeriği SSR'a bırakmak hydration uyuşmazlığı ve yanlış içerik cache'lenmesi üretir. Prerender edilen sayfalar için bu daha da kritik — çıktı tüm ziyaretçilere aynı dosya olarak servis edilir.
 

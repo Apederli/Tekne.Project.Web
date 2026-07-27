@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ROUTE_ADMIN } from '../../core/routes.const';
+
+const ROOT = `/${ROUTE_ADMIN.main}`;
 
 @Component({
   selector: 'app-admin-layout',
@@ -8,10 +11,10 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 })
 export class AdminLayout {
   protected readonly navItems = [
-    { path: '/admin', label: 'Genel Bakış', exact: true },
-    { path: '/admin/musteriler', label: 'Müşteriler', exact: false },
-    { path: '/admin/tekne-sahipleri', label: 'Tekne Sahipleri', exact: false },
-    { path: '/admin/tekneler', label: 'Tekneler', exact: false },
-    { path: '/admin/rezervasyonlar', label: 'Rezervasyonlar', exact: false },
+    { path: ROOT, label: 'Genel Bakış', exact: true },
+    { path: `${ROOT}/${ROUTE_ADMIN.customers}`, label: 'Müşteriler', exact: false },
+    { path: `${ROOT}/${ROUTE_ADMIN.partners}`, label: 'Tekne Sahipleri', exact: false },
+    { path: `${ROOT}/${ROUTE_ADMIN.boats}`, label: 'Tekneler', exact: false },
+    { path: `${ROOT}/${ROUTE_ADMIN.reservations}`, label: 'Rezervasyonlar', exact: false },
   ];
 }
