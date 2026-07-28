@@ -37,7 +37,7 @@ export class PartnerLogin {
         // bilgisi ayrı bir istekle alınıyor.
         this.authStore.setUser(await firstValueFrom(this.userService.me()));
 
-        await this.router.navigate(['/', ROUTE_PARTNER.main]);
+        await this.router.navigate(['/', ROUTE_PARTNER.main, ROUTE_PARTNER.dashboard]);
       } catch {
         // Mesajı errorInterceptor gösterdi; burada sadece yönlendirmeyi iptal
         // edip oturumu temiz bırakıyoruz.

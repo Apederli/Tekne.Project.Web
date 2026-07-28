@@ -12,12 +12,12 @@ export const providerRoutes: Routes = [
     loadComponent: () => import('./login/partner-login').then((m) => m.PartnerLogin),
   },
   {
-    path: '',
+    path: ROUTE_PARTNER.dashboard,
     component: ProviderLayout,
     canMatch: [roleGuard('provider', LOGIN_URL)],
     children: [
       {
-        path: ROUTE_PARTNER.dashboard,
+        path: '',
         loadComponent: () => import('./dashboard/dashboard').then((m) => m.ProviderDashboard),
       },
       {
@@ -35,4 +35,6 @@ export const providerRoutes: Routes = [
       },
     ],
   },
+  /** Çıplak /partner → panel tabanı. Oturum yoksa dashboard guard'ı login'e atar. */
+  { path: '', pathMatch: 'full', redirectTo: ROUTE_PARTNER.dashboard },
 ];

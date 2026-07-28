@@ -30,11 +30,14 @@ export const ROUTE_ADMIN = {
 /**
  * Tekne sahibi paneli. URL'de `partner` görünür (backend terminolojisi),
  * kod tarafında alan hâlâ `provider` olarak adlandırılmış durumda.
+ *
+ * `dashboard` panelin taban segmentidir: tüm panel sayfaları
+ * `/partner/dashboard` altında yaşar, `login` guard dışında kalır.
  */
 export const ROUTE_PARTNER = {
   main: 'partner',
   login: 'login',
-  dashboard: '',
+  dashboard: 'dashboard',
   boats: 'teknelerim',
   availability: 'musaitlik',
   reservations: 'rezervasyonlar',
