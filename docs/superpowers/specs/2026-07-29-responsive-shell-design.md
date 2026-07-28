@@ -15,7 +15,7 @@ düzene geçirilecek.
 | Aralık | Sidebar | Topbar |
 |---|---|---|
 | ≥ lg (1024px) | Bugünkü sabit `w-60` sidebar — değişiklik yok | Sağda kullanıcı menüsü (değişiklik yok) |
-| < lg | Gizli (`hidden lg:flex`); menü soldan Spartan sheet ile drawer olarak açılır | Solda yalnız bu aralıkta görünen (`lg:hidden`) hamburger butonu + sağda kullanıcı menüsü |
+| < lg | Gizli (`hidden lg:block`); menü soldan Spartan sheet ile drawer olarak açılır | Solda yalnız bu aralıkta görünen (`lg:hidden`) hamburger butonu + sağda kullanıcı menüsü |
 
 İçerik dolgusu mobilde daralır: `main` → `p-4 sm:p-6 lg:p-8`.
 
