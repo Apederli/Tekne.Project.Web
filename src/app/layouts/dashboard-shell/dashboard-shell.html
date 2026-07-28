@@ -1,0 +1,28 @@
+<div class="flex min-h-screen bg-background text-foreground">
+  <aside class="w-60 shrink-0 border-r border-border bg-muted/40">
+    <div class="px-5 py-5 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+      {{ title() }}
+    </div>
+    <nav class="flex flex-col gap-1 px-3">
+      @for (item of navItems(); track item.path) {
+        <a
+          hlmBtn
+          variant="ghost"
+          class="justify-start text-muted-foreground"
+          [routerLink]="item.path"
+          routerLinkActive="bg-accent text-accent-foreground"
+          [routerLinkActiveOptions]="{ exact: item.exact }"
+          >{{ item.label }}</a
+        >
+      }
+    </nav>
+  </aside>
+
+  <div class="flex min-w-0 flex-1 flex-col">
+    <header class="flex h-14 items-center justify-end border-b border-border px-6"></header>
+
+    <main class="flex-1 p-8">
+      <ng-content />
+    </main>
+  </div>
+</div>
