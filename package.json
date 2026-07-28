@@ -5,7 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
+    "build:dev": "ng build --configuration dev",
+    "watch": "ng build --watch --configuration local",
     "test": "ng test",
     "serve:ssr:tekne-web": "node dist/tekne-web/server/server.mjs"
   },

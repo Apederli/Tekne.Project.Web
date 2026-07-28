@@ -56,10 +56,25 @@
               ],
               "outputHashing": "all"
             },
-            "development": {
+            "dev": {
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.dev.ts"
+                }
+              ]
+            },
+            "local": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.local.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -70,14 +85,22 @@
             "production": {
               "buildTarget": "tekne-web:build:production"
             },
-            "development": {
-              "buildTarget": "tekne-web:build:development"
+            "dev": {
+              "buildTarget": "tekne-web:build:dev"
+            },
+            "local": {
+              "buildTarget": "tekne-web:build:local"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "local"
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            // Builder varsayılan olarak `build:development` arar; o konfigürasyon
+            // `local` olarak adlandırıldığı için hedef açıkça yazılıyor.
+            "buildTarget": "tekne-web:build:local"
+          }
         }
       }
     }
