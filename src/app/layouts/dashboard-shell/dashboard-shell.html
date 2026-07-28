@@ -1,8 +1,5 @@
 <div class="flex min-h-screen bg-background text-foreground">
-  <aside class="w-60 shrink-0 border-r border-border bg-muted/40">
-    <div class="px-5 py-5 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-      {{ panelTitle() }}
-    </div>
+  <ng-template #navContent>
     <nav class="flex flex-col gap-1 px-3">
       @for (item of navItems(); track item.path) {
         <a
@@ -13,15 +10,42 @@
           routerLinkActive="bg-accent text-accent-foreground"
           ariaCurrentWhenActive="page"
           [routerLinkActiveOptions]="{ exact: item.exact }"
+          (click)="closeMobileNav()"
           >{{ item.label }}</a
         >
       }
     </nav>
+  </ng-template>
+
+  <aside class="hidden w-60 shrink-0 border-r border-border bg-muted/40 lg:block">
+    <div class="px-5 py-5 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+      {{ panelTitle() }}
+    </div>
+    <ng-container [ngTemplateOutlet]="navContent" />
   </aside>
 
   <div class="flex min-w-0 flex-1 flex-col">
-    <header class="flex h-14 items-center justify-end border-b border-border px-6">
-      <hlm-popover align="end" sideOffset="8">
+    <header class="flex h-14 items-center gap-2 border-b border-border px-4 lg:px-6">
+      <hlm-sheet side="left" [state]="mobileNavState()" (stateChanged)="mobileNavState.set($event)">
+        <button
+          hlmSheetTrigger
+          hlmBtn
+          variant="ghost"
+          size="icon"
+          class="lg:hidden"
+          aria-label="Menüyü aç"
+        >
+          <ng-icon name="lucideMenu" />
+        </button>
+        <hlm-sheet-content *hlmSheetPortal>
+          <div class="px-2 py-4 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+            {{ panelTitle() }}
+          </div>
+          <ng-container [ngTemplateOutlet]="navContent" />
+        </hlm-sheet-content>
+      </hlm-sheet>
+
+      <hlm-popover class="ml-auto" align="end" sideOffset="8">
         <button hlmPopoverTrigger hlmBtn variant="ghost">{{ displayName() }}</button>
         <hlm-popover-content *hlmPopoverPortal class="w-64">
           <div class="px-1.5 py-1">
@@ -38,7 +62,7 @@
       </hlm-popover>
     </header>
 
-    <main class="flex-1 p-8">
+    <main class="flex-1 p-4 sm:p-6 lg:p-8">
       <ng-content />
     </main>
   </div>

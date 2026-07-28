@@ -10,6 +10,9 @@ import { AuthStore } from '../../core/auth/auth-store';
 import { DashboardShell } from './dashboard-shell';
 import { NavItem } from './nav-item';
 
+@Component({ template: '' })
+class Blank {}
+
 @Component({
   imports: [DashboardShell],
   template: `
@@ -33,7 +36,10 @@ describe('DashboardShell', () => {
 
     await TestBed.configureTestingModule({
       imports: [Host],
-      providers: [provideRouter([]), { provide: UserService, useValue: userService }],
+      providers: [
+        provideRouter([{ path: '**', component: Blank }]),
+        { provide: UserService, useValue: userService },
+      ],
     }).compileComponents();
   });
 
@@ -129,5 +135,49 @@ describe('DashboardShell', () => {
 
     expect(authStore.user()).toBeNull();
     expect(navigateSpy).toHaveBeenCalledWith('/partner/login');
+  });
+
+  it('hamburger tetikleyicisi render edilir', async () => {
+    const fixture = TestBed.createComponent(Host);
+    await fixture.whenStable();
+    const trigger = fixture.nativeElement.querySelector('[data-slot="sheet-trigger"]');
+
+    expect(trigger).toBeTruthy();
+    expect(trigger?.getAttribute('aria-label')).toBe('Menüyü aç');
+  });
+
+  it('hamburger tıklanınca drawer nav linklerini gösterir', async () => {
+    const fixture = TestBed.createComponent(Host);
+    await fixture.whenStable();
+
+    (
+      fixture.nativeElement.querySelector('[data-slot="sheet-trigger"]') as HTMLButtonElement
+    ).click();
+    await fixture.whenStable();
+
+    const content = document.body.querySelector('[data-slot="sheet-content"]');
+    expect(content).toBeTruthy();
+    const links = Array.from(content!.querySelectorAll<HTMLAnchorElement>('nav a'));
+    expect(links.map((a) => a.textContent?.trim())).toEqual(['Genel Bakış', 'Teknelerim']);
+  });
+
+  it('drawer içindeki nav linkine tıklanınca drawer kapanır', async () => {
+    const fixture = TestBed.createComponent(Host);
+    await fixture.whenStable();
+    const shell = fixture.debugElement.query(By.directive(DashboardShell)).componentInstance;
+
+    (
+      fixture.nativeElement.querySelector('[data-slot="sheet-trigger"]') as HTMLButtonElement
+    ).click();
+    await fixture.whenStable();
+    expect(shell.mobileNavState()).toBe('open');
+
+    const link = document.body.querySelector(
+      '[data-slot="sheet-content"] nav a',
+    ) as HTMLAnchorElement;
+    link.click();
+    await fixture.whenStable();
+
+    expect(shell.mobileNavState()).toBe('closed');
   });
 });
