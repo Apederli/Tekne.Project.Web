@@ -1,4 +1,4 @@
-{
+﻿{
   "compileOnSave": false,
   "compilerOptions": {
     "noImplicitOverride": true,
@@ -12,29 +12,30 @@
     "target": "ES2022",
     "module": "preserve",
     /* Dahili alias'lar. `baseUrl` bilinçli olarak yok: yolu olmayan bir import
-       (`models/user` gibi) node_modules yerine buraya düşmesin diye. `@spartan-ng/helm/*`
-       girdilerini Spartan CLI ekliyor — bileşen eklendikçe listeye yenisi yazılır. */
+       (`models/user` gibi) node_modules yerine buraya düşmesin diye. `@ui/*`
+       girdilerini Spartan CLI ekliyor (adı `components.json` içindeki
+       `importAlias`'tan gelir) — bileşen eklendikçe listeye yenisi yazılır. */
     "paths": {
       "@models/*": ["./src/app/core/models/*"],
       "@enums/*": ["./src/app/core/enums/*"],
       "@services/*": ["./src/app/core/services/*"],
       "@interceptors/*": ["./src/app/core/interceptors/*"],
-      "@spartan-ng/helm/button": ["./src/app/shared/ui/button/src/index.ts"],
-      "@spartan-ng/helm/utils": ["./src/app/shared/ui/utils/src/index.ts"],
-      "@spartan-ng/helm/card": ["./src/app/shared/ui/card/src/index.ts"],
-      "@spartan-ng/helm/accordion": ["./src/app/shared/ui/accordion/src/index.ts"],
-      "@spartan-ng/helm/breadcrumb": ["./src/app/shared/ui/breadcrumb/src/index.ts"],
-      "@spartan-ng/helm/dialog": ["./src/app/shared/ui/dialog/src/index.ts"],
-      "@spartan-ng/helm/sonner": ["./src/app/shared/ui/sonner/src/index.ts"],
-      "@spartan-ng/helm/date-picker": ["./src/app/shared/ui/date-picker/src/index.ts"],
-      "@spartan-ng/helm/calendar": ["./src/app/shared/ui/calendar/src/index.ts"],
-      "@spartan-ng/helm/select": ["./src/app/shared/ui/select/src/index.ts"],
-      "@spartan-ng/helm/popover": ["./src/app/shared/ui/popover/src/index.ts"],
-      "@spartan-ng/helm/input-group": ["./src/app/shared/ui/input-group/src/index.ts"],
-      "@spartan-ng/helm/input": ["./src/app/shared/ui/input/src/index.ts"],
-      "@spartan-ng/helm/textarea": ["./src/app/shared/ui/textarea/src/index.ts"],
-      "@spartan-ng/helm/table": ["./src/app/shared/ui/table/src/index.ts"],
-      "@spartan-ng/helm/carousel": ["./src/app/shared/ui/carousel/src/index.ts"]
+      "@ui/button": ["./src/app/shared/ui/button/src/index.ts"],
+      "@ui/utils": ["./src/app/shared/ui/utils/src/index.ts"],
+      "@ui/card": ["./src/app/shared/ui/card/src/index.ts"],
+      "@ui/accordion": ["./src/app/shared/ui/accordion/src/index.ts"],
+      "@ui/breadcrumb": ["./src/app/shared/ui/breadcrumb/src/index.ts"],
+      "@ui/dialog": ["./src/app/shared/ui/dialog/src/index.ts"],
+      "@ui/sonner": ["./src/app/shared/ui/sonner/src/index.ts"],
+      "@ui/date-picker": ["./src/app/shared/ui/date-picker/src/index.ts"],
+      "@ui/calendar": ["./src/app/shared/ui/calendar/src/index.ts"],
+      "@ui/select": ["./src/app/shared/ui/select/src/index.ts"],
+      "@ui/popover": ["./src/app/shared/ui/popover/src/index.ts"],
+      "@ui/input-group": ["./src/app/shared/ui/input-group/src/index.ts"],
+      "@ui/input": ["./src/app/shared/ui/input/src/index.ts"],
+      "@ui/textarea": ["./src/app/shared/ui/textarea/src/index.ts"],
+      "@ui/table": ["./src/app/shared/ui/table/src/index.ts"],
+      "@ui/carousel": ["./src/app/shared/ui/carousel/src/index.ts"]
     }
   },
   "angularCompilerOptions": {

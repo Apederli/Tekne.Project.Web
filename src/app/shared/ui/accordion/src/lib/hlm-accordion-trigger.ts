@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideChevronDown, lucideChevronUp } from '@ng-icons/lucide';
 import { BrnAccordionImports } from '@spartan-ng/brain/accordion';
-import { hlm } from '@spartan-ng/helm/utils';
+import { hlm } from '@ui/utils';
 import type { ClassValue } from 'clsx';
 
 @Component({

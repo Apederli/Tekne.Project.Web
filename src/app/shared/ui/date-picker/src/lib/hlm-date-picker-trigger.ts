@@ -1,4 +1,4 @@
-import { BooleanInput } from '@angular/cdk/coercion';
+﻿import { BooleanInput } from '@angular/cdk/coercion';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -15,9 +15,9 @@ import {
   provideBrnDatePickerTrigger,
 } from '@spartan-ng/brain/date-picker';
 import { BrnFieldControl, BrnFieldControlDescribedBy } from '@spartan-ng/brain/field';
-import { ButtonVariants, HlmButtonImports } from '@spartan-ng/helm/button';
-import { HlmPopoverTrigger } from '@spartan-ng/helm/popover';
-import { hlm } from '@spartan-ng/helm/utils';
+import { ButtonVariants, HlmButtonImports } from '@ui/button';
+import { HlmPopoverTrigger } from '@ui/popover';
+import { hlm } from '@ui/utils';
 import { ClassValue } from 'clsx';
 
 @Component({

@@ -1,4 +1,4 @@
-import { OVERLAY_DEFAULT_CONFIG } from '@angular/cdk/overlay';
+﻿import { OVERLAY_DEFAULT_CONFIG } from '@angular/cdk/overlay';
 import { type EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 
 /**
@@ -14,7 +14,7 @@ import { type EnvironmentProviders, makeEnvironmentProviders } from '@angular/co
  * @example
  * ```ts
  * // app.config.ts
- * import { provideSpartanHlm } from '@spartan-ng/helm/utils';
+ * import { provideSpartanHlm } from '@ui/utils';
  *
  * export const appConfig: ApplicationConfig = {
  *   providers: [

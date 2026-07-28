@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BrnAccordionContent } from '@spartan-ng/brain/accordion';
-import { classes } from '@spartan-ng/helm/utils';
+import { classes } from '@ui/utils';
 
 @Component({
   selector: 'hlm-accordion-content',

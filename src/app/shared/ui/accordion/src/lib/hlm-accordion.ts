@@ -1,6 +1,6 @@
-import { Directive } from '@angular/core';
+﻿import { Directive } from '@angular/core';
 import { BrnAccordion } from '@spartan-ng/brain/accordion';
-import { classes } from '@spartan-ng/helm/utils';
+import { classes } from '@ui/utils';
 
 @Directive({
   selector: '[hlmAccordion], hlm-accordion',

@@ -1,11 +1,11 @@
-import { Directive } from '@angular/core';
+﻿import { Directive } from '@angular/core';
 import {
   BrnPopover,
   provideBrnPopoverConfig,
   provideBrnPopoverDefaultOptions,
 } from '@spartan-ng/brain/popover';
 import { BrnSelectMultiple } from '@spartan-ng/brain/select';
-import { classes } from '@spartan-ng/helm/utils';
+import { classes } from '@ui/utils';
 
 @Directive({
   selector: '[hlmSelectMultiple],hlm-select-multiple',

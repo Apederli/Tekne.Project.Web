@@ -1,4 +1,4 @@
-import {
+﻿import {
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -8,8 +8,8 @@ import {
 } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideArrowRight } from '@ng-icons/lucide';
-import { HlmButton, provideBrnButtonConfig } from '@spartan-ng/helm/button';
-import { hlm } from '@spartan-ng/helm/utils';
+import { HlmButton, provideBrnButtonConfig } from '@ui/button';
+import { hlm } from '@ui/utils';
 import { HlmCarousel } from './hlm-carousel';
 
 @Component({

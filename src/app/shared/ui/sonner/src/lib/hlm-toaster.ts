@@ -16,7 +16,7 @@ import {
   lucideTriangleAlert,
 } from '@ng-icons/lucide';
 import { BrnSonnerImports, type ToasterProps } from '@spartan-ng/brain/sonner';
-import { hlm } from '@spartan-ng/helm/utils';
+import { hlm } from '@ui/utils';
 import type { ClassValue } from 'clsx';
 
 @Component({

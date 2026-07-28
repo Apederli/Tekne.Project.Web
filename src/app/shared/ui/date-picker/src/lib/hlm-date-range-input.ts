@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideCalendar, lucideX } from '@ng-icons/lucide';
 import {
@@ -6,7 +6,7 @@ import {
   type BrnDatePickerTriggerBase,
   provideBrnDatePickerTrigger,
 } from '@spartan-ng/brain/date-picker';
-import { HlmInputGroup, HlmInputGroupImports } from '@spartan-ng/helm/input-group';
+import { HlmInputGroup, HlmInputGroupImports } from '@ui/input-group';
 import { injectHlmDateRangePickerConfig } from './hlm-date-range-picker.token';
 
 @Component({

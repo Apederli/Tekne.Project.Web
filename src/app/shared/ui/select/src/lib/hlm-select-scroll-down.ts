@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideChevronDown } from '@ng-icons/lucide';
 import { BrnSelectScrollDown } from '@spartan-ng/brain/select';
-import { classes } from '@spartan-ng/helm/utils';
+import { classes } from '@ui/utils';
 
 @Component({
   selector: 'hlm-select-scroll-down',

@@ -1,4 +1,4 @@
-import type { BooleanInput } from '@angular/cdk/coercion';
+﻿import type { BooleanInput } from '@angular/cdk/coercion';
 import type { ComponentType } from '@angular/cdk/portal';
 import { NgComponentOutlet } from '@angular/common';
 import {
@@ -12,9 +12,9 @@ import {
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideX } from '@ng-icons/lucide';
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
-import { HlmButton } from '@spartan-ng/helm/button';
+import { HlmButton } from '@ui/button';
 
-import { classes } from '@spartan-ng/helm/utils';
+import { classes } from '@ui/utils';
 import { HlmDialogClose } from './hlm-dialog-close';
 
 type HlmDialogContentContext = {

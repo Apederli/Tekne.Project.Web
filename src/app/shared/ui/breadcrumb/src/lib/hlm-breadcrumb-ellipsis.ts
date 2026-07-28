@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideEllipsis } from '@ng-icons/lucide';
-import { classes } from '@spartan-ng/helm/utils';
+import { classes } from '@ui/utils';
 
 @Component({
   selector: 'hlm-breadcrumb-ellipsis',

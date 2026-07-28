@@ -1,4 +1,4 @@
-import { Directionality } from '@angular/cdk/bidi';
+﻿import { Directionality } from '@angular/cdk/bidi';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -10,7 +10,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { classes } from '@spartan-ng/helm/utils';
+import { classes } from '@ui/utils';
 import type { EmblaEventType, EmblaOptionsType, EmblaPluginType } from 'embla-carousel';
 import { EmblaCarouselDirective } from 'embla-carousel-angular';
 

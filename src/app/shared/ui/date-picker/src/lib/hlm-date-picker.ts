@@ -1,4 +1,4 @@
-import type { BooleanInput } from '@angular/cdk/coercion';
+﻿import type { BooleanInput } from '@angular/cdk/coercion';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -22,8 +22,8 @@ import { BrnFieldControl, provideBrnLabelable } from '@spartan-ng/brain/field';
 import type { ChangeFn, TouchFn } from '@spartan-ng/brain/forms';
 import type { BrnOverlayState } from '@spartan-ng/brain/overlay';
 import { BrnPopover } from '@spartan-ng/brain/popover';
-import { HlmCalendar } from '@spartan-ng/helm/calendar';
-import { HlmPopoverImports } from '@spartan-ng/helm/popover';
+import { HlmCalendar } from '@ui/calendar';
+import { HlmPopoverImports } from '@ui/popover';
 import { injectHlmDatePickerConfig } from './hlm-date-picker.token';
 
 export const HLM_DATE_PICKER_VALUE_ACCESSOR = {

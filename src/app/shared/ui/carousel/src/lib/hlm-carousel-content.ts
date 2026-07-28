@@ -1,5 +1,5 @@
-import { Directive, inject } from '@angular/core';
-import { classes } from '@spartan-ng/helm/utils';
+﻿import { Directive, inject } from '@angular/core';
+import { classes } from '@ui/utils';
 import { HlmCarousel } from './hlm-carousel';
 
 @Directive({

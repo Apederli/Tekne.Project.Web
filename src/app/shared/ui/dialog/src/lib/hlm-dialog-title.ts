@@ -1,6 +1,6 @@
-import { Directive } from '@angular/core';
+﻿import { Directive } from '@angular/core';
 import { BrnDialogTitle } from '@spartan-ng/brain/dialog';
-import { classes } from '@spartan-ng/helm/utils';
+import { classes } from '@ui/utils';
 
 @Directive({
   selector: '[hlmDialogTitle]',

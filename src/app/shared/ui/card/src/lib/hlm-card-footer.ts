@@ -1,5 +1,5 @@
-import { Directive } from '@angular/core';
-import { classes } from '@spartan-ng/helm/utils';
+﻿import { Directive } from '@angular/core';
+import { classes } from '@ui/utils';
 
 @Directive({
   selector: '[hlmCardFooter],hlm-card-footer',

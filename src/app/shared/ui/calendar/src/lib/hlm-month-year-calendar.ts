@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideChevronLeft, lucideChevronRight } from '@ng-icons/lucide';
 import {
@@ -7,8 +7,8 @@ import {
   injectBrnCalendarI18n,
 } from '@spartan-ng/brain/calendar';
 import { injectDateAdapter } from '@spartan-ng/brain/date-time';
-import { buttonVariants, HlmButtonImports } from '@spartan-ng/helm/button';
-import { classes, hlm } from '@spartan-ng/helm/utils';
+import { buttonVariants, HlmButtonImports } from '@ui/button';
+import { classes, hlm } from '@ui/utils';
 
 @Component({
   selector: 'hlm-month-year-calendar',

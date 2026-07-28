@@ -1,4 +1,4 @@
-import { NgTemplateOutlet } from '@angular/common';
+﻿import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideChevronLeft, lucideChevronRight } from '@ng-icons/lucide';
@@ -8,9 +8,9 @@ import {
   injectBrnCalendarI18n,
 } from '@spartan-ng/brain/calendar';
 import { injectDateAdapter } from '@spartan-ng/brain/date-time';
-import { buttonVariants, HlmButtonImports } from '@spartan-ng/helm/button';
-import { HlmSelectImports } from '@spartan-ng/helm/select';
-import { classes, hlm } from '@spartan-ng/helm/utils';
+import { buttonVariants, HlmButtonImports } from '@ui/button';
+import { HlmSelectImports } from '@ui/select';
+import { classes, hlm } from '@ui/utils';
 
 @Component({
   selector: 'hlm-calendar-range',
