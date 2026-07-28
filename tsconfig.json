@@ -1,5 +1,3 @@
-/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
-/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
   "compileOnSave": false,
   "compilerOptions": {
@@ -14,14 +12,29 @@
     "target": "ES2022",
     "module": "preserve",
     /* Dahili alias'lar. `baseUrl` bilinçli olarak yok: yolu olmayan bir import
-       (`models/user` gibi) node_modules yerine buraya düşmesin diye — `@` önekli
-       girdiler tekil ve açık kalıyor. Yollar bu dosyaya göre çözülür, extends
-       eden tsconfig'ler olduğu gibi devralır. */
+       (`models/user` gibi) node_modules yerine buraya düşmesin diye. `@spartan-ng/helm/*`
+       girdilerini Spartan CLI ekliyor — bileşen eklendikçe listeye yenisi yazılır. */
     "paths": {
       "@models/*": ["./src/app/core/models/*"],
       "@enums/*": ["./src/app/core/enums/*"],
       "@services/*": ["./src/app/core/services/*"],
-      "@interceptors/*": ["./src/app/core/interceptors/*"]
+      "@interceptors/*": ["./src/app/core/interceptors/*"],
+      "@spartan-ng/helm/button": ["./src/app/shared/ui/button/src/index.ts"],
+      "@spartan-ng/helm/utils": ["./src/app/shared/ui/utils/src/index.ts"],
+      "@spartan-ng/helm/card": ["./src/app/shared/ui/card/src/index.ts"],
+      "@spartan-ng/helm/accordion": ["./src/app/shared/ui/accordion/src/index.ts"],
+      "@spartan-ng/helm/breadcrumb": ["./src/app/shared/ui/breadcrumb/src/index.ts"],
+      "@spartan-ng/helm/dialog": ["./src/app/shared/ui/dialog/src/index.ts"],
+      "@spartan-ng/helm/sonner": ["./src/app/shared/ui/sonner/src/index.ts"],
+      "@spartan-ng/helm/date-picker": ["./src/app/shared/ui/date-picker/src/index.ts"],
+      "@spartan-ng/helm/calendar": ["./src/app/shared/ui/calendar/src/index.ts"],
+      "@spartan-ng/helm/select": ["./src/app/shared/ui/select/src/index.ts"],
+      "@spartan-ng/helm/popover": ["./src/app/shared/ui/popover/src/index.ts"],
+      "@spartan-ng/helm/input-group": ["./src/app/shared/ui/input-group/src/index.ts"],
+      "@spartan-ng/helm/input": ["./src/app/shared/ui/input/src/index.ts"],
+      "@spartan-ng/helm/textarea": ["./src/app/shared/ui/textarea/src/index.ts"],
+      "@spartan-ng/helm/table": ["./src/app/shared/ui/table/src/index.ts"],
+      "@spartan-ng/helm/carousel": ["./src/app/shared/ui/carousel/src/index.ts"]
     }
   },
   "angularCompilerOptions": {

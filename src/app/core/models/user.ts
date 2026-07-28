@@ -26,7 +26,15 @@ export interface RegisterUserInputModel {
   phoneNumberDialCode?: string;
 }
 
-/** `POST /api/Users/login` istek gövdesi. */
+/**
+ * Giriş istek gövdesi — hem `POST /api/Users/login` hem
+ * `POST /api/Users/login/partner` aynı gövdeyi alır.
+ *
+ * Portal kısıtı gövdede taşınmıyor, adresin kendisinde: `/login/partner`
+ * yalnızca Partner hesaplarını kabul eder, tür tutmazsa backend cookie'yi hiç
+ * yazmadan reddeder. Böylece istemcinin hesap türü beyan edebileceği bir alan
+ * kalmıyor.
+ */
 export interface LoginInputModel {
   email: string;
   password: string;

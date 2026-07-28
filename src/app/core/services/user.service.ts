@@ -29,9 +29,22 @@ export class UserService {
     return this.http.post<boolean>(`${this.baseUrl}/register`, model);
   }
 
-  /** E-posta + şifre ile giriş. Rol ayrımı yanıtta değil, token claim'lerindedir. */
+  /**
+   * Müşteri sitesi ve mobil girişi — tüm hesap türleri kabul edilir.
+   * Rol ayrımı yanıtta değil, token claim'lerindedir.
+   */
   login(model: LoginInputModel): Observable<LoginOutputModel> {
     return this.http.post<LoginOutputModel>(`${this.baseUrl}/login`, model);
+  }
+
+  /**
+   * Tekne sahibi paneli girişi — yalnızca `Partner` hesapları.
+   *
+   * Portal kısıtı adreste olduğu için gövdede hesap türü göndermiyoruz;
+   * tür tutmazsa backend cookie yazmadan 400 döner.
+   */
+  loginPartner(model: LoginInputModel): Observable<LoginOutputModel> {
+    return this.http.post<LoginOutputModel>(`${this.baseUrl}/login/partner`, model);
   }
 
   /**
