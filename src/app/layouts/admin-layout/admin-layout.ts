@@ -10,7 +10,7 @@ const ROOT = `/${ROUTE_ADMIN.main}`;
   templateUrl: './admin-layout.html',
 })
 export class AdminLayout {
-  protected readonly navItems = [
+  navItems = [
     { path: ROOT, label: 'Genel Bakış', exact: true },
     { path: `${ROOT}/${ROUTE_ADMIN.customers}`, label: 'Müşteriler', exact: false },
     { path: `${ROOT}/${ROUTE_ADMIN.partners}`, label: 'Tekne Sahipleri', exact: false },

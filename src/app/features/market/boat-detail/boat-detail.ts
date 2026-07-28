@@ -13,5 +13,5 @@ import { Component, input } from '@angular/core';
 })
 export class BoatDetail {
   /** `withComponentInputBinding` sayesinde route parametresi doğrudan bağlanıyor. */
-  readonly slug = input.required<string>();
+  slug = input.required<string>();
 }

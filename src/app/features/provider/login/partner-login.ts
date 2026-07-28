@@ -10,20 +10,20 @@ import { LoginInputModel } from '@models/user';
   templateUrl: './partner-login.html',
 })
 export class PartnerLogin {
-  private readonly router = inject(Router);
+  router = inject(Router);
 
-  private readonly model = signal<LoginInputModel>({ email: '', password: '' });
+  model = signal<LoginInputModel>({ email: '', password: '' });
 
-  protected readonly loginForm = form(this.model, (path) => {
+  loginForm = form(this.model, (path) => {
     required(path.email, { message: 'E-posta adresi gerekli.' });
     email(path.email, { message: 'Geçerli bir e-posta adresi girin.' });
     required(path.password, { message: 'Şifre gerekli.' });
     minLength(path.password, 6, { message: 'Şifre en az 6 karakter olmalı.' });
   });
 
-  protected readonly serverError = signal<string | null>(null);
+  serverError = signal<string | null>(null);
 
-  protected async signIn(): Promise<void> {
+  async signIn(): Promise<void> {
     this.serverError.set(null);
 
     await submit(this.loginForm, async () => {
@@ -33,7 +33,7 @@ export class PartnerLogin {
     });
   }
 
-  protected goToDashboard(): void {
+  goToDashboard(): void {
     this.router.navigate(['/', ROUTE_PARTNER.main]);
   }
 }

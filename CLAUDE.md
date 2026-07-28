@@ -102,7 +102,7 @@ Bu sürümde değişmiş, kolayca eskisi gibi yazılan noktalar:
 - `ngClass` / `ngStyle` yerine `class` / `style` binding.
 - `@HostBinding` / `@HostListener` yerine dekoratördeki `host` objesi.
 - Yeni formlarda Signal Forms (`@angular/forms/signals`); olmuyorsa Reactive Forms.
-- Yalnızca template'ten okunan üyeler `protected`, Angular'ın doldurduğu üyeler `readonly`.
+- **Bileşen ve servislerde erişim belirteci yazma.** `private readonly router = inject(Router)` değil, düz `router = inject(Router)`. `private` / `protected` / `public` ve `readonly` kullanılmıyor — üyeler sade bırakılır.
 - Durum için signal; türetilmiş değerler için `computed()`.
 
 Bu liste Angular MCP'nin `get_best_practices` çıktısından geliyor — emin olmadığında oradan veya `search_documentation`'dan doğrula, ezberden yazma.

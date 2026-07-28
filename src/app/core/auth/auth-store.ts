@@ -15,10 +15,10 @@ export interface AuthUser {
  */
 @Service()
 export class AuthStore {
-  private readonly currentUser = signal<AuthUser | null>(null);
+  currentUser = signal<AuthUser | null>(null);
 
-  readonly user = this.currentUser.asReadonly();
-  readonly isAuthenticated = computed(() => this.currentUser() !== null);
+  user = this.currentUser.asReadonly();
+  isAuthenticated = computed(() => this.currentUser() !== null);
 
   hasRole(role: UserRole): boolean {
     return this.currentUser()?.roles.includes(role) ?? false;

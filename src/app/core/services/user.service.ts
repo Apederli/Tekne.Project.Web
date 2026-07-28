@@ -21,8 +21,8 @@ import {
  */
 @Service()
 export class UserService {
-  private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${inject(API_BASE_URL)}/Users`;
+  http = inject(HttpClient);
+  baseUrl = `${inject(API_BASE_URL)}/Users`;
 
   /** Public kayıt — oluşan kullanıcı her zaman `Customer` tipindedir. */
   register(model: RegisterUserInputModel): Observable<boolean> {

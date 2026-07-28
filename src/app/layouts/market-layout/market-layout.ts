@@ -8,5 +8,5 @@ import { ROUTE_MARKET } from '../../core/routes.const';
   templateUrl: './market-layout.html',
 })
 export class MarketLayout {
-  protected readonly route = ROUTE_MARKET;
+  route = ROUTE_MARKET;
 }

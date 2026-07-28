@@ -10,7 +10,7 @@ const ROOT = `/${ROUTE_PARTNER.main}`;
   templateUrl: './provider-layout.html',
 })
 export class ProviderLayout {
-  protected readonly navItems = [
+  navItems = [
     { path: ROOT, label: 'Genel Bakış', exact: true },
     { path: `${ROOT}/${ROUTE_PARTNER.boats}`, label: 'Teknelerim', exact: false },
     { path: `${ROOT}/${ROUTE_PARTNER.availability}`, label: 'Müsaitlik & Fiyat', exact: false },
