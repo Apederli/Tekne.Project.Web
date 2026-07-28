@@ -13,7 +13,7 @@ import { NavItem } from './nav-item';
 @Component({
   imports: [DashboardShell],
   template: `
-    <app-dashboard-shell title="Test Panel" [navItems]="navItems" loginPath="/partner/login">
+    <app-dashboard-shell panelTitle="Test Panel" [navItems]="navItems" loginPath="/partner/login">
       <p data-testid="projected">İçerik</p>
     </app-dashboard-shell>
   `,

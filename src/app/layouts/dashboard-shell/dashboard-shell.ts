@@ -17,7 +17,7 @@ import { NavItem } from './nav-item';
   templateUrl: './dashboard-shell.html',
 })
 export class DashboardShell {
-  title = input.required<string>();
+  panelTitle = input.required<string>();
   navItems = input.required<NavItem[]>();
   /** Çıkış sonrası yönlendirilecek adres (ör. `/partner/login`). */
   loginPath = input.required<string>();
@@ -45,6 +45,6 @@ export class DashboardShell {
 
   completeSignOut(): void {
     this.authStore.setUser(null);
-    this.router.navigateByUrl(this.loginPath());
+    void this.router.navigateByUrl(this.loginPath());
   }
 }

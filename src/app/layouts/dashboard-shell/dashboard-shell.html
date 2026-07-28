@@ -1,16 +1,17 @@
 <div class="flex min-h-screen bg-background text-foreground">
   <aside class="w-60 shrink-0 border-r border-border bg-muted/40">
     <div class="px-5 py-5 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-      {{ title() }}
+      {{ panelTitle() }}
     </div>
     <nav class="flex flex-col gap-1 px-3">
       @for (item of navItems(); track item.path) {
         <a
           hlmBtn
           variant="ghost"
-          class="justify-start text-muted-foreground"
+          class="justify-start"
           [routerLink]="item.path"
           routerLinkActive="bg-accent text-accent-foreground"
+          ariaCurrentWhenActive="page"
           [routerLinkActiveOptions]="{ exact: item.exact }"
           >{{ item.label }}</a
         >
@@ -21,7 +22,7 @@
   <div class="flex min-w-0 flex-1 flex-col">
     <header class="flex h-14 items-center justify-end border-b border-border px-6">
       <hlm-popover align="end" sideOffset="8">
-        <button hlmPopoverTrigger hlmBtn variant="ghost" data-slot="popover-trigger">{{ displayName() }}</button>
+        <button hlmPopoverTrigger hlmBtn variant="ghost">{{ displayName() }}</button>
         <hlm-popover-content *hlmPopoverPortal class="w-64">
           <div class="px-1.5 py-1">
             <p class="text-sm font-medium">{{ displayName() }}</p>
