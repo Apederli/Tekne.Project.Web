@@ -1,4 +1,4 @@
-﻿{
+{
   "compileOnSave": false,
   "compilerOptions": {
     "noImplicitOverride": true,
@@ -11,10 +11,6 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve",
-    /* Dahili alias'lar. `baseUrl` bilinçli olarak yok: yolu olmayan bir import
-       (`models/user` gibi) node_modules yerine buraya düşmesin diye. `@ui/*`
-       girdilerini Spartan CLI ekliyor (adı `components.json` içindeki
-       `importAlias`'tan gelir) — bileşen eklendikçe listeye yenisi yazılır. */
     "paths": {
       "@models/*": ["./src/app/core/models/*"],
       "@enums/*": ["./src/app/core/enums/*"],
@@ -35,7 +31,8 @@
       "@ui/input": ["./src/app/shared/ui/input/src/index.ts"],
       "@ui/textarea": ["./src/app/shared/ui/textarea/src/index.ts"],
       "@ui/table": ["./src/app/shared/ui/table/src/index.ts"],
-      "@ui/carousel": ["./src/app/shared/ui/carousel/src/index.ts"]
+      "@ui/carousel": ["./src/app/shared/ui/carousel/src/index.ts"],
+      "@ui/sheet": ["./src/app/shared/ui/sheet/src/index.ts"]
     }
   },
   "angularCompilerOptions": {
