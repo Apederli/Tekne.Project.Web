@@ -12,7 +12,17 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
-    "module": "preserve"
+    "module": "preserve",
+    /* Dahili alias'lar. `baseUrl` bilinçli olarak yok: yolu olmayan bir import
+       (`models/user` gibi) node_modules yerine buraya düşmesin diye — `@` önekli
+       girdiler tekil ve açık kalıyor. Yollar bu dosyaya göre çözülür, extends
+       eden tsconfig'ler olduğu gibi devralır. */
+    "paths": {
+      "@models/*": ["./src/app/core/models/*"],
+      "@enums/*": ["./src/app/core/enums/*"],
+      "@services/*": ["./src/app/core/services/*"],
+      "@interceptors/*": ["./src/app/core/interceptors/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

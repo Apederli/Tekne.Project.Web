@@ -27,6 +27,8 @@ Testler Vitest ile koşuyor (Karma değil). `--filter` test **adına**, `--inclu
 
 `D:\Tekne\Tekne.Project.Api` — ASP.NET Core 10, CQRS + MediatR, EF Core / PostgreSQL.
 
+API lokalde `http://localhost:5188` üzerinde koşuyor; Swagger UI `http://localhost:5188/swagger/index.html`, ham şema ise `http://localhost:5188/swagger/v1/swagger.json` (model yazarken okunacak dosya budur — UI sayfası değil).
+
 Kendi `CLAUDE.md`'si var ve iş modelini (aktörler, konum hiyerarşisi, rezervasyon akışı) orası tanımlıyor. **Domain sorularında kaynak orasıdır**, burada tahmin yürütme.
 
 İki noktaya dikkat:
@@ -63,6 +65,29 @@ Her alan kendi `*.routes.ts` dosyasından lazy yükleniyor ve kendi layout'una s
 ### Klasör düzeni
 
 `features/` altında **erişim alanına** göre bölünmüş, alanların içinde feature klasörleri var. Angular'ın style guide'ı tipe göre klasör açmayı (`components/`, `services/`) önermiyor — `core/` ve `shared/` bu kuralın bilinçli istisnası ve ikisi de **ince tutulmalı**: bir şey tek bir alana aitse o alanın klasöründe kalır.
+
+## Modeller
+
+**Interface ve model tipleri bileşen dosyalarının içinde tanımlanmaz.** Hepsi `src/app/core/models/` altında, konu başına bir dosyada yaşar (`auth.ts`, `boat.ts`, `reservation.ts` …).
+
+**Kaynak Swagger'dır.** Alan adları, tipler ve zorunluluklar backend'in Swagger şemasından doğrulanarak yazılır — tahminle veya UI'ın ihtiyacına göre değil. Şema `D:\Tekne\Tekne.Project.Api` tarafından üretiliyor.
+
+İsimlendirme, istek/yanıt ayrımını taşır:
+
+```ts
+export interface PartnerLoginInputModel {   // request gövdesi
+  email: string;
+  password: string;
+}
+
+export interface PartnerLoginOutputModel {  // response gövdesi
+  accessToken: string;
+}
+```
+
+Bir bileşende `interface` görürsen yanlış yerdedir; `core/models/` altına taşı.
+
+Kod üretme aracı (ng-openapi-gen, NSwag vb.) kurulu değil — modeller elle yazılıyor. Swagger büyüdüğünde codegen değerlendirilebilir, ama şu an konvansiyon elle yazmak.
 
 ## Angular 22 konvansiyonları
 

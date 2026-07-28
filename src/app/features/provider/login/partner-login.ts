@@ -2,11 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormField, email, form, minLength, required, submit } from '@angular/forms/signals';
 import { ROUTE_PARTNER } from '../../../core/routes.const';
-
-interface PartnerLoginModel {
-  email: string;
-  password: string;
-}
+import { LoginInputModel } from '@models/user';
 
 @Component({
   selector: 'app-partner-login',
@@ -16,7 +12,7 @@ interface PartnerLoginModel {
 export class PartnerLogin {
   private readonly router = inject(Router);
 
-  private readonly model = signal<PartnerLoginModel>({ email: '', password: '' });
+  private readonly model = signal<LoginInputModel>({ email: '', password: '' });
 
   protected readonly loginForm = form(this.model, (path) => {
     required(path.email, { message: 'E-posta adresi gerekli.' });
