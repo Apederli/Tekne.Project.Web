@@ -6,11 +6,24 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 import { join } from 'node:path';
+import { ROUTE_ADMIN, ROUTE_PARTNER } from './app/core/routes.const';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
+
+/**
+ * Panel alanları (partner + admin) arama motorlarına kapalı — login dahil.
+ *
+ * robots.txt'te Disallow bilinçli olarak yok: crawler sayfayı çekebilmeli ki
+ * bu noindex sinyalini görebilsin; robots.txt engeli dış link alan URL'in
+ * "içeriği bilinmeyen sayfa" olarak indekslenmesini önlemez.
+ */
+app.use([`/${ROUTE_PARTNER.main}`, `/${ROUTE_ADMIN.main}`], (_req, res, next) => {
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  next();
+});
 
 /**
  * Example Express Rest API endpoints can be defined here.
