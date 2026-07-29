@@ -30,6 +30,29 @@ export interface BoatInputModel {
   description?: string;
 }
 
+/**
+ * Tekne formunun çalışma kopyası. `BoatInputModel`'den farkı, alanların
+ * "henüz doldurulmadı" hâlini taşıyabilmesi: sayısal inputlar boşken `null`,
+ * select/radio kontrolleri native değerleri string tutar. Gönderimden hemen
+ * önce `BoatInputModel`'e çevrilir.
+ */
+export interface BoatFormModel {
+  name: string;
+  boatType: BoatType | '';
+  rentalType: RentalType | '';
+  manufactureYear: number | null;
+  lengthInMeters: number | null;
+  diningCapacity: number | null;
+  totalCapacity: number | null;
+  swimmingCapacity: number | null;
+  /** Native select değeri — `''` henüz seçilmedi demektir. */
+  cityId: string;
+  /** Native radio değeri — `''` henüz seçilmedi demektir. */
+  primaryHarborId: string;
+  harborIds: number[];
+  description: string;
+}
+
 /** `GET /api/Boats` ve `GET /api/Boats/{id}` yanıt gövdesi. */
 export interface BoatOutputModel {
   id: number;

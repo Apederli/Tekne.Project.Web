@@ -1,0 +1,240 @@
+<div class="max-w-2xl">
+  <h1 class="text-2xl font-semibold">Yeni Tekne</h1>
+  <p class="mt-2 text-sm text-slate-600">
+    İlan bilgilerini girin; fotoğrafları kayıttan sonra ekleyebilirsiniz.
+  </p>
+
+  <form class="mt-8 flex flex-col gap-10" (submit)="$event.preventDefault(); save()">
+    <fieldset class="flex flex-col gap-5">
+      <legend class="mb-4 text-lg font-medium text-slate-900">Temel bilgiler</legend>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="name" class="text-sm font-medium text-slate-700">Tekne adı</label>
+        <input
+          id="name"
+          type="text"
+          [formField]="boatForm.name"
+          class="rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
+        />
+        @if (boatForm.name().touched() && boatForm.name().errors().length > 0) {
+          <p class="text-sm text-red-600">{{ boatForm.name().errors()[0].message }}</p>
+        }
+      </div>
+
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div class="flex flex-col gap-1.5">
+          <label for="boatType" class="text-sm font-medium text-slate-700">Tekne tipi</label>
+          <select
+            id="boatType"
+            [formField]="boatForm.boatType"
+            class="rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
+          >
+            <option value="" disabled>Seçin</option>
+            @for (option of boatTypeOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+          @if (boatForm.boatType().touched() && boatForm.boatType().errors().length > 0) {
+            <p class="text-sm text-red-600">{{ boatForm.boatType().errors()[0].message }}</p>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="rentalType" class="text-sm font-medium text-slate-700">Kiralama tipi</label>
+          <select
+            id="rentalType"
+            [formField]="boatForm.rentalType"
+            class="rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
+          >
+            <option value="" disabled>Seçin</option>
+            @for (option of rentalTypeOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+          @if (boatForm.rentalType().touched() && boatForm.rentalType().errors().length > 0) {
+            <p class="text-sm text-red-600">{{ boatForm.rentalType().errors()[0].message }}</p>
+          }
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-1.5 sm:max-w-[12rem]">
+        <label for="manufactureYear" class="text-sm font-medium text-slate-700">
+          Üretim yılı <span class="font-normal text-slate-400">(isteğe bağlı)</span>
+        </label>
+        <input
+          id="manufactureYear"
+          type="number"
+          [formField]="boatForm.manufactureYear"
+          class="rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
+        />
+        @if (boatForm.manufactureYear().touched() && boatForm.manufactureYear().errors().length > 0) {
+          <p class="text-sm text-red-600">{{ boatForm.manufactureYear().errors()[0].message }}</p>
+        }
+      </div>
+    </fieldset>
+
+    <fieldset class="flex flex-col gap-5">
+      <legend class="mb-4 text-lg font-medium text-slate-900">Boyut ve kapasite</legend>
+
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div class="flex flex-col gap-1.5">
+          <label for="lengthInMeters" class="text-sm font-medium text-slate-700">
+            Uzunluk (metre)
+          </label>
+          <input
+            id="lengthInMeters"
+            type="number"
+            step="0.1"
+            [formField]="boatForm.lengthInMeters"
+            class="rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
+          />
+          @if (boatForm.lengthInMeters().touched() && boatForm.lengthInMeters().errors().length > 0) {
+            <p class="text-sm text-red-600">{{ boatForm.lengthInMeters().errors()[0].message }}</p>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="totalCapacity" class="text-sm font-medium text-slate-700">
+            Toplam kapasite (kişi)
+          </label>
+          <input
+            id="totalCapacity"
+            type="number"
+            [formField]="boatForm.totalCapacity"
+            class="rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
+          />
+          @if (boatForm.totalCapacity().touched() && boatForm.totalCapacity().errors().length > 0) {
+            <p class="text-sm text-red-600">{{ boatForm.totalCapacity().errors()[0].message }}</p>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="diningCapacity" class="text-sm font-medium text-slate-700">
+            Yemekli kapasite (kişi)
+          </label>
+          <input
+            id="diningCapacity"
+            type="number"
+            [formField]="boatForm.diningCapacity"
+            class="rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
+          />
+          @if (boatForm.diningCapacity().touched() && boatForm.diningCapacity().errors().length > 0) {
+            <p class="text-sm text-red-600">{{ boatForm.diningCapacity().errors()[0].message }}</p>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="swimmingCapacity" class="text-sm font-medium text-slate-700">
+            Yüzme turu kapasitesi (kişi)
+          </label>
+          <input
+            id="swimmingCapacity"
+            type="number"
+            [formField]="boatForm.swimmingCapacity"
+            class="rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
+          />
+          @if (boatForm.swimmingCapacity().touched() && boatForm.swimmingCapacity().errors().length > 0) {
+            <p class="text-sm text-red-600">{{ boatForm.swimmingCapacity().errors()[0].message }}</p>
+          }
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="flex flex-col gap-5">
+      <legend class="mb-4 text-lg font-medium text-slate-900">Konum</legend>
+
+      <div class="flex flex-col gap-1.5 sm:max-w-xs">
+        <label for="cityId" class="text-sm font-medium text-slate-700">Şehir</label>
+        <select
+          id="cityId"
+          [formField]="boatForm.cityId"
+          (change)="onCityChange()"
+          class="rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
+        >
+          <option value="" disabled>Seçin</option>
+          @for (city of cities(); track city.cityId) {
+            <option [value]="city.cityId">{{ city.cityName }}</option>
+          }
+        </select>
+        @if (boatForm.cityId().touched() && boatForm.cityId().errors().length > 0) {
+          <p class="text-sm text-red-600">{{ boatForm.cityId().errors()[0].message }}</p>
+        }
+      </div>
+
+      @if (harbors().length > 0) {
+        <div class="flex flex-col gap-1.5">
+          <span class="text-sm font-medium text-slate-700">Kalkış limanları</span>
+          <p class="text-xs text-slate-500">
+            Teknenin ücretsiz alım yapabildiği limanları işaretleyin, birini ana liman seçin.
+            Ana liman ilanda görünen konumdur.
+          </p>
+          <div class="mt-1 flex flex-col gap-2">
+            @for (harbor of harbors(); track harbor.id) {
+              <div
+                class="flex items-center justify-between rounded-md border border-slate-200 px-3 py-2"
+              >
+                <label class="flex items-center gap-2 text-sm text-slate-700">
+                  <input
+                    type="checkbox"
+                    [checked]="isHarborSelected(harbor.id)"
+                    (change)="toggleHarbor(harbor.id, $any($event.target).checked)"
+                  />
+                  {{ harbor.name }}
+                </label>
+                <label class="flex items-center gap-2 text-xs text-slate-500">
+                  <input
+                    type="radio"
+                    name="primaryHarbor"
+                    [checked]="isPrimaryHarbor(harbor.id)"
+                    (change)="setPrimaryHarbor(harbor.id)"
+                  />
+                  Ana liman
+                </label>
+              </div>
+            }
+          </div>
+          @if (boatForm.harborIds().touched() && boatForm.harborIds().errors().length > 0) {
+            <p class="text-sm text-red-600">{{ boatForm.harborIds().errors()[0].message }}</p>
+          }
+          @if (boatForm.primaryHarborId().touched() && boatForm.primaryHarborId().errors().length > 0) {
+            <p class="text-sm text-red-600">
+              {{ boatForm.primaryHarborId().errors()[0].message }}
+            </p>
+          }
+        </div>
+      }
+    </fieldset>
+
+    <fieldset class="flex flex-col gap-1.5">
+      <legend class="mb-4 text-lg font-medium text-slate-900">Açıklama</legend>
+      <label for="description" class="text-sm font-medium text-slate-700">
+        İlan açıklaması <span class="font-normal text-slate-400">(isteğe bağlı)</span>
+      </label>
+      <textarea
+        id="description"
+        rows="5"
+        [formField]="boatForm.description"
+        class="rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
+      ></textarea>
+      @if (boatForm.description().touched() && boatForm.description().errors().length > 0) {
+        <p class="text-sm text-red-600">{{ boatForm.description().errors()[0].message }}</p>
+      }
+    </fieldset>
+
+    <div class="flex items-center gap-3">
+      <button
+        type="submit"
+        [disabled]="boatForm().submitting()"
+        class="rounded-md bg-slate-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
+      >
+        {{ boatForm().submitting() ? 'Kaydediliyor…' : 'Tekneyi kaydet' }}
+      </button>
+      <a
+        [routerLink]="boatsUrl"
+        class="rounded-md px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
+      >
+        Vazgeç
+      </a>
+    </div>
+  </form>
+</div>
