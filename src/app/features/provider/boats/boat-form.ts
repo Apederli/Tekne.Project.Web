@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -12,6 +12,13 @@ import {
   validate,
 } from '@angular/forms/signals';
 import { firstValueFrom } from 'rxjs';
+import { HlmButton } from '@ui/button';
+import { HlmCardImports } from '@ui/card';
+import { HlmFieldImports } from '@ui/field';
+import { HlmInput } from '@ui/input';
+import { HlmSelectImports } from '@ui/select';
+import { HlmTextarea } from '@ui/textarea';
+import { HlmToggleGroupImports } from '@ui/toggle-group';
 import { BoatType, RentalType } from '@enums';
 import { BoatFormModel, BoatInputModel } from '@models';
 import { BoatService, HarborService } from '@services';
@@ -19,7 +26,17 @@ import { ROUTE_PARTNER } from '../../../core/routes.const';
 
 @Component({
   selector: 'app-boat-form',
-  imports: [FormField, RouterLink],
+  imports: [
+    FormField,
+    RouterLink,
+    HlmButton,
+    HlmCardImports,
+    HlmFieldImports,
+    HlmInput,
+    HlmSelectImports,
+    HlmTextarea,
+    HlmToggleGroupImports,
+  ],
   templateUrl: './boat-form.html',
 })
 export class BoatForm {
@@ -59,11 +76,55 @@ export class BoatForm {
     description: '',
   });
 
-  /** Seçili şehrin limanları — liman seçim satırları buradan çizilir. */
+  /** Şehir select'inin seçenekleri — değerler form modelindeki gibi string. */
+  cityOptions = computed(() =>
+    this.cities().map((c) => ({ value: String(c.cityId), label: c.cityName })),
+  );
+
+  /** Seçili şehrin limanları — chip listesi buradan çizilir. */
   harbors = computed(() => {
     const cityId = Number(this.model().cityId);
     return this.cities().find((c) => c.cityId === cityId)?.harbors ?? [];
   });
+
+  /**
+   * Multi-select trigger'ında seçili limanların adını gösterir.
+   * Brain, çoklu seçimde `itemToString`'e tek id değil dizinin tamamını verir.
+   */
+  harborName = (value: number | number[]): string =>
+    Array.isArray(value)
+      ? value.map((id) => this.singleHarborName(id)).join(', ')
+      : this.singleHarborName(value);
+
+  singleHarborName(id: number): string {
+    return this.harbors().find((h) => h.id === id)?.name ?? String(id);
+  }
+
+  /** Şehir select trigger'ında id yerine şehir adını gösterir. */
+  cityName = (value: string): string =>
+    this.cities().find((c) => String(c.cityId) === value)?.cityName ?? value;
+
+  /** Bağlı olduğu liman select trigger'ında id yerine liman adını gösterir. */
+  primaryHarborName = (value: string): string => this.singleHarborName(Number(value));
+
+  /** Bağlı olduğu liman select'inin seçenekleri — yalnızca seçili limanlar. */
+  primaryHarborOptions = computed(() => {
+    const selected = this.model().harborIds;
+    return this.harbors()
+      .filter((h) => selected.includes(h.id))
+      .map((h) => ({ value: String(h.id), label: h.name }));
+  });
+
+  constructor() {
+    // Liman chip'i kaldırılınca ona bağlı ana liman seçimi de düşmeli —
+    // aksi hâlde listede olmayan bir ana liman gönderilebilir (backend kuralı ihlali).
+    effect(() => {
+      const m = this.model();
+      if (m.primaryHarborId !== '' && !m.harborIds.includes(Number(m.primaryHarborId))) {
+        this.model.update((x) => ({ ...x, primaryHarborId: '' }));
+      }
+    });
+  }
 
   /** Kurallar backend'in `BoatInputModelValidator`'ıyla birebir. */
   boatForm = form(this.model, (path) => {
@@ -92,11 +153,14 @@ export class BoatForm {
         ? { kind: 'minSelected', message: 'En az bir liman seçin.' }
         : undefined,
     );
-    required(path.primaryHarborId, { message: 'Ana liman seçin.' });
+    required(path.primaryHarborId, { message: 'Bağlı olduğu limanı seçin.' });
     validate(path.primaryHarborId, (ctx) => {
       const value = ctx.value();
       return value !== '' && !ctx.valueOf(path.harborIds).includes(Number(value))
-        ? { kind: 'primaryInHarbors', message: 'Ana liman, seçili limanlar arasında olmalı.' }
+        ? {
+            kind: 'primaryInHarbors',
+            message: 'Bağlı olduğu liman, seçili limanlar arasında olmalı.',
+          }
         : undefined;
     });
     maxLength(path.description, 1000, { message: 'Açıklama en fazla 1000 karakter olabilir.' });
@@ -104,32 +168,6 @@ export class BoatForm {
 
   onCityChange(): void {
     this.model.update((m) => ({ ...m, harborIds: [], primaryHarborId: '' }));
-  }
-
-  isHarborSelected(id: number): boolean {
-    return this.model().harborIds.includes(id);
-  }
-
-  isPrimaryHarbor(id: number): boolean {
-    return this.model().primaryHarborId === String(id);
-  }
-
-  toggleHarbor(id: number, checked: boolean): void {
-    this.model.update((m) => ({
-      ...m,
-      harborIds: checked ? [...m.harborIds, id] : m.harborIds.filter((h) => h !== id),
-      primaryHarborId: !checked && m.primaryHarborId === String(id) ? '' : m.primaryHarborId,
-    }));
-    this.boatForm.harborIds().markAsTouched();
-  }
-
-  setPrimaryHarbor(id: number): void {
-    this.model.update((m) => ({
-      ...m,
-      primaryHarborId: String(id),
-      harborIds: m.harborIds.includes(id) ? m.harborIds : [...m.harborIds, id],
-    }));
-    this.boatForm.primaryHarborId().markAsTouched();
   }
 
   async save(): Promise<void> {

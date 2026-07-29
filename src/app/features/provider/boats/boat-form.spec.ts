@@ -1,6 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { BoatType, RentalType } from '@enums';
 import { BoatFormModel } from '@models';
@@ -23,6 +23,7 @@ const validModel: BoatFormModel = {
 };
 
 describe('BoatForm', () => {
+  let fixture: ComponentFixture<BoatForm>;
   let component: BoatForm;
   let http: HttpTestingController;
 
@@ -38,7 +39,8 @@ describe('BoatForm', () => {
     });
     http = TestBed.inject(HttpTestingController);
 
-    component = TestBed.createComponent(BoatForm).componentInstance;
+    fixture = TestBed.createComponent(BoatForm);
+    component = fixture.componentInstance;
     http
       .expectOne((req) => req.method === 'GET' && req.url.endsWith('/Harbors'))
       .flush([
@@ -92,7 +94,7 @@ describe('BoatForm', () => {
 
     expect(component.boatForm().invalid()).toBe(true);
     expect(component.boatForm.primaryHarborId().errors()[0].message).toBe(
-      'Ana liman, seçili limanlar arasında olmalı.',
+      'Bağlı olduğu liman, seçili limanlar arasında olmalı.',
     );
   });
 
@@ -115,22 +117,33 @@ describe('BoatForm', () => {
     );
   });
 
-  it('ana liman işaretlenen liman seçili listede değilse listeye ekler', () => {
-    component.model.set({ ...validModel, harborIds: [4], primaryHarborId: '' });
+  it('seçili limanlar arasından çıkan ana liman temizlenir', () => {
+    component.model.set({ ...validModel, harborIds: [4], primaryHarborId: '3' });
 
-    component.setPrimaryHarbor(3);
+    fixture.detectChanges();
 
-    expect(component.model().harborIds).toEqual([4, 3]);
-    expect(component.model().primaryHarborId).toBe('3');
+    expect(component.model().primaryHarborId).toBe('');
   });
 
-  it('liman seçimi kalkınca ana liman seçimi de düşer', () => {
+  it('multi-select gösterimi id dizisini liman adlarına çevirir', () => {
     component.model.set(validModel);
 
-    component.toggleHarbor(3, false);
+    expect(component.harborName([3, 4])).toBe('Bodrum Limanı, Yalıkavak Marina');
+  });
 
-    expect(component.model().harborIds).toEqual([4]);
-    expect(component.model().primaryHarborId).toBe('');
+  it('şehir ve bağlı liman gösterimleri id yerine ad döner', () => {
+    component.model.set(validModel);
+
+    expect(component.cityName('1')).toBe('Muğla');
+    expect(component.primaryHarborName('3')).toBe('Bodrum Limanı');
+  });
+
+  it('ana liman seçenekleri yalnızca seçili limanlardan oluşur', () => {
+    component.model.set({ ...validModel, harborIds: [4] });
+
+    expect(component.primaryHarborOptions()).toEqual([
+      { value: '4', label: 'Yalıkavak Marina' },
+    ]);
   });
 
   it('şehir değişince liman seçimlerini sıfırlar', () => {
