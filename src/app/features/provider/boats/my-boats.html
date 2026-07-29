@@ -1,0 +1,56 @@
+<div class="flex items-center justify-between">
+  <h1 class="text-2xl font-semibold">Teknelerim</h1>
+  <a hlmBtn [routerLink]="newBoatUrl">Yeni tekne ekle</a>
+</div>
+
+@if (loading()) {
+  <p class="mt-6 text-sm text-muted-foreground">İlanlar yükleniyor…</p>
+} @else if (failed()) {
+  <p class="mt-6 text-sm text-destructive">
+    İlanlar yüklenemedi. Sayfayı yenileyip tekrar deneyin.
+  </p>
+} @else if (boats().length === 0) {
+  <div class="mt-6 rounded-lg border border-dashed border-input p-10 text-center">
+    <p class="font-medium">Henüz ilanınız yok</p>
+    <p class="mt-1 text-sm text-muted-foreground">
+      İlk teknenizi ekleyin, rezervasyon almaya başlayın.
+    </p>
+    <a hlmBtn class="mt-4" [routerLink]="newBoatUrl">Yeni tekne ekle</a>
+  </div>
+} @else {
+  <div hlmTableContainer class="mt-6">
+    <table hlmTable>
+      <caption hlmCaption class="sr-only">
+        Teknelerim listesi
+      </caption>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh>Tekne</th>
+          <th hlmTh>Tip</th>
+          <th hlmTh>Kiralama</th>
+          <th hlmTh>Konum</th>
+          <th hlmTh class="text-right">Kapasite</th>
+          <th hlmTh>Durum</th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (boat of boats(); track boat.id) {
+          <tr hlmTr>
+            <td hlmTd class="font-medium">{{ boat.name }}</td>
+            <td hlmTd>{{ boatTypeLabel(boat.boatType) }}</td>
+            <td hlmTd>{{ rentalTypeLabel(boat.rentalType) }}</td>
+            <td hlmTd>{{ location(boat) }}</td>
+            <td hlmTd class="text-right">{{ boat.totalCapacity }} kişi</td>
+            <td hlmTd>
+              @if (boat.isActive) {
+                <span class="text-sm">Yayında</span>
+              } @else {
+                <span class="text-sm text-muted-foreground">Yayında değil</span>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
