@@ -15,7 +15,7 @@ import { routes } from './app.routes';
 import { AuthStore } from './core/auth/auth-store';
 import { authInterceptor } from '@interceptors/auth.interceptor';
 import { errorInterceptor } from '@interceptors/error.interceptor';
-import { UserService } from '@services/user.service';
+import { UserService } from '@services';
 
 export const appConfig: ApplicationConfig = {
   providers: [

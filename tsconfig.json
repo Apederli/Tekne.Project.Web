@@ -16,8 +16,11 @@
        girdilerini Spartan CLI ekliyor (adı `components.json` içindeki
        `importAlias`'tan gelir) — bileşen eklendikçe listeye yenisi yazılır. */
     "paths": {
+      "@models": ["./src/app/core/models/index.ts"],
       "@models/*": ["./src/app/core/models/*"],
+      "@enums": ["./src/app/core/enums/index.ts"],
       "@enums/*": ["./src/app/core/enums/*"],
+      "@services": ["./src/app/core/services/index.ts"],
       "@services/*": ["./src/app/core/services/*"],
       "@interceptors/*": ["./src/app/core/interceptors/*"],
       "@ui/button": ["./src/app/shared/ui/button/src/index.ts"],

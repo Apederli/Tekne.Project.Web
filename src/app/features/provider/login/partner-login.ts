@@ -4,8 +4,8 @@ import { FormField, email, form, minLength, required, submit } from '@angular/fo
 import { firstValueFrom } from 'rxjs';
 import { ROUTE_PARTNER } from '../../../core/routes.const';
 import { AuthStore } from '../../../core/auth/auth-store';
-import { LoginInputModel } from '@models/user';
-import { UserService } from '@services/user.service';
+import { LoginInputModel } from '@models';
+import { UserService } from '@services';
 
 @Component({
   selector: 'app-partner-login',

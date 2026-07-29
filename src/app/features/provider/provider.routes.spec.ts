@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { UserType } from '@enums/user-type';
+import { UserType } from '@enums';
 import { AuthStore } from '../../core/auth/auth-store';
 import { ROUTE_PARTNER } from '../../core/routes.const';
 import { providerRoutes } from './provider.routes';

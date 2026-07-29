@@ -8,7 +8,7 @@ import {
   LoginOutputModel,
   RegisterUserInputModel,
   UserOutputModel,
-} from '@models/user';
+} from '@models';
 
 /**
  * `UsersController` (`/api/Users`) karşılığı — kayıt, giriş, çıkış ve

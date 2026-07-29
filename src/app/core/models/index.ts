@@ -1,0 +1,14 @@
+/**
+ * Model barrel'ı — `@models` alias'ı buraya çözülür:
+ *
+ *   import { BoatInputModel, HarborOutputModel } from '@models';
+ *
+ * Kural: yalnızca re-export. Bu klasörün İÇİNDEKİ dosyalar barrel'ı değil
+ * birbirini doğrudan import eder (`@models/boat-photo` gibi) — aksi döngü
+ * üretir. Yeni model dosyası ekleyince buraya satırını yaz.
+ */
+
+export * from './boat';
+export * from './boat-photo';
+export * from './harbor';
+export * from './user';

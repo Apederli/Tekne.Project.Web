@@ -6,7 +6,7 @@ import { lucideMenu } from '@ng-icons/lucide';
 import { HlmButton } from '@ui/button';
 import { HlmPopoverImports } from '@ui/popover';
 import { HlmSheetImports } from '@ui/sheet';
-import { UserService } from '@services/user.service';
+import { UserService } from '@services';
 import { AuthStore } from '../../core/auth/auth-store';
 import { NavItem } from './nav-item';
 

@@ -2,7 +2,7 @@ import { Service, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../api/api.config';
-import { CityHarborsOutputModel } from '@models/harbor';
+import { CityHarborsOutputModel } from '@models';
 
 /** `HarborsController` (`/api/Harbors`) karşılığı. */
 @Service()

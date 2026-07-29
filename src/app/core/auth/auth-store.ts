@@ -1,6 +1,6 @@
 import { Service, computed, signal } from '@angular/core';
-import { UserType } from '@enums/user-type';
-import { UserOutputModel } from '@models/user';
+import { UserType } from '@enums';
+import { UserOutputModel } from '@models';
 
 /**
  * Uygulamanın erişim alanları. Backend'in `UserType`'ı ile birebir değil:

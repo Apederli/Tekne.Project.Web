@@ -2,9 +2,8 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { BoatType } from '@enums/boat-type';
-import { RentalType } from '@enums/rental-type';
-import { BoatFormModel } from '@models/boat';
+import { BoatType, RentalType } from '@enums';
+import { BoatFormModel } from '@models';
 import { BoatForm } from './boat-form';
 
 /** Backend `BoatInputModelValidator`'ının kabul ettiği asgari geçerli form. */

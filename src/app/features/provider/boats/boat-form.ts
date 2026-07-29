@@ -12,11 +12,9 @@ import {
   validate,
 } from '@angular/forms/signals';
 import { firstValueFrom } from 'rxjs';
-import { BoatType } from '@enums/boat-type';
-import { RentalType } from '@enums/rental-type';
-import { BoatFormModel, BoatInputModel } from '@models/boat';
-import { BoatService } from '@services/boat.service';
-import { HarborService } from '@services/harbor.service';
+import { BoatType, RentalType } from '@enums';
+import { BoatFormModel, BoatInputModel } from '@models';
+import { BoatService, HarborService } from '@services';
 import { ROUTE_PARTNER } from '../../../core/routes.const';
 
 @Component({
