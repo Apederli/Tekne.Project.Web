@@ -25,6 +25,7 @@
       </caption>
       <thead hlmTHead>
         <tr hlmTr>
+          <th hlmTh>Fotoğraf</th>
           <th hlmTh>Tekne</th>
           <th hlmTh>Tip</th>
           <th hlmTh>Kiralama</th>
@@ -36,6 +37,13 @@
       <tbody hlmTBody>
         @for (boat of boats(); track boat.id) {
           <tr hlmTr>
+            <td hlmTd>
+              <app-photo-gallery
+                [photos]="boat.photos"
+                [alt]="boat.name"
+                class="aspect-[4/3] w-40"
+              />
+            </td>
             <td hlmTd class="font-medium">{{ boat.name }}</td>
             <td hlmTd>{{ boatTypeLabel(boat.boatType) }}</td>
             <td hlmTd>{{ rentalTypeLabel(boat.rentalType) }}</td>

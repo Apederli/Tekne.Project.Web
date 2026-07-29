@@ -1,0 +1,68 @@
+<div class="relative" [class]="galleryClass()">
+  @if (visible().length === 0) {
+    <div
+      class="flex h-full items-center justify-center rounded-lg border border-dashed border-input"
+    >
+      <p class="text-sm text-muted-foreground">Fotoğraf yok</p>
+    </div>
+  } @else {
+    <!-- Oklar `HlmCarouselNext/Previous` yerine elle: onlar kendini kapsayıcının
+         dışına konumluyor (`-end-12`), galeride görselin üstünde durmalı. -->
+    <hlm-carousel
+      #carousel
+      class="h-full overflow-hidden rounded-lg"
+      [options]="{ loop: scrollable() }"
+    >
+      <!-- `ml-0` / `pl-0`: helm'in slide arası 1rem boşluğu galeride istenmiyor,
+           fotoğraflar kenardan kenara aksın. -->
+      <hlm-carousel-content class="ml-0 h-full">
+        @for (photo of visible(); track photo.id; let i = $index) {
+          <div hlmCarouselItem class="h-full pl-0">
+            <img
+              [src]="photoUrl.url(photo.objectKey)"
+              [alt]="photoAlt(i)"
+              [attr.loading]="i === 0 ? 'eager' : 'lazy'"
+              decoding="async"
+              draggable="false"
+              class="h-full w-full cursor-grab select-none object-cover active:cursor-grabbing"
+            />
+          </div>
+        }
+      </hlm-carousel-content>
+
+      @if (scrollable()) {
+        <button
+          hlmBtn
+          variant="outline"
+          size="icon-sm"
+          class="absolute start-3 top-1/2 z-10 -translate-y-1/2 rounded-full"
+          (click)="carousel.scrollPrev()"
+        >
+          <ng-icon name="lucideChevronLeft" class="rtl:rotate-180" />
+          <span class="sr-only">Önceki fotoğraf</span>
+        </button>
+
+        <button
+          hlmBtn
+          variant="outline"
+          size="icon-sm"
+          class="absolute end-3 top-1/2 z-10 -translate-y-1/2 rounded-full"
+          (click)="carousel.scrollNext()"
+        >
+          <ng-icon name="lucideChevronRight" class="rtl:rotate-180" />
+          <span class="sr-only">Sonraki fotoğraf</span>
+        </button>
+
+        <hlm-carousel-slide-display
+          label="Fotoğraf"
+          slideClass="text-xs text-white"
+          class="absolute bottom-3 end-3 z-10 rounded-full bg-black/60 px-2 py-0.5"
+        />
+      }
+    </hlm-carousel>
+  }
+
+  <!-- Çağrı yerinin etiketi: "Hemen Rezervasyon", "Yayında değil" vb.
+       Konumlandırmayı çağıran yapar; oklar z-10'da, overlay z-20 ile üstte durur. -->
+  <ng-content />
+</div>
