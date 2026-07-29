@@ -20,9 +20,9 @@ const ROLE_BY_USER_TYPE: Record<UserType, UserRole> = {
  * Token'ı tutmuyoruz: HttpOnly cookie'de duruyor, JS erişemiyor ve zaten
  * her isteğe tarayıcı ekliyor. Burada duran şey sadece kullanıcı bilgisi.
  *
- * Sayfa yenilendiğinde bu store boşalır ve guard kullanıcıyı giriş sayfasına
- * atar — cookie hâlâ geçerli olsa bile. Açılışta `/api/Users/me` ile oturumu
- * geri yüklemek bunu çözer, şimdilik bilinçli olarak kapsam dışı.
+ * Sayfa yenilenince bellek sıfırlanır; `app.config.ts`'teki initializer
+ * açılışta `/api/Users/me` ile store'u geri doldurur (cookie geçerliyse).
+ * Guard'lar bu yüzden ilk yönlendirmede bile dolu store görür.
  */
 @Service()
 export class AuthStore {

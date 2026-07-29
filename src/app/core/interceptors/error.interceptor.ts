@@ -1,7 +1,14 @@
 import { inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { HttpContextToken, HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
+
+/**
+ * Hatası kullanıcıya gösterilmeyecek istekler için context bayrağı.
+ * Örnek: açılıştaki oturum geri yükleme — anonim ziyaretçide 401 dönmesi
+ * normaldir, alert çıkmamalı. Hata yine fırlatılır, sadece sessizdir.
+ */
+export const SILENT_ERRORS = new HttpContextToken<boolean>(() => false);
 
 /**
  * HTTP hatalarını tek yerden kullanıcıya gösterir.
@@ -21,6 +28,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
+      if (req.context.get(SILENT_ERRORS)) {
+        return throwError(() => error);
+      }
+
       if (isBrowser) {
         alert(toMessage(error));
       } else {

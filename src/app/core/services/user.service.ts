@@ -1,7 +1,8 @@
 import { Service, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../api/api.config';
+import { SILENT_ERRORS } from '@interceptors/error.interceptor';
 import {
   LoginInputModel,
   LoginOutputModel,
@@ -55,8 +56,14 @@ export class UserService {
     return this.http.post<boolean>(`${this.baseUrl}/logout`, null);
   }
 
-  /** Token'daki kullanıcının bilgileri. Oturum yoksa 401 döner. */
-  me(): Observable<UserOutputModel> {
-    return this.http.get<UserOutputModel>(`${this.baseUrl}/me`);
+  /**
+   * Token'daki kullanıcının bilgileri. Oturum yoksa 401 döner.
+   *
+   * `silent`: hata kullanıcıya gösterilmez — açılıştaki oturum geri yükleme
+   * gibi 401'in olağan olduğu çağrılar için.
+   */
+  me(options?: { silent?: boolean }): Observable<UserOutputModel> {
+    const context = options?.silent ? new HttpContext().set(SILENT_ERRORS, true) : undefined;
+    return this.http.get<UserOutputModel>(`${this.baseUrl}/me`, { context });
   }
 }
