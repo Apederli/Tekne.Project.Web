@@ -29,7 +29,13 @@ describe('BoatForm', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+      // Catch-all rota: save() sonrası navigate gerçek rota ağacı olmadan da eşleşsin.
+      // (Component'te try/catch yok — eşleşmeyen rota testi unhandled rejection ile düşürür.)
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([{ path: '**', children: [] }]),
+      ],
     });
     http = TestBed.inject(HttpTestingController);
 

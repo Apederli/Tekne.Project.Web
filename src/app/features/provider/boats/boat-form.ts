@@ -104,7 +104,6 @@ export class BoatForm {
     maxLength(path.description, 1000, { message: 'Açıklama en fazla 1000 karakter olabilir.' });
   });
 
-  /** Şehir değişince önceki şehrin liman seçimleri anlamsızlaşır — sıfırla. */
   onCityChange(): void {
     this.model.update((m) => ({ ...m, harborIds: [], primaryHarborId: '' }));
   }
@@ -121,13 +120,11 @@ export class BoatForm {
     this.model.update((m) => ({
       ...m,
       harborIds: checked ? [...m.harborIds, id] : m.harborIds.filter((h) => h !== id),
-      // Ana liman listeden çıkarsa ana liman seçimi de düşer.
       primaryHarborId: !checked && m.primaryHarborId === String(id) ? '' : m.primaryHarborId,
     }));
     this.boatForm.harborIds().markAsTouched();
   }
 
-  /** Ana liman seçimi limanı seçili listeye de ekler — backend kuralı: ana liman listede olmalı. */
   setPrimaryHarbor(id: number): void {
     this.model.update((m) => ({
       ...m,
@@ -138,7 +135,6 @@ export class BoatForm {
   }
 
   async save(): Promise<void> {
-    // submit() form geçersizse action'ı hiç çalıştırmaz, tüm alanları touched yapar.
     await submit(this.boatForm, async () => {
       const m = this.model();
       const input: BoatInputModel = {
@@ -155,13 +151,11 @@ export class BoatForm {
         harborIds: m.harborIds,
         description: m.description.trim() || undefined,
       };
-      try {
-        await firstValueFrom(this.boatService.create(input));
-        await this.router.navigate(this.boatsUrl);
-      } catch {
-        // Mesajı errorInterceptor gösterdi; formda kalınır, girilenler korunur.
-        // Beklenen hata (422 doğrulama, 400 iş kuralı) konsola/ErrorHandler'a sızmaz.
-      }
+      // try/catch bilinçli yok: mesajı errorInterceptor gösterir; başarısızlıkta
+      // navigate'e ulaşılmaz, formda kalınır. Hatanın konsola/ErrorHandler'a
+      // düşmesi kabul edilmiştir.
+      await firstValueFrom(this.boatService.create(input));
+      await this.router.navigate(this.boatsUrl);
     });
   }
 }
