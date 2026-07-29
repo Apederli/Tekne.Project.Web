@@ -16,9 +16,10 @@ import { HlmButton } from '@ui/button';
 import { HlmCardImports } from '@ui/card';
 import { HlmFieldImports } from '@ui/field';
 import { HlmInput } from '@ui/input';
-import { HlmSelectImports } from '@ui/select';
 import { HlmTextarea } from '@ui/textarea';
 import { HlmToggleGroupImports } from '@ui/toggle-group';
+import { AppMultiSelect } from '../../../shared/forms/app-multi-select';
+import { AppSelect } from '../../../shared/forms/app-select';
 import { BoatType, RentalType } from '@enums';
 import { BoatFormModel, BoatInputModel } from '@models';
 import { BoatService, HarborService } from '@services';
@@ -29,11 +30,12 @@ import { ROUTE_PARTNER } from '../../../core/routes.const';
   imports: [
     FormField,
     RouterLink,
+    AppMultiSelect,
+    AppSelect,
     HlmButton,
     HlmCardImports,
     HlmFieldImports,
     HlmInput,
-    HlmSelectImports,
     HlmTextarea,
     HlmToggleGroupImports,
   ],
@@ -87,25 +89,10 @@ export class BoatForm {
     return this.cities().find((c) => c.cityId === cityId)?.harbors ?? [];
   });
 
-  /**
-   * Multi-select trigger'ında seçili limanların adını gösterir.
-   * Brain, çoklu seçimde `itemToString`'e tek id değil dizinin tamamını verir.
-   */
-  harborName = (value: number | number[]): string =>
-    Array.isArray(value)
-      ? value.map((id) => this.singleHarborName(id)).join(', ')
-      : this.singleHarborName(value);
-
-  singleHarborName(id: number): string {
-    return this.harbors().find((h) => h.id === id)?.name ?? String(id);
-  }
-
-  /** Şehir select trigger'ında id yerine şehir adını gösterir. */
-  cityName = (value: string): string =>
-    this.cities().find((c) => String(c.cityId) === value)?.cityName ?? value;
-
-  /** Bağlı olduğu liman select trigger'ında id yerine liman adını gösterir. */
-  primaryHarborName = (value: string): string => this.singleHarborName(Number(value));
+  /** Ücretsiz kalkış limanları multi-select'inin seçenekleri. */
+  harborOptions = computed(() =>
+    this.harbors().map((h) => ({ value: h.id, label: h.name })),
+  );
 
   /** Bağlı olduğu liman select'inin seçenekleri — yalnızca seçili limanlar. */
   primaryHarborOptions = computed(() => {

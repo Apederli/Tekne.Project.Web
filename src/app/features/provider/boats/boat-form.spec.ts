@@ -57,6 +57,24 @@ describe('BoatForm', () => {
 
   afterEach(() => http.verify());
 
+  /**
+   * Regresyon: form `novalidate` olmazsa, Signal Forms'un bastığı native
+   * `required` yüzünden tarayıcı submit olayını hiç yayınlamaz — save()
+   * çağrılmaz, alanlar touched olmaz ve hiçbir hata görünmez.
+   */
+  it('kaydet butonuna tıklamak tüm alanları touched yapar ve hataları gösterir', async () => {
+    const el = fixture.nativeElement as HTMLElement;
+    fixture.detectChanges();
+
+    el.querySelector<HTMLButtonElement>('button[type=submit]')!.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(component.boatForm.name().touched()).toBe(true);
+    expect(component.boatForm.cityId().touched()).toBe(true);
+    expect(el.querySelectorAll('[data-slot=field-error]').length).toBeGreaterThan(0);
+  });
+
   it('boş form geçersizdir ve gönderimde istek atmaz', async () => {
     await component.save();
 
@@ -125,17 +143,13 @@ describe('BoatForm', () => {
     expect(component.model().primaryHarborId).toBe('');
   });
 
-  it('multi-select gösterimi id dizisini liman adlarına çevirir', () => {
+  it('liman seçenekleri seçili şehrin limanlarından üretilir', () => {
     component.model.set(validModel);
 
-    expect(component.harborName([3, 4])).toBe('Bodrum Limanı, Yalıkavak Marina');
-  });
-
-  it('şehir ve bağlı liman gösterimleri id yerine ad döner', () => {
-    component.model.set(validModel);
-
-    expect(component.cityName('1')).toBe('Muğla');
-    expect(component.primaryHarborName('3')).toBe('Bodrum Limanı');
+    expect(component.harborOptions()).toEqual([
+      { value: 3, label: 'Bodrum Limanı' },
+      { value: 4, label: 'Yalıkavak Marina' },
+    ]);
   });
 
   it('ana liman seçenekleri yalnızca seçili limanlardan oluşur', () => {

@@ -3,7 +3,13 @@
   İlan bilgilerini girin; fotoğrafları kayıttan sonra ekleyebilirsiniz.
 </p>
 
-<form class="mt-6" (submit)="$event.preventDefault(); save()">
+<!--
+  novalidate şart: Signal Forms `required`/`min`/`max` kısıtlarını native
+  attribute olarak da basıyor. Onsuz tarayıcı kendi doğrulamasını çalıştırıp
+  submit olayını hiç yayınlamıyor — save() çağrılmıyor, alanlar touched
+  olmuyor ve yalnızca ilk geçersiz alanda native balon çıkıyor.
+-->
+<form class="mt-6" novalidate (submit)="$event.preventDefault(); save()">
   <div class="grid gap-6 lg:grid-cols-2">
     <section hlmCard>
       <div hlmCardHeader>
@@ -142,68 +148,26 @@
         </p>
       </div>
       <div hlmCardContent class="grid grid-cols-1 items-start gap-5 sm:grid-cols-3">
-        <div hlmField>
-          <label hlmFieldLabel for="cityId">Şehir</label>
-          <hlm-select
-            [formField]="boatForm.cityId"
-            [itemToString]="cityName"
-            (valueChange)="onCityChange()"
-          >
-            <hlm-select-trigger class="w-full" buttonId="cityId">
-              <hlm-select-value placeholder="Seçin" />
-            </hlm-select-trigger>
-            <hlm-select-content *hlmSelectPortal>
-              @for (option of cityOptions(); track option.value) {
-                <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
-              }
-            </hlm-select-content>
-          </hlm-select>
-          @if (boatForm.cityId().touched()) {
-            @for (error of boatForm.cityId().errors(); track error.kind) {
-              <hlm-field-error forceShow>{{ error.message }}</hlm-field-error>
-            }
-          }
-        </div>
+        <app-select
+          label="Şehir"
+          [field]="boatForm.cityId"
+          [options]="cityOptions()"
+          (valueChange)="onCityChange()"
+        />
 
         @if (harbors().length > 0) {
-          <div hlmField>
-            <label hlmFieldLabel for="harborIds">Ücretsiz kalkış limanları</label>
-            <hlm-select-multiple [formField]="boatForm.harborIds" [itemToString]="harborName">
-              <hlm-select-trigger class="w-full" buttonId="harborIds">
-                <hlm-select-value placeholder="Seçin" />
-              </hlm-select-trigger>
-              <hlm-select-content *hlmSelectPortal>
-                @for (harbor of harbors(); track harbor.id) {
-                  <hlm-select-item [value]="harbor.id">{{ harbor.name }}</hlm-select-item>
-                }
-              </hlm-select-content>
-            </hlm-select-multiple>
-            @if (boatForm.harborIds().touched()) {
-              @for (error of boatForm.harborIds().errors(); track error.kind) {
-                <hlm-field-error forceShow>{{ error.message }}</hlm-field-error>
-              }
-            }
-          </div>
+          <app-multi-select
+            label="Ücretsiz kalkış limanları"
+            [field]="boatForm.harborIds"
+            [options]="harborOptions()"
+          />
 
           @if (model().harborIds.length > 0) {
-            <div hlmField>
-              <label hlmFieldLabel for="primaryHarborId">Bağlı olduğu liman</label>
-              <hlm-select [formField]="boatForm.primaryHarborId" [itemToString]="primaryHarborName">
-                <hlm-select-trigger class="w-full" buttonId="primaryHarborId">
-                  <hlm-select-value placeholder="Seçin" />
-                </hlm-select-trigger>
-                <hlm-select-content *hlmSelectPortal>
-                  @for (option of primaryHarborOptions(); track option.value) {
-                    <hlm-select-item [value]="option.value">{{ option.label }}</hlm-select-item>
-                  }
-                </hlm-select-content>
-              </hlm-select>
-              @if (boatForm.primaryHarborId().touched()) {
-                @for (error of boatForm.primaryHarborId().errors(); track error.kind) {
-                  <hlm-field-error forceShow>{{ error.message }}</hlm-field-error>
-                }
-              }
-            </div>
+            <app-select
+              label="Bağlı olduğu liman"
+              [field]="boatForm.primaryHarborId"
+              [options]="primaryHarborOptions()"
+            />
           }
         }
       </div>
