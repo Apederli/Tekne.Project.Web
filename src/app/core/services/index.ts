@@ -9,6 +9,7 @@
  * döngüsel import üretmesi kolaydır. Yeni servis ekleyince buraya satırını yaz.
  */
 
+export * from './boat-photo.service';
 export * from './boat.service';
 export * from './harbor.service';
 export * from './photo-url.service';
