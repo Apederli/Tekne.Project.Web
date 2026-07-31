@@ -1,0 +1,39 @@
+<div class="overflow-hidden rounded-xl border border-border bg-background">
+  <app-photo-gallery [photos]="boat().photos" [alt]="boat().name" class="aspect-[5/4] w-full">
+    <!-- Noktalar z-10'da; overlay z-20 ile üstte. -->
+    <div class="absolute inset-x-1.5 top-1.5 z-20 flex items-start justify-between">
+      <!-- TODO(backend): Boat modelinde anında rezervasyon alanı yok; rozet test için sabit. -->
+      <span class="rounded-full bg-sky-600 px-3 py-1.5 text-xs text-white shadow-sm shadow-slate-500">
+        ⚡ Anında Rezerve
+      </span>
+
+      <button
+        type="button"
+        class="rounded-full p-1 transition-transform duration-100 ease-in active:scale-90"
+        (click)="toggleFavorite()"
+      >
+        <!-- Lucide çizgi seti: dolu/boş ayrımı fill ile. Yarı saydam dolgu + beyaz
+             çizgi, fotoğraf üzerinde her zeminde okunur (teknevia kalıbı). -->
+        <ng-icon
+          name="lucideHeart"
+          size="26"
+          class="drop-shadow-md"
+          [class]="favorite() ? 'text-red-500 [&_svg]:fill-current' : 'text-white [&_svg]:fill-black/30'"
+        />
+        <span class="sr-only">
+          {{ favorite() ? 'Favorilerden çıkar' : 'Favorilere ekle' }}
+        </span>
+      </button>
+    </div>
+  </app-photo-gallery>
+
+  <div class="p-3">
+    <div class="flex items-center justify-between gap-2">
+      <span class="truncate font-medium">{{ boat().name }}</span>
+      <span class="shrink-0 text-sm text-muted-foreground">{{ boat().totalCapacity }} kişi</span>
+    </div>
+    @if (location()) {
+      <span class="mt-1 block text-sm text-muted-foreground">{{ location() }}</span>
+    }
+  </div>
+</div>
