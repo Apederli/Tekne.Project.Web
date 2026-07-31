@@ -1,16 +1,19 @@
-<div class="flex min-h-screen flex-col bg-white text-slate-900">
+<!-- Kök: mobilde altta sabit sekme çubuğu var; içerik onun arkasında
+     kalmasın diye taban `pb-16`, çubuğun kalktığı `lg:`'de sıfırlanıyor. -->
+<div class="flex min-h-screen flex-col bg-white pb-16 text-slate-900 lg:pb-0">
   <header class="border-b border-slate-200">
     <nav class="mx-auto flex max-w-6xl items-center gap-6 px-4 py-4">
       <a routerLink="/" class="text-lg font-semibold">Tekne</a>
       <a
         [routerLink]="['/', route.boats]"
         routerLinkActive="text-slate-900 font-medium"
-        class="text-sm text-slate-600 hover:text-slate-900"
+        class="hidden text-sm text-slate-600 hover:text-slate-900 lg:block"
         >Tekneler</a
       >
 
-      <!-- Giriş/kayıt modal üzerinden açılacak; henüz bağlanmadı. -->
-      <div class="ml-auto flex items-center gap-4">
+      <!-- Giriş/kayıt modal üzerinden açılacak; henüz bağlanmadı.
+           Mobilde bu işler alt çubukta — burada yalnızca masaüstünde görünür. -->
+      <div class="ml-auto hidden items-center gap-4 lg:flex">
         <button type="button" class="text-sm text-slate-600 hover:text-slate-900">Giriş</button>
         <button
           type="button"
@@ -20,13 +23,68 @@
         </button>
       </div>
     </nav>
+
+    <!-- Arama başlığı — şimdilik görsel, tıklama bağlı değil. Açılacak panelin
+         planı: bölge seçimi; bölgeye göre kiralama tipine uygun girdiler —
+         günlükte tarih + başlangıç/bitiş saati, saatlikte başlangıç + tur
+         süresi (arttır/eksilt), ve misafir sayısı (arttır/eksilt). -->
+    <div class="mx-auto max-w-6xl px-4 pb-3 lg:pb-4">
+      <button
+        type="button"
+        class="mx-auto flex w-full items-center gap-3 rounded-full border border-slate-200 px-4 py-2.5 text-start shadow-sm transition-shadow hover:shadow-md lg:max-w-md"
+      >
+        <ng-icon name="lucideSearch" size="18" class="shrink-0 text-slate-500" />
+        <span class="min-w-0">
+          <span class="block truncate text-sm font-medium">Nereye gitmek istiyorsun?</span>
+          <span class="block truncate text-xs text-slate-500">Bölge · Tarih · Misafir sayısı</span>
+        </span>
+      </button>
+    </div>
   </header>
 
-  <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-10">
+  <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-6 lg:py-10">
     <router-outlet />
   </main>
 
   <footer class="border-t border-slate-200 py-6 text-center text-sm text-slate-500">
     Tekne — tekne kiralama platformu
   </footer>
+
+  <!-- Mobil alt navigasyon. `env(safe-area-inset-bottom)`: Capacitor/iOS'ta home
+       çubuğunun altında kalmasın (webde 0'a düşer, zararsız). Keşfet dışındakiler
+       henüz bağlı değil — favoriler/gelen kutusu backend'i, giriş modalı bekliyor. -->
+  <nav
+    class="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] lg:hidden"
+  >
+    <div class="grid grid-cols-5">
+      <a
+        [routerLink]="['/', route.boats]"
+        routerLinkActive="text-sky-600"
+        class="flex flex-col items-center gap-1 py-2 text-slate-500"
+      >
+        <ng-icon name="lucideCompass" size="22" />
+        <span class="text-[11px]">Keşfet</span>
+      </a>
+
+      <button type="button" class="flex flex-col items-center gap-1 py-2 text-slate-500">
+        <ng-icon name="lucideHeart" size="22" />
+        <span class="text-[11px]">Favoriler</span>
+      </button>
+
+      <button type="button" class="flex flex-col items-center gap-1 py-2 text-slate-500">
+        <ng-icon name="lucideUser" size="22" />
+        <span class="text-[11px]">Giriş yap</span>
+      </button>
+
+      <button type="button" class="flex flex-col items-center gap-1 py-2 text-slate-500">
+        <ng-icon name="lucideInbox" size="22" />
+        <span class="text-[11px]">Gelen Kutusu</span>
+      </button>
+
+      <button type="button" class="flex flex-col items-center gap-1 py-2 text-slate-500">
+        <ng-icon name="lucideEllipsis" size="22" />
+        <span class="text-[11px]">Diğer</span>
+      </button>
+    </div>
+  </nav>
 </div>
