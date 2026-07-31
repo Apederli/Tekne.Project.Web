@@ -36,6 +36,14 @@ Kendi `CLAUDE.md`'si var ve iş modelini (aktörler, konum hiyerarşisi, rezerva
 - **Terminoloji farkı:** backend'de tekne sahibi **`Partner`**, bu projenin kodunda **`provider`** (URL'i ise `/partner`). API modelleri karşılanırken bu eşleme bilinçli yapılmalı.
 - **Konum modeli:** `City` → `Harbor` hiyerarşisi. Bir tekne tek bir şehirde hizmet verir, o şehrin birden çok limanından kalkabilir; `PrimaryHarborId` teknenin bağlı olduğu ana noktadır ve listelemede gösterilen konumdur.
 
+## Arayüz: mobile-first
+
+**Ekranlar önce mobil için tasarlanır**, masaüstü genişleme olarak eklenir. Tailwind'de bu, taban sınıfların mobil düzeni tarif etmesi ve `sm:` / `md:` / `lg:` ön eklerinin yalnızca büyütme yönünde kullanılması demektir — masaüstü düzeni yazıp `sm:` ile daraltmak değil.
+
+Sebebi ürün kararı: uygulama ileride **Capacitor** ile mobil olarak da paketlenecek, özellikle market tarafı ağırlıklı olarak telefonda kullanılacak. Dokunmatik hedefler parmakla basılabilir boyutta olmalı, yalnızca hover ile erişilen (masaüstünde görünüp dokunmatikte kaybolan) etkileşim bırakılmamalı.
+
+Capacitor henüz kurulu değil; native plugin'lere bugünden bağımlılık yazma.
+
 ## Mimari
 
 Tek Angular uygulaması, üç erişim alanı. Ayrı uygulamalara bölünmedi çünkü Angular render modunu **route bazında** seçebiliyor:
