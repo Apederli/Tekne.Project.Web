@@ -41,6 +41,8 @@ export const ROUTE_PARTNER = {
   boats: 'teknelerim',
   /** `boats` altına eklenir: `/partner/dashboard/teknelerim/yeni`. */
   boatNew: 'yeni',
+  /** `boats/:boatId` altına eklenir: `/partner/dashboard/teknelerim/5/fotograflar`. */
+  boatPhotos: 'fotograflar',
   availability: 'musaitlik',
   reservations: 'rezervasyonlar',
 } as const;

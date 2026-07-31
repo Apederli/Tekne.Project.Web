@@ -33,4 +33,9 @@ export class BoatService {
   getMine(): Observable<BoatOutputModel[]> {
     return this.http.get<BoatOutputModel[]>(`${this.baseUrl}/mine`);
   }
+
+  /** Tek tekne — fotoğraf yönetimi gibi tek ilana bakan sayfaların kaynağı. */
+  getById(id: number): Observable<BoatOutputModel> {
+    return this.http.get<BoatOutputModel>(`${this.baseUrl}/${id}`);
+  }
 }

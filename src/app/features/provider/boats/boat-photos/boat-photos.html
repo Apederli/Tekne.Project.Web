@@ -1,0 +1,19 @@
+<a hlmBtn variant="ghost" size="sm" [routerLink]="boatsUrl">‹ Teknelerim</a>
+
+@if (loading()) {
+  <p class="mt-6 text-sm text-muted-foreground">Tekne yükleniyor…</p>
+} @else if (failed() || !boat()) {
+  <p class="mt-6 text-sm text-destructive">Tekne yüklenemedi. Sayfayı yenileyip tekrar deneyin.</p>
+} @else {
+  <h1 class="mt-2 text-2xl font-semibold">{{ boat()!.name }}</h1>
+  <p class="mt-1 text-sm text-muted-foreground">
+    Fotoğraflar — ilk sıradaki fotoğraf ilanın kapağıdır.
+  </p>
+
+  <app-photo-uploader
+    class="mt-6 block"
+    [boatId]="boat()!.id"
+    [photos]="photos()"
+    (photosChanged)="photos.set($event)"
+  />
+}

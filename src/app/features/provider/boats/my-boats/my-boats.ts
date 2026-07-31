@@ -38,6 +38,18 @@ export class MyBoats {
     ROUTE_PARTNER.boatNew,
   ];
 
+  /** Satırdaki "Fotoğraflar" linki — `/partner/dashboard/teknelerim/{id}/fotograflar`. */
+  photosUrl(boatId: number): (string | number)[] {
+    return [
+      '/',
+      ROUTE_PARTNER.main,
+      ROUTE_PARTNER.dashboard,
+      ROUTE_PARTNER.boats,
+      boatId,
+      ROUTE_PARTNER.boatPhotos,
+    ];
+  }
+
   boatsResource = rxResource({ stream: () => this.boatService.getMine() });
   citiesResource = rxResource({ stream: () => this.harborService.getAll() });
 

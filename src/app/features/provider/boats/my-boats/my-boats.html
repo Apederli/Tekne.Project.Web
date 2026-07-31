@@ -32,6 +32,7 @@
           <th hlmTh>Konum</th>
           <th hlmTh class="text-right">Kapasite</th>
           <th hlmTh>Durum</th>
+          <th hlmTh><span class="sr-only">İşlemler</span></th>
         </tr>
       </thead>
       <tbody hlmTBody>
@@ -55,6 +56,11 @@
               } @else {
                 <span class="text-sm text-muted-foreground">Yayında değil</span>
               }
+            </td>
+            <td hlmTd>
+              <a hlmBtn variant="outline" size="sm" [routerLink]="photosUrl(boat.id)">
+                Fotoğraflar
+              </a>
             </td>
           </tr>
         }
