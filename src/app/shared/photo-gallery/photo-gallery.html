@@ -6,60 +6,34 @@
       <p class="text-sm text-muted-foreground">Fotoğraf yok</p>
     </div>
   } @else {
-    <!-- Oklar `HlmCarouselNext/Previous` yerine elle: onlar kendini kapsayıcının
-         dışına konumluyor (`-end-12`), galeride görselin üstünde durmalı. -->
-    <hlm-carousel
-      #carousel
-      class="h-full overflow-hidden rounded-lg"
-      [options]="{ loop: scrollable() }"
+    <!-- Parametreler attribute olarak: upgrade öncesi property ataması class
+         accessor'ı gölgeleyebiliyor, attribute'lar `register()` sonrası okunuyor.
+         `rewind` (loop değil): Swiper loop modu slotlanmış slaytların DOM sırasını
+         değiştiriyor, o düğümler `@for`'a ait. Dinamik noktalar (teknevia kartıyla
+         aynı): en fazla 5 ana nokta, gerisi kenarda küçülür — 20 fotoğraflı tekne
+         de taşmaz. Renk/ölçü shadow DOM'a `--swiper-pagination-*` ile geçiyor. -->
+    <swiper-container
+      class="block h-full w-full overflow-hidden rounded-lg [--swiper-pagination-bullet-inactive-color:#fff] [--swiper-pagination-bullet-inactive-opacity:0.6] [--swiper-pagination-bullet-size:6px] [--swiper-pagination-color:#fff]"
+      [attr.rewind]="scrollable()"
+      [attr.pagination]="scrollable()"
+      pagination-clickable="true"
+      pagination-dynamic-bullets="true"
     >
-      <!-- `ml-0` / `pl-0`: helm'in slide arası 1rem boşluğu galeride istenmiyor,
-           fotoğraflar kenardan kenara aksın. -->
-      <hlm-carousel-content class="ml-0 h-full">
-        @for (photo of visible(); track photo.id; let i = $index) {
-          <div hlmCarouselItem class="h-full pl-0">
-            <img
-              [src]="photoUrl.url(photo.objectKey)"
-              [alt]="photoAlt(i)"
-              [attr.loading]="i === 0 ? 'eager' : 'lazy'"
-              decoding="async"
-              draggable="false"
-              class="h-full w-full cursor-grab select-none object-cover active:cursor-grabbing"
-            />
-          </div>
-        }
-      </hlm-carousel-content>
-
-      @if (scrollable()) {
-        <button
-          hlmBtn
-          variant="outline"
-          size="icon-sm"
-          class="absolute start-3 top-1/2 z-10 -translate-y-1/2 rounded-full"
-          (click)="carousel.scrollPrev()"
-        >
-          <ng-icon name="lucideChevronLeft" class="rtl:rotate-180" />
-          <span class="sr-only">Önceki fotoğraf</span>
-        </button>
-
-        <button
-          hlmBtn
-          variant="outline"
-          size="icon-sm"
-          class="absolute end-3 top-1/2 z-10 -translate-y-1/2 rounded-full"
-          (click)="carousel.scrollNext()"
-        >
-          <ng-icon name="lucideChevronRight" class="rtl:rotate-180" />
-          <span class="sr-only">Sonraki fotoğraf</span>
-        </button>
-
-        <hlm-carousel-slide-display
-          label="Fotoğraf"
-          slideClass="text-xs text-white"
-          class="absolute bottom-3 end-3 z-10 rounded-full bg-black/60 px-2 py-0.5"
-        />
+      @for (photo of visible(); track photo.id; let i = $index) {
+        <!-- `block h-full`: upgrade/SSR öncesi de ilk fotoğraf düzgün boyansın. -->
+        <swiper-slide class="block h-full w-full">
+          <img
+            [src]="photoUrl.url(photo.objectKey)"
+            [alt]="photoAlt(i)"
+            [attr.loading]="i === 0 ? 'eager' : 'lazy'"
+            decoding="async"
+            draggable="false"
+            class="h-full w-full cursor-grab select-none object-cover active:cursor-grabbing"
+          />
+        </swiper-slide>
       }
-    </hlm-carousel>
+    </swiper-container>
+
   }
 
   <!-- Çağrı yerinin etiketi: "Hemen Rezervasyon", "Yayında değil" vb.

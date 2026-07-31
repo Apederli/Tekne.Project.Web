@@ -34,7 +34,6 @@
       "@ui/input": ["./src/app/shared/ui/input/src/index.ts"],
       "@ui/textarea": ["./src/app/shared/ui/textarea/src/index.ts"],
       "@ui/table": ["./src/app/shared/ui/table/src/index.ts"],
-      "@ui/carousel": ["./src/app/shared/ui/carousel/src/index.ts"],
       "@ui/sheet": ["./src/app/shared/ui/sheet/src/index.ts"],
       "@ui/field": ["./src/app/shared/ui/field/src/index.ts"],
       "@ui/label": ["./src/app/shared/ui/label/src/index.ts"],

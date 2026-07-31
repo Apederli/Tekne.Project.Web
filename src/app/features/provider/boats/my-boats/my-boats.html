@@ -39,10 +39,11 @@
         @for (boat of boats(); track boat.id) {
           <tr hlmTr>
             <td hlmTd>
+              <!-- 300×240 — teknevia kartındaki fotoğraf ebadıyla aynı. -->
               <app-photo-gallery
                 [photos]="boat.photos"
                 [alt]="boat.name"
-                class="aspect-[4/3] w-40"
+                class="aspect-[5/4] w-[300px]"
               />
             </td>
             <td hlmTd class="font-medium">{{ boat.name }}</td>

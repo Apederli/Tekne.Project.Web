@@ -1,5 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { vi } from 'vitest';
 import { BoatPhotoOutputModel } from '@models';
+
+// jsdom Swiper'ın shadow DOM render'ını taşıyamıyor (connectedCallback fırlatıyor);
+// custom element hiç tanımlanmasın — testler Angular'ın render ettiği light DOM'u doğruluyor.
+vi.mock('swiper/element/bundle', () => ({ register: () => {} }));
 import { CDN_BASE_URL } from '../../core/api/cdn.config';
 import { PhotoGallery } from './photo-gallery';
 
@@ -31,26 +36,34 @@ describe('PhotoGallery', () => {
     return Array.from(fixture.nativeElement.querySelectorAll('img'));
   }
 
-  it('shows a placeholder and no carousel when there are no photos', () => {
+  function swiper(): HTMLElement | null {
+    return fixture.nativeElement.querySelector('swiper-container');
+  }
+
+  it('shows a placeholder and no swiper when there are no photos', () => {
     create([]);
 
     expect(images().length).toBe(0);
+    expect(swiper()).toBeNull();
     expect(fixture.nativeElement.textContent).toContain('Fotoğraf yok');
   });
 
-  it('hides arrows and the counter for a single photo', () => {
+  it('disables pagination dots and rewind for a single photo', () => {
     create([photo(1, 0, true)]);
 
     expect(images().length).toBe(1);
-    expect(fixture.nativeElement.querySelectorAll('button').length).toBe(0);
-    expect(fixture.nativeElement.querySelector('hlm-carousel-slide-display')).toBeNull();
+    expect(swiper()!.getAttribute('pagination')).toBe('false');
+    expect(swiper()!.getAttribute('rewind')).toBe('false');
   });
 
-  it('renders arrows and the counter for multiple photos', () => {
+  it('enables dynamic pagination dots and rewind for multiple photos', () => {
     create([photo(1, 0, true), photo(2, 1)]);
 
-    expect(fixture.nativeElement.querySelectorAll('button').length).toBe(2);
-    expect(fixture.nativeElement.querySelector('hlm-carousel-slide-display')).not.toBeNull();
+    expect(swiper()!.getAttribute('pagination')).toBe('true');
+    expect(swiper()!.getAttribute('rewind')).toBe('true');
+    expect(swiper()!.getAttribute('pagination-dynamic-bullets')).toBe('true');
+    // Ok düğmesi bilinçli yok — gezinme kaydırma + noktalarla (teknevia kalıbı).
+    expect(fixture.nativeElement.querySelectorAll('button').length).toBe(0);
   });
 
   it('puts the main photo first, then orders by sortOrder', () => {

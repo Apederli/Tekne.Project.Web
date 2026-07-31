@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "swiper": {
+      "type": "http",
+      "url": "https://swiperjs.com/mcp"
+    }
+  }
+}
