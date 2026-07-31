@@ -4,22 +4,12 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { HlmButton } from '@ui/button';
 import { HlmTableImports } from '@ui/table';
 import { BoatType, RentalType } from '@enums';
-import { BoatOutputModel, CityHarborsOutputModel } from '@models';
+import { BoatOutputModel } from '@models';
 import { BoatService, HarborService } from '@services';
 import { PhotoGallery } from '../../../../shared/photo-gallery/photo-gallery';
 import { ROUTE_PARTNER } from '../../../../core/routes.const';
-
-const BOAT_TYPE_LABELS: Record<BoatType, string> = {
-  [BoatType.Sailboat]: 'Yelkenli',
-  [BoatType.MotorYacht]: 'Motor yat',
-  [BoatType.Catamaran]: 'Katamaran',
-  [BoatType.Gulet]: 'Gulet',
-};
-
-const RENTAL_TYPE_LABELS: Record<RentalType, string> = {
-  [RentalType.Hourly]: 'Saatlik',
-  [RentalType.Daily]: 'Günlük',
-};
+import { BOAT_TYPE_LABELS, RENTAL_TYPE_LABELS } from '../../../../core/util/boat-labels';
+import { formatBoatLocation } from '../../../../core/util/boat-location';
 
 @Component({
   selector: 'app-my-boats',
@@ -57,13 +47,9 @@ export class MyBoats {
   failed = computed(() => this.boatsResource.status() === 'error');
 
   /** Oturumdaki partner'ın ilanları — süzme backend'de, `GET /Boats/mine`. */
-  boats = computed(() =>
-    this.boatsResource.hasValue() ? this.boatsResource.value() : [],
-  );
+  boats = computed(() => (this.boatsResource.hasValue() ? this.boatsResource.value() : []));
 
-  cities = computed(() =>
-    this.citiesResource.hasValue() ? this.citiesResource.value() : [],
-  );
+  cities = computed(() => (this.citiesResource.hasValue() ? this.citiesResource.value() : []));
 
   boatTypeLabel(type: BoatType): string {
     return BOAT_TYPE_LABELS[type] ?? type;
@@ -75,16 +61,6 @@ export class MyBoats {
 
   /** Listede gösterilen konum: bağlı olduğu limanın adı, yanında şehir. */
   location(boat: BoatOutputModel): string {
-    const city = this.cities().find((c) => c.cityId === boat.cityId);
-    const harbor = harborName(city, boat.primaryHarborId);
-    if (!city) return harbor ?? '—';
-    return harbor ? `${harbor}, ${city.cityName}` : city.cityName;
+    return formatBoatLocation(boat, this.cities(), '—');
   }
-}
-
-function harborName(
-  city: CityHarborsOutputModel | undefined,
-  harborId: number,
-): string | undefined {
-  return city?.harbors.find((h) => h.id === harborId)?.name;
 }
