@@ -22,11 +22,11 @@ export const providerRoutes: Routes = [
       },
       {
         path: `${ROUTE_PARTNER.boats}/${ROUTE_PARTNER.boatNew}`,
-        loadComponent: () => import('./boats/boat-form').then((m) => m.BoatForm),
+        loadComponent: () => import('./boats/boat-form/boat-form').then((m) => m.BoatForm),
       },
       {
         path: ROUTE_PARTNER.boats,
-        loadComponent: () => import('./boats/my-boats').then((m) => m.MyBoats),
+        loadComponent: () => import('./boats/my-boats/my-boats').then((m) => m.MyBoats),
       },
       {
         path: ROUTE_PARTNER.availability,

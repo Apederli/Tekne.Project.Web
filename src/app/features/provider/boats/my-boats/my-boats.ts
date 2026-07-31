@@ -6,8 +6,8 @@ import { HlmTableImports } from '@ui/table';
 import { BoatType, RentalType } from '@enums';
 import { BoatOutputModel, CityHarborsOutputModel } from '@models';
 import { BoatService, HarborService } from '@services';
-import { PhotoGallery } from '../../../shared/photo-gallery/photo-gallery';
-import { ROUTE_PARTNER } from '../../../core/routes.const';
+import { PhotoGallery } from '../../../../shared/photo-gallery/photo-gallery';
+import { ROUTE_PARTNER } from '../../../../core/routes.const';
 
 const BOAT_TYPE_LABELS: Record<BoatType, string> = {
   [BoatType.Sailboat]: 'Yelkenli',

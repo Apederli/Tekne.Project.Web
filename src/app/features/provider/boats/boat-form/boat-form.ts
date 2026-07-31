@@ -18,12 +18,12 @@ import { HlmFieldImports } from '@ui/field';
 import { HlmInput } from '@ui/input';
 import { HlmTextarea } from '@ui/textarea';
 import { HlmToggleGroupImports } from '@ui/toggle-group';
-import { AppMultiSelect } from '../../../shared/forms/app-multi-select';
-import { AppSelect } from '../../../shared/forms/app-select';
+import { AppMultiSelect } from '../../../../shared/forms/app-multi-select';
+import { AppSelect } from '../../../../shared/forms/app-select';
 import { BoatType, RentalType } from '@enums';
 import { BoatFormModel, BoatInputModel } from '@models';
 import { BoatService, HarborService } from '@services';
-import { ROUTE_PARTNER } from '../../../core/routes.const';
+import { ROUTE_PARTNER } from '../../../../core/routes.const';
 
 @Component({
   selector: 'app-boat-form',
