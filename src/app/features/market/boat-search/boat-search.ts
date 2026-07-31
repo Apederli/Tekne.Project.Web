@@ -1,7 +1,8 @@
 import { Component, computed, inject } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { BoatOutputModel, CityHarborsOutputModel } from '@models';
+import { BoatOutputModel } from '@models';
 import { BoatService, HarborService } from '@services';
+import { formatBoatLocation } from '../../../core/util/boat-location';
 import { BoatCard } from './boat-card';
 
 /**
@@ -44,16 +45,6 @@ export class BoatSearch {
 
   /** Bağlı liman + şehir — `MyBoats.location` ile aynı kural (ana liman gösterilir). */
   location(boat: BoatOutputModel): string {
-    const city = this.cities().find((c) => c.cityId === boat.cityId);
-    const harbor = harborName(city, boat.primaryHarborId);
-    if (!city) return harbor ?? '';
-    return harbor ? `${harbor}, ${city.cityName}` : city.cityName;
+    return formatBoatLocation(boat, this.cities());
   }
-}
-
-function harborName(
-  city: CityHarborsOutputModel | undefined,
-  harborId: number,
-): string | undefined {
-  return city?.harbors.find((h) => h.id === harborId)?.name;
 }
