@@ -1,0 +1,70 @@
+@if (notFound()) {
+  <div class="rounded-lg border border-dashed border-input p-10 text-center">
+    <h1 class="font-medium">Tekne bulunamadı</h1>
+    <p class="mt-1 text-sm text-muted-foreground">
+      İlan kaldırılmış veya bağlantı hatalı olabilir.
+    </p>
+    <a [routerLink]="boatsUrl" class="mt-4 inline-block text-sm underline">Teknelere dön</a>
+  </div>
+} @else if (loading()) {
+  <p class="text-sm text-muted-foreground">Tekne yükleniyor…</p>
+} @else if (boat(); as b) {
+  <!-- Mobil: kaydırmalı galeri. Masaüstü: mozaik. Geçiş saf CSS. -->
+  <app-photo-gallery [photos]="b.photos" [alt]="b.name" class="aspect-[4/3] w-full lg:hidden" />
+
+  <div
+    data-testid="mosaic"
+    class="hidden aspect-[2/1] w-full gap-2 overflow-hidden rounded-xl lg:grid lg:grid-cols-4 lg:grid-rows-2"
+  >
+    @if (cover(); as coverPhoto) {
+      <img
+        [src]="photoUrl.url(coverPhoto.objectKey)"
+        [alt]="b.name + ' — kapak fotoğrafı'"
+        loading="eager"
+        [class]="coverClass()"
+      />
+    } @else {
+      <div
+        class="col-span-4 row-span-2 flex items-center justify-center rounded-xl border border-dashed border-input"
+      >
+        <p class="text-sm text-muted-foreground">Fotoğraf yok</p>
+      </div>
+    }
+
+    @for (tile of tiles(); track tile.id; let i = $index) {
+      <div [class]="tileClass(i)">
+        <img
+          [src]="photoUrl.url(tile.objectKey)"
+          [alt]="b.name + ' — fotoğraf ' + (i + 2)"
+          loading="lazy"
+          decoding="async"
+          class="h-full w-full object-cover"
+        />
+        <!-- Tam ekran görüntüleyici sonraki tur — çip şimdilik bilgi amaçlı. -->
+        @if (extraCount() > 0 && i === tiles().length - 1) {
+          <span
+            class="absolute bottom-2 end-2 rounded-md bg-white/90 px-2 py-1 text-xs font-medium"
+          >
+            +{{ extraCount() }} fotoğraf
+          </span>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="mt-6">
+    <h1 class="text-2xl font-semibold">{{ b.name }}</h1>
+    @if (location()) {
+      <p class="mt-1 text-slate-600">{{ location() }}</p>
+    }
+    <p class="mt-3 text-sm text-slate-600">
+      {{ typeLabel() }} · {{ b.totalCapacity }} kişi · {{ b.lengthInMeters }} m
+      @if (b.manufactureYear) {
+        · {{ b.manufactureYear }}
+      }
+    </p>
+    @if (b.description) {
+      <p class="mt-4 max-w-2xl whitespace-pre-line text-slate-700">{{ b.description }}</p>
+    }
+  </div>
+}
