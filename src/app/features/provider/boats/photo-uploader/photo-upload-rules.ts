@@ -91,7 +91,7 @@ export function rejectionMessage(rejected: RejectedFile[]): string {
     rejected.filter((r) => r.reason === reason).length;
 
   if (count('type')) parts.push(`${count('type')} dosya desteklenmeyen türde`);
-  if (count('size')) parts.push(`${count('size')} dosya 10MB üzeri`);
+  if (count('size')) parts.push(`${count('size')} dosya ${MAX_FILE_BYTES / (1024 * 1024)}MB üzeri`);
   if (count('limit')) parts.push(`${count('limit')} dosya ${MAX_PHOTOS} fotoğraf sınırını aştığı`);
 
   return `${parts.join(', ')} için atlandı.`;

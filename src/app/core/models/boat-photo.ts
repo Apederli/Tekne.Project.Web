@@ -26,3 +26,17 @@ export interface BoatPhotoOutputModel {
 export interface ReorderPhotosInputModel {
   photoIdsInOrder: number[];
 }
+
+/**
+ * Gösterim sırası: ana fotoğraf başta, gerisi `sortOrder` artan.
+ *
+ * `PhotoUploader` ve `PhotoGallery` aynı fotoğrafı kapak saymalı — market kartı
+ * ile partner listesinin farklı fotoğrafla açılması istenmez. Ölçüt bu yüzden
+ * modelin yanında tek yerde tutulur, iki bileşen de buradan çağırır.
+ */
+export function sortBoatPhotos(photos: BoatPhotoOutputModel[]): BoatPhotoOutputModel[] {
+  return [...photos].sort((a, b) => {
+    if (a.isMain !== b.isMain) return a.isMain ? -1 : 1;
+    return a.sortOrder - b.sortOrder;
+  });
+}
