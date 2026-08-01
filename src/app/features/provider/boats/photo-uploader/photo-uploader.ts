@@ -1,6 +1,13 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDragHandle,
+  CdkDropList,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideImagePlus, lucideTrash2 } from '@ng-icons/lucide';
+import { lucideGripVertical, lucideImagePlus, lucideTrash2 } from '@ng-icons/lucide';
 import { HlmButton } from '@ui/button';
 import { BoatPhotoOutputModel, sortBoatPhotos } from '@models';
 import { BoatPhotoService, PhotoUrlService } from '@services';
@@ -15,8 +22,8 @@ import { MAX_PHOTOS, rejectionMessage, selectUploadableFiles } from './photo-upl
  */
 @Component({
   selector: 'app-photo-uploader',
-  imports: [NgIcon, HlmButton],
-  providers: [provideIcons({ lucideImagePlus, lucideTrash2 })],
+  imports: [CdkDrag, CdkDragHandle, CdkDropList, NgIcon, HlmButton],
+  providers: [provideIcons({ lucideGripVertical, lucideImagePlus, lucideTrash2 })],
   templateUrl: './photo-uploader.html',
 })
 export class PhotoUploader {
@@ -35,6 +42,13 @@ export class PhotoUploader {
   skippedMessage = signal('');
   /** Sürükle-bırak vurgusu — masaüstünde ek yetenek, mobilde hiç tetiklenmez. */
   dragging = signal(false);
+  /** Sıralama isteği uçuyor — karşılıklı dışlamanın üçüncü ortağı. */
+  reordering = signal(false);
+
+  /** Yükleme/silme/sıralamadan biri uçarken diğer ikisi başlayamaz. */
+  busy = computed(
+    () => this.uploadingCount() > 0 || this.deletingId() !== null || this.reordering(),
+  );
 
   /** Sıra `PhotoGallery` ile ortak (`sortBoatPhotos`) — iki ekran aynı fotoğrafı kapak saysın. */
   visible = computed(() => sortBoatPhotos(this.photos()));
@@ -64,7 +78,7 @@ export class PhotoUploader {
     this.dragging.set(false);
     // `upload()` zaten silme sürerken engelliyor; burada da bakılıyor ki
     // dosyalar diziye çevrilip boşuna işlenmesin.
-    if (this.full() || this.deletingId() !== null) return;
+    if (this.full() || this.busy()) return;
     this.upload(Array.from(event.dataTransfer?.files ?? []));
   }
 
@@ -75,7 +89,7 @@ export class PhotoUploader {
     // anlık görüntüden okur ve biri diğerinin sonucunu ezer/geri getirir
     // (silme sürerken yüklenirse silinen fotoğraf geri döner; yükleme sürerken
     // silinirse yeni fotoğraf kaybolur). Bu yüzden ikisi de karşılıklı dışlar.
-    if (this.uploadingCount() > 0 || this.deletingId() !== null) return;
+    if (this.busy()) return;
 
     const pending = this.photos().length + this.uploadingCount();
     const { accepted, rejected } = selectUploadableFiles(files, pending);
@@ -100,7 +114,7 @@ export class PhotoUploader {
    * Yükleme sürerken de silme başlatılmaz — aynı gerekçe `upload()`'da anlatılıyor.
    */
   remove(photo: BoatPhotoOutputModel): void {
-    if (this.deletingId() !== null || this.uploadingCount() > 0) return;
+    if (this.busy()) return;
 
     this.deletingId.set(photo.id);
     this.photoService.delete(this.boatId(), photo.id).subscribe({
@@ -111,5 +125,38 @@ export class PhotoUploader {
       },
       error: () => this.deletingId.set(null),
     });
+  }
+
+  /**
+   * Sıra değişikliği: yeni sıra anında yayınlanır (optimistic), tek PUT atılır.
+   * Backend sözleşmesi: kapak, sıralamanın en düşük `sortOrder`'lı (ilk)
+   * elemanıdır — `sortOrder` alanı yeni sıraya göre yeniden yazılır ki
+   * `sortBoatPhotos` görsel sırayla aynı sonucu üretsin ve "Kapak" rozeti
+   * doğru karoya geçsin.
+   */
+  onPhotoDrop(event: CdkDragDrop<BoatPhotoOutputModel[]>): void {
+    if (event.previousIndex === event.currentIndex) return;
+    if (this.busy()) return;
+
+    const previous = this.photos();
+    const next = [...this.visible()];
+    moveItemInArray(next, event.previousIndex, event.currentIndex);
+    const renumbered = next.map((p, i) => ({ ...p, sortOrder: i }));
+
+    this.reordering.set(true);
+    this.photosChanged.emit(renumbered);
+    this.photoService
+      .reorder(
+        this.boatId(),
+        renumbered.map((p) => p.id),
+      )
+      .subscribe({
+        next: () => this.reordering.set(false),
+        // Mesajı errorInterceptor gösterdi; buradaki iş sırayı geri almak.
+        error: () => {
+          this.reordering.set(false);
+          this.photosChanged.emit(previous);
+        },
+      });
   }
 }

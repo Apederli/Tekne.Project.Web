@@ -10,12 +10,8 @@ import { PhotoGallery } from './photo-gallery';
 
 const CDN = 'https://cdn.test';
 
-function photo(
-  id: number,
-  sortOrder: number,
-  isMain = false,
-): BoatPhotoOutputModel {
-  return { id, objectKey: `boat-image/${id}.webp`, isMain, sortOrder };
+function photo(id: number, sortOrder: number): BoatPhotoOutputModel {
+  return { id, objectKey: `boat-image/${id}.webp`, sortOrder };
 }
 
 describe('PhotoGallery', () => {
@@ -49,7 +45,7 @@ describe('PhotoGallery', () => {
   });
 
   it('disables pagination dots and rewind for a single photo', () => {
-    create([photo(1, 0, true)]);
+    create([photo(1, 0)]);
 
     expect(images().length).toBe(1);
     expect(swiper()!.getAttribute('pagination')).toBe('false');
@@ -57,7 +53,7 @@ describe('PhotoGallery', () => {
   });
 
   it('enables dynamic pagination dots and rewind for multiple photos', () => {
-    create([photo(1, 0, true), photo(2, 1)]);
+    create([photo(1, 0), photo(2, 1)]);
 
     expect(swiper()!.getAttribute('pagination')).toBe('true');
     expect(swiper()!.getAttribute('rewind')).toBe('true');
@@ -66,26 +62,26 @@ describe('PhotoGallery', () => {
     expect(fixture.nativeElement.querySelectorAll('button').length).toBe(0);
   });
 
-  it('puts the main photo first, then orders by sortOrder', () => {
-    create([photo(1, 0), photo(2, 1), photo(3, 2, true)]);
+  it('orders photos by ascending sortOrder', () => {
+    create([photo(3, 2), photo(1, 0), photo(2, 1)]);
 
-    expect(fixture.componentInstance.visible().map((p) => p.id)).toEqual([3, 1, 2]);
+    expect(fixture.componentInstance.visible().map((p) => p.id)).toEqual([1, 2, 3]);
   });
 
   it('builds the src from the CDN token without duplicating the key prefix', () => {
-    create([photo(7, 0, true)]);
+    create([photo(7, 0)]);
 
     expect(images()[0].getAttribute('src')).toBe(`${CDN}/boat-image/7.webp`);
   });
 
   it('describes the boat and the position in the alt text', () => {
-    create([photo(1, 0, true), photo(2, 1)], 'Ayla');
+    create([photo(1, 0), photo(2, 1)], 'Ayla');
 
     expect(images()[0].getAttribute('alt')).toBe('Ayla — fotoğraf 1 / 2');
   });
 
   it('loads the first photo eagerly and the rest lazily', () => {
-    create([photo(1, 0, true), photo(2, 1)]);
+    create([photo(1, 0), photo(2, 1)]);
 
     expect(images()[0].getAttribute('loading')).toBe('eager');
     expect(images()[1].getAttribute('loading')).toBe('lazy');

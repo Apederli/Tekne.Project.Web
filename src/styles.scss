@@ -1,1 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* CDK drag-drop görsel durumları — fotoğraf sıralama (photo-uploader).
+   Preview ve placeholder body altına ışınlandığı için bileşen stiline
+   yazılamaz, global olmak zorundalar. */
+.cdk-drag-preview {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+}
+
+.cdk-drag-animating,
+.cdk-drop-list-dragging .cdk-drag:not(.cdk-drag-placeholder) {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}

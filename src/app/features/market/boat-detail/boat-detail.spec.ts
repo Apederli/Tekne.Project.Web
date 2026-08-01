@@ -11,8 +11,8 @@ import { BoatOutputModel, BoatPhotoOutputModel } from '@models';
 vi.mock('swiper/element/bundle', () => ({ register: () => {} }));
 import { BoatDetail } from './boat-detail';
 
-function photo(id: number, sortOrder: number, isMain = false): BoatPhotoOutputModel {
-  return { id, objectKey: `boat-image/${id}.webp`, isMain, sortOrder };
+function photo(id: number, sortOrder: number): BoatPhotoOutputModel {
+  return { id, objectKey: `boat-image/${id}.webp`, sortOrder };
 }
 
 function boat(photos: BoatPhotoOutputModel[]): BoatOutputModel {
@@ -66,7 +66,7 @@ describe('BoatDetail', () => {
 
   it("slug'daki id ile tekneyi çeker ve künyeyi çizer", async () => {
     create('mavi-ruzgar-5');
-    await flush(boat([photo(1, 0, true)]));
+    await flush(boat([photo(1, 0)]));
 
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('h1')?.textContent).toContain('Mavi Rüzgar');
@@ -78,14 +78,14 @@ describe('BoatDetail', () => {
 
   it('sayfa başlığına tekne adını yazar', async () => {
     create('mavi-ruzgar-5');
-    await flush(boat([photo(1, 0, true)]));
+    await flush(boat([photo(1, 0)]));
 
     expect(TestBed.inject(Title).getTitle()).toBe('Mavi Rüzgar — Tekne');
   });
 
   it('5 ten çok fotoğrafta mozaik 5 görsel ve +N çipi gösterir', async () => {
     create('mavi-ruzgar-5');
-    await flush(boat([0, 1, 2, 3, 4, 5, 6].map((i) => photo(i + 1, i, i === 0))));
+    await flush(boat([0, 1, 2, 3, 4, 5, 6].map((i) => photo(i + 1, i))));
 
     const mosaic = fixture.nativeElement.querySelector('[data-testid="mosaic"]');
     expect(mosaic.querySelectorAll('img').length).toBe(5);
@@ -94,7 +94,7 @@ describe('BoatDetail', () => {
 
   it('tek fotoğrafta mozaikte yalnız kapak vardır, çip yoktur', async () => {
     create('mavi-ruzgar-5');
-    await flush(boat([photo(1, 0, true)]));
+    await flush(boat([photo(1, 0)]));
 
     const mosaic = fixture.nativeElement.querySelector('[data-testid="mosaic"]');
     expect(mosaic.querySelectorAll('img').length).toBe(1);
@@ -103,7 +103,7 @@ describe('BoatDetail', () => {
 
   it('tam 5 fotoğrafta mozaik 5 görsel gösterir, çip yoktur', async () => {
     create('mavi-ruzgar-5');
-    await flush(boat([0, 1, 2, 3, 4].map((i) => photo(i + 1, i, i === 0))));
+    await flush(boat([0, 1, 2, 3, 4].map((i) => photo(i + 1, i))));
 
     const mosaic = fixture.nativeElement.querySelector('[data-testid="mosaic"]');
     expect(mosaic.querySelectorAll('img').length).toBe(5);
@@ -112,7 +112,7 @@ describe('BoatDetail', () => {
 
   it('2 fotoğrafta mozaik 2 görsel gösterir, çip yoktur', async () => {
     create('mavi-ruzgar-5');
-    await flush(boat([photo(1, 0, true), photo(2, 1)]));
+    await flush(boat([photo(1, 0), photo(2, 1)]));
 
     const mosaic = fixture.nativeElement.querySelector('[data-testid="mosaic"]');
     expect(mosaic.querySelectorAll('img').length).toBe(2);

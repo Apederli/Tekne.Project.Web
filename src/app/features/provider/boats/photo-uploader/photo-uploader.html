@@ -1,36 +1,43 @@
 <div>
-  <!-- Mobile-first: telefonda iki sütun, ekranla birlikte genişliyor. -->
-  <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-    @if (!full()) {
-      <!--
-        Gizli input bir label ile sarılı: telefonda tek dokunuşla galeri açılır.
-        Silme sürerken input disabled: input disabled olunca tarayıcı label'a
-        tıklamayı da dosya seçiciyi açmaya çevirmiyor, `has-disabled` ile de
-        görünüşü ölü bir kontrol gibi kalmıyor.
-      -->
-      <label
-        class="flex aspect-square cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed text-muted-foreground hover:bg-muted/50 focus-within:ring-2 focus-within:ring-ring has-disabled:cursor-not-allowed has-disabled:opacity-50 has-disabled:hover:bg-transparent"
-        [class]="dragging() ? 'border-primary bg-muted/50' : 'border-input'"
-        (dragover)="$event.preventDefault(); dragging.set(true)"
-        (dragleave)="dragging.set(false)"
-        (drop)="onDrop($event)"
-      >
-        <ng-icon name="lucideImagePlus" size="24" />
-        <span class="text-sm">Fotoğraf ekle</span>
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          class="sr-only"
-          [disabled]="deletingId() !== null"
-          #fileInput
-          (change)="onFileInput(fileInput)"
-        />
-      </label>
-    }
+  @if (!full()) {
+    <!--
+      Ekle-barı ızgaranın DIŞINDA: cdkDropList içindeki sürüklenemeyen hücre
+      CDK'nın karışık yön sıralama hesabını bozar. Gizli input bir label ile
+      sarılı: telefonda tek dokunuşla galeri açılır; masaüstü dosya bırakma
+      vurgusu (dragging) barda devam eder.
+    -->
+    <label
+      class="mb-3 flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed p-3 text-muted-foreground hover:bg-muted/50 focus-within:ring-2 focus-within:ring-ring has-disabled:cursor-not-allowed has-disabled:opacity-50 has-disabled:hover:bg-transparent"
+      [class]="dragging() ? 'border-primary bg-muted/50' : 'border-input'"
+      (dragover)="$event.preventDefault(); dragging.set(true)"
+      (dragleave)="dragging.set(false)"
+      (drop)="onDrop($event)"
+    >
+      <ng-icon name="lucideImagePlus" size="24" />
+      <span class="text-sm">Fotoğraf ekle</span>
+      <input
+        type="file"
+        accept="image/*"
+        multiple
+        class="sr-only"
+        [disabled]="deletingId() !== null || reordering()"
+        #fileInput
+        (change)="onFileInput(fileInput)"
+      />
+    </label>
+  }
 
+  <!-- Mobile-first: telefonda iki sütun, ekranla birlikte genişliyor. -->
+  <div
+    class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
+    cdkDropList
+    cdkDropListOrientation="mixed"
+    (cdkDropListDropped)="onPhotoDrop($event)"
+  >
     @for (photo of visible(); track photo.id; let i = $index) {
       <div
+        cdkDrag
+        [cdkDragDisabled]="busy()"
         class="relative aspect-square overflow-hidden rounded-lg bg-muted"
         [class]="deletingId() === photo.id ? 'opacity-50' : ''"
       >
@@ -58,11 +65,28 @@
           size="icon-sm"
           type="button"
           class="absolute end-2 top-2 rounded-full"
-          [disabled]="deletingId() !== null || uploadingCount() > 0"
+          [disabled]="busy()"
           (click)="remove(photo)"
         >
           <ng-icon name="lucideTrash2" size="16" />
           <span class="sr-only">{{ i + 1 }}. fotoğrafı sil</span>
+        </button>
+
+        <!--
+          Sürükleme YALNIZCA tutamaçtan başlar; karonun kendisi kaydırmayı
+          bozmaz. touch-none: parmak tutamaçtayken tarayıcı kaydırmayı değil
+          CDK sürüklemesini alsın. 40px hedef (h-10 w-10) — dokunma kuralı.
+        -->
+        <button
+          hlmBtn
+          variant="secondary"
+          type="button"
+          cdkDragHandle
+          class="absolute end-2 bottom-2 h-10 w-10 cursor-grab touch-none rounded-full p-0"
+          [disabled]="busy()"
+        >
+          <ng-icon name="lucideGripVertical" size="18" />
+          <span class="sr-only">{{ i + 1 }}. fotoğrafı taşı</span>
         </button>
       </div>
     }

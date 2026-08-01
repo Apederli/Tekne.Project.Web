@@ -5,8 +5,8 @@ import { BoatPhotoOutputModel } from '@models';
 import { MAX_PHOTOS } from './photo-upload-rules';
 import { PhotoUploader } from './photo-uploader';
 
-function photo(id: number, sortOrder: number, isMain = false): BoatPhotoOutputModel {
-  return { id, objectKey: `boat-image/${id}.jpg`, isMain, sortOrder };
+function photo(id: number, sortOrder: number): BoatPhotoOutputModel {
+  return { id, objectKey: `boat-image/${id}.jpg`, sortOrder };
 }
 
 function imageFile(name = 'a.jpg', type = 'image/jpeg', size = 1024): File {
@@ -40,20 +40,20 @@ describe('PhotoUploader', () => {
     fixture.detectChanges();
   }
 
-  it('fotoğrafları ana fotoğraf başta olacak şekilde sıralar', () => {
-    setPhotos([photo(1, 1), photo(2, 2, true), photo(3, 0)]);
+  it('fotoğrafları sortOrder artan sırada dizer', () => {
+    setPhotos([photo(1, 1), photo(2, 2), photo(3, 0)]);
 
-    expect(component.visible().map((p) => p.id)).toEqual([2, 3, 1]);
+    expect(component.visible().map((p) => p.id)).toEqual([3, 1, 2]);
   });
 
   it('her fotoğraf için bir kutucuk çizer', () => {
-    setPhotos([photo(1, 0, true), photo(2, 1)]);
+    setPhotos([photo(1, 0), photo(2, 1)]);
 
     expect(fixture.nativeElement.querySelectorAll('img').length).toBe(2);
   });
 
   it('kapak rozetini yalnızca ilk kutucukta gösterir', () => {
-    setPhotos([photo(1, 0, true), photo(2, 1)]);
+    setPhotos([photo(1, 0), photo(2, 1)]);
 
     const badges = fixture.nativeElement.querySelectorAll('[data-testid="cover-badge"]');
     expect(badges.length).toBe(1);
@@ -72,9 +72,10 @@ describe('PhotoUploader', () => {
   });
 
   it('her sil düğmesinin benzersiz erişilebilir adı vardır', () => {
-    setPhotos([photo(1, 0, true), photo(2, 1), photo(3, 2)]);
+    setPhotos([photo(1, 0), photo(2, 1), photo(3, 2)]);
 
-    const buttons = fixture.nativeElement.querySelectorAll('button[hlmBtn]');
+    // Tutamaç düğmesi de hlmBtn taşıyor artık — yalnızca sil düğmelerini seç.
+    const buttons = fixture.nativeElement.querySelectorAll('button[hlmBtn]:not([cdkDragHandle])');
     expect(buttons.length).toBe(3);
     expect(buttons[0].textContent).toContain('1. fotoğrafı sil');
     expect(buttons[1].textContent).toContain('2. fotoğrafı sil');
@@ -126,7 +127,7 @@ describe('PhotoUploader', () => {
   });
 
   it('yanıt gelince mevcut ve yeni fotoğrafları birlikte emit eder', () => {
-    setPhotos([photo(1, 0, true)]);
+    setPhotos([photo(1, 0)]);
     const emitted: BoatPhotoOutputModel[][] = [];
     component.photosChanged.subscribe((list) => emitted.push(list));
 
@@ -136,7 +137,7 @@ describe('PhotoUploader', () => {
       .flush([photo(2, 1)]);
     fixture.detectChanges();
 
-    expect(emitted).toEqual([[photo(1, 0, true), photo(2, 1)]]);
+    expect(emitted).toEqual([[photo(1, 0), photo(2, 1)]]);
     expect(component.uploadingCount()).toBe(0);
   });
 
@@ -176,10 +177,10 @@ describe('PhotoUploader', () => {
   });
 
   it('yükleme sürerken silme isteği açmaz', () => {
-    setPhotos([photo(1, 0, true)]);
+    setPhotos([photo(1, 0)]);
 
     component.upload([imageFile()]);
-    component.remove(photo(1, 0, true));
+    component.remove(photo(1, 0));
 
     expect(component.deletingId()).toBeNull();
     http.expectNone((r) => r.method === 'DELETE' && r.url.endsWith('/Boats/7/photos/1'));
@@ -188,9 +189,9 @@ describe('PhotoUploader', () => {
   });
 
   it('silme sürerken yükleme isteği açmaz', () => {
-    setPhotos([photo(1, 0, true)]);
+    setPhotos([photo(1, 0)]);
 
-    component.remove(photo(1, 0, true));
+    component.remove(photo(1, 0));
     component.upload([imageFile()]);
 
     expect(component.uploadingCount()).toBe(0);
@@ -200,9 +201,9 @@ describe('PhotoUploader', () => {
   });
 
   it('silme sürerken dosya seçiciyi devre dışı bırakır', () => {
-    setPhotos([photo(1, 0, true)]);
+    setPhotos([photo(1, 0)]);
 
-    component.remove(photo(1, 0, true));
+    component.remove(photo(1, 0));
     fixture.detectChanges();
 
     const input = fixture.nativeElement.querySelector('input[type="file"]') as HTMLInputElement;
@@ -226,7 +227,7 @@ describe('PhotoUploader', () => {
   });
 
   it('sil düğmesi fotoğrafı doğru uca gönderir', () => {
-    setPhotos([photo(1, 0, true), photo(2, 1)]);
+    setPhotos([photo(1, 0), photo(2, 1)]);
 
     fixture.nativeElement.querySelectorAll('button')[0].click();
 
@@ -238,11 +239,11 @@ describe('PhotoUploader', () => {
   });
 
   it('silme başarılıysa o fotoğrafsız listeyi emit eder', () => {
-    setPhotos([photo(1, 0, true), photo(2, 1)]);
+    setPhotos([photo(1, 0), photo(2, 1)]);
     const emitted: BoatPhotoOutputModel[][] = [];
     component.photosChanged.subscribe((list) => emitted.push(list));
 
-    component.remove(photo(1, 0, true));
+    component.remove(photo(1, 0));
     http.expectOne((r) => r.method === 'DELETE' && r.url.endsWith('/Boats/7/photos/1')).flush(true);
 
     expect(emitted).toEqual([[photo(2, 1)]]);
@@ -250,21 +251,21 @@ describe('PhotoUploader', () => {
   });
 
   it('silme başarılı olunca atlanan mesajını temizler', () => {
-    setPhotos([photo(1, 0, true)]);
+    setPhotos([photo(1, 0)]);
     component.upload([imageFile('belge.pdf', 'application/pdf')]);
     fixture.detectChanges();
     expect(component.skippedMessage()).not.toBe('');
 
-    component.remove(photo(1, 0, true));
+    component.remove(photo(1, 0));
     http.expectOne((r) => r.method === 'DELETE' && r.url.endsWith('/Boats/7/photos/1')).flush(true);
 
     expect(component.skippedMessage()).toBe('');
   });
 
   it('silme sürerken ikinci silme isteği açmaz', () => {
-    setPhotos([photo(1, 0, true), photo(2, 1)]);
+    setPhotos([photo(1, 0), photo(2, 1)]);
 
-    component.remove(photo(1, 0, true));
+    component.remove(photo(1, 0));
     component.remove(photo(2, 1));
 
     http.expectOne((r) => r.method === 'DELETE' && r.url.endsWith('/Boats/7/photos/1')).flush(true);
@@ -287,11 +288,11 @@ describe('PhotoUploader', () => {
   });
 
   it('silme hatasında kutucuğu serbest bırakır ve emit etmez', () => {
-    setPhotos([photo(1, 0, true)]);
+    setPhotos([photo(1, 0)]);
     const emitted: BoatPhotoOutputModel[][] = [];
     component.photosChanged.subscribe((list) => emitted.push(list));
 
-    component.remove(photo(1, 0, true));
+    component.remove(photo(1, 0));
     http
       .expectOne((r) => r.method === 'DELETE' && r.url.endsWith('/Boats/7/photos/1'))
       .flush({ message: 'Fotoğraf bulunamadı.' }, { status: 404, statusText: 'Not Found' });
