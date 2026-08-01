@@ -79,4 +79,14 @@
   body {
     @apply bg-background text-foreground;
   }
+  /*
+   * Tailwind v4 preflight butonlara `cursor: default` veriyor (native'e
+   * uyum kararı). Web'de tıklanabilirin işareti pointer — hlmBtn kendi
+   * sınıfında taşıyor ama düz button'lar (ör. hlmTabsTrigger) açıkta
+   * kalıyordu. shadcn'in v4 için önerdiği global geri alma:
+   */
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
 }
