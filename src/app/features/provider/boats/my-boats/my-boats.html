@@ -66,7 +66,21 @@
             >Fotoğraflar</a
           >
           @if (boat.isActive) {
-            <a hlmBtn variant="ghost" class="h-10 px-4" [routerLink]="publicUrl(boat)">İlanı gör</a>
+            <!--
+              target="_blank" bilinçli: ilan market layout'unda açılır, panele
+              dönüş yolu yoktur — yeni sekme paneli olduğu yerde bırakır.
+              Capacitor'da yeni sekme yok; o gün bu link Browser plugin'ine
+              (uygulama içi tarayıcı + Bitti butonu) taşınacak.
+            -->
+            <a
+              hlmBtn
+              variant="ghost"
+              class="h-10 px-4"
+              [routerLink]="publicUrl(boat)"
+              target="_blank"
+              rel="noopener"
+              >İlanı gör</a
+            >
           }
         </div>
       </article>
