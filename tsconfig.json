@@ -41,7 +41,10 @@
       "@ui/toggle-group": ["./src/app/shared/ui/toggle-group/src/index.ts"],
       "@ui/toggle": ["./src/app/shared/ui/toggle/src/index.ts"],
       "@ui/checkbox": ["./src/app/shared/ui/checkbox/src/index.ts"],
-      "@ui/tabs": ["./src/app/shared/ui/tabs/src/index.ts"]
+      "@ui/tabs": ["./src/app/shared/ui/tabs/src/index.ts"],
+      "@ui/sidebar": ["./src/app/shared/ui/sidebar/src/index.ts"],
+      "@ui/skeleton": ["./src/app/shared/ui/skeleton/src/index.ts"],
+      "@ui/tooltip": ["./src/app/shared/ui/tooltip/src/index.ts"]
     }
   },
   "angularCompilerOptions": {
