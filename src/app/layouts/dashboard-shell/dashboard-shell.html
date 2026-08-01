@@ -1,5 +1,5 @@
 <div hlmSidebarWrapper class="text-foreground">
-  <hlm-sidebar collapsible="icon">
+  <hlm-sidebar collapsible="icon" [ariaLabel]="panelTitle()">
     <!--
       Daraltılmış modda header'da hiçbir şey kalmaz: logo da başlık da
       group-data ile gizlenir. `group` sınıfı hlm-sidebar host'unda,
@@ -22,7 +22,7 @@
     </div>
 
     <div hlmSidebarContent>
-      <div hlmSidebarGroup>
+      <nav hlmSidebarGroup aria-label="Panel menüsü">
         <ul hlmSidebarMenu>
           @for (item of navItems(); track item.path) {
             <li hlmSidebarMenuItem>
@@ -49,16 +49,16 @@
             </li>
           }
         </ul>
-      </div>
+      </nav>
     </div>
 
     <button hlmSidebarRail aria-label="Kenar çubuğunu aç/kapat"></button>
   </hlm-sidebar>
 
   <!-- hlmSidebarInset seçicisi main[...] — başka etikete takılamaz. -->
-  <main hlmSidebarInset>
+  <main hlmSidebarInset class="min-w-0">
     <header class="flex h-14 items-center gap-2 border-b border-border px-4 lg:px-6">
-      <button hlmSidebarTrigger srOnlyText="Menüyü aç/kapat"></button>
+      <button hlmSidebarTrigger size="icon-lg" srOnlyText="Menüyü aç/kapat"></button>
 
       <hlm-popover class="ml-auto" align="end" sideOffset="8">
         <button hlmPopoverTrigger hlmBtn variant="ghost">{{ displayName() }}</button>

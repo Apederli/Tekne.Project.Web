@@ -25,10 +25,20 @@ import { injectHlmSidebarConfig } from './hlm-sidebar.token';
     @if (collapsible() === 'none') {
       <ng-container *ngTemplateOutlet="contentContainer"></ng-container>
     } @else if (_sidebarService.isMobile()) {
+      <!--
+        Yerel düzenleme: mobil drawer'ın erişilebilir adı. aria-label,
+        HlmSheet'in miras aldığı BrnDialog.ariaLabel girdisine bağlanıyor
+        — bu değer doğrudan CDK'nın _cdkDialog.open()'a aktardığı dialog
+        config'e gidiyor ve role=dialog taşıyan konteyner elemanının
+        (CdkDialogContainer) kendisine iniyor; aynı zamanda BrnDialog'un
+        varsayılan aria-labelledby'sini (var olmayan brn-dialog-title-N
+        id'sini) de geçersiz kılıyor. Yeniden generate edilirse korunmalı.
+      -->
       <hlm-sheet
         [side]="side()"
         [state]="_sidebarService.openMobile() ? 'open' : 'closed'"
         (stateChanged)="_sidebarService.setOpenMobile($event === 'open')"
+        [aria-label]="ariaLabel() || null"
       >
         <hlm-sheet-content
           *hlmSheetPortal="let ctx"
@@ -70,6 +80,13 @@ export class HlmSidebar {
   public readonly side = input<'left' | 'right'>('left');
   public readonly variant = input<SidebarVariant>(this._sidebarService.variant());
   public readonly collapsible = input<'offcanvas' | 'icon' | 'none'>('offcanvas');
+
+  /**
+   * Yerel düzenleme: mobil drawer'ın (sheet) erişilebilir adı — kullanım
+   * yeri için yukarıdaki `hlm-sheet` şablonundaki yoruma bakın. Masaüstü
+   * dallarında kullanılmıyor, bu yüzden opsiyonel.
+   */
+  public readonly ariaLabel = input<string>('');
 
   protected readonly _sidebarGapComputedClass = computed(() =>
     hlm(

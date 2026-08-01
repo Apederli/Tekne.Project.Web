@@ -55,9 +55,7 @@ describe('DashboardShell', () => {
 
     expect(el.querySelector('[data-sidebar="header"]')?.textContent).toContain('Test Panel');
 
-    const links = Array.from(
-      el.querySelectorAll<HTMLAnchorElement>('[data-sidebar="menu"] a'),
-    );
+    const links = Array.from(el.querySelectorAll<HTMLAnchorElement>('[data-sidebar="menu"] a'));
     expect(links.map((a) => a.textContent?.trim())).toEqual(['Genel Bakış', 'Teknelerim']);
     expect(links.map((a) => a.getAttribute('href'))).toEqual(['/partner', '/partner/teknelerim']);
   });
@@ -94,7 +92,7 @@ describe('DashboardShell', () => {
     expect(trigger?.textContent?.trim()).toBe('Deniz Kaptan');
   });
 
-  it('çıkış: logout çağrılır, store temizlenir, loginPath\'e gidilir', async () => {
+  it("çıkış: logout çağrılır, store temizlenir, loginPath'e gidilir", async () => {
     const authStore = TestBed.inject(AuthStore);
     authStore.setUser({
       id: 1,

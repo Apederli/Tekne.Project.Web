@@ -29,14 +29,7 @@ import { NavItem } from './nav-item';
  */
 @Component({
   selector: 'app-dashboard-shell',
-  imports: [
-    RouterLink,
-    RouterLinkActive,
-    NgIcon,
-    HlmButton,
-    HlmPopoverImports,
-    HlmSidebarImports,
-  ],
+  imports: [RouterLink, RouterLinkActive, NgIcon, HlmButton, HlmPopoverImports, HlmSidebarImports],
   providers: [
     provideIcons({
       lucideCalendarDays,
