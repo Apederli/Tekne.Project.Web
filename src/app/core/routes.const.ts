@@ -41,8 +41,21 @@ export const ROUTE_PARTNER = {
   boats: 'teknelerim',
   /** `boats` altına eklenir: `/partner/dashboard/teknelerim/yeni`. */
   boatNew: 'yeni',
-  /** `boats/:boatId` altına eklenir: `/partner/dashboard/teknelerim/5/fotograflar`. */
-  boatPhotos: 'fotograflar',
+  /** `boats/:boatId` altına eklenir: `/partner/dashboard/teknelerim/5/duzenle`. */
+  boatEdit: 'duzenle',
   availability: 'musaitlik',
   reservations: 'rezervasyonlar',
+} as const;
+
+/**
+ * Tekne düzenleme sayfasının sekmeleri — `?sekme=` query param'ının değeri.
+ *
+ * Segment değiller ama URL'de görünüyorlar ve iki yerde birden geçiyorlar
+ * (`boat-edit` şablonu ve `my-boats` linki), bu yüzden burada.
+ */
+export const BOAT_EDIT_TABS = {
+  general: 'genel',
+  photos: 'fotograflar',
+  terms: 'sartlar',
+  amenities: 'imkanlar',
 } as const;

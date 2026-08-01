@@ -1,0 +1,54 @@
+<a hlmBtn variant="ghost" size="sm" [routerLink]="boatsUrl">‹ Teknelerim</a>
+
+@if (loading()) {
+  <p class="mt-6 text-sm text-muted-foreground">Tekne yükleniyor…</p>
+} @else if (failed() || !boat()) {
+  <p class="mt-6 text-sm text-destructive">Tekne yüklenemedi. Sayfayı yenileyip tekrar deneyin.</p>
+} @else {
+  <h1 class="mt-2 text-2xl font-semibold">{{ boat()!.name }}</h1>
+
+  <!--
+    Tetikleyiciler tek tek yazılıyor, @for ile üretilmiyor:
+    hlm-paginated-tabs-list onları contentChildren(..., {descendants: false})
+    ile topluyor ve @for'un gömülü görünümleri bu aramada güvenilir eşleşmiyor.
+    tabListClass: şeridin varsayılan yüksekliği h-8; dokunma hedefi için h-10
+    (my-boats aksiyon butonlarıyla tutarlı). Aynı variant anahtarı kullanıldı
+    ki tailwind-merge h-8'i gerçekten değiştirsin.
+  -->
+  <!--
+    class'a display sınıfı YAZMA: HlmTabs host'una zaten `flex ... flex-col`
+    uyguluyor, `block` onunla çakışır. Yalnızca boşluk sınıfı geçilir.
+  -->
+  <hlm-tabs class="mt-6" [tab]="activeTab()" (tabActivated)="onTabActivated($event)">
+    <hlm-paginated-tabs-list tabListClass="group-data-horizontal/tabs:h-10">
+      <button [hlmTabsTrigger]="tabs.general">Genel</button>
+      <button [hlmTabsTrigger]="tabs.photos">Fotoğraflar</button>
+      <button [hlmTabsTrigger]="tabs.terms">Şartlar</button>
+      <button [hlmTabsTrigger]="tabs.amenities">İmkanlar</button>
+    </hlm-paginated-tabs-list>
+
+    <div [hlmTabsContent]="tabs.general" class="pt-4">
+      <ng-template hlmTabsContentLazy>
+        <app-boat-form [screenOpenType]="FormMode.Update" (saved)="boatResource.reload()" />
+      </ng-template>
+    </div>
+
+    <div [hlmTabsContent]="tabs.photos" class="pt-4">
+      <ng-template hlmTabsContentLazy>
+        <app-boat-photos />
+      </ng-template>
+    </div>
+
+    <div [hlmTabsContent]="tabs.terms" class="pt-4">
+      <ng-template hlmTabsContentLazy>
+        <app-boat-terms />
+      </ng-template>
+    </div>
+
+    <div [hlmTabsContent]="tabs.amenities" class="pt-4">
+      <ng-template hlmTabsContentLazy>
+        <app-boat-amenities />
+      </ng-template>
+    </div>
+  </hlm-tabs>
+}

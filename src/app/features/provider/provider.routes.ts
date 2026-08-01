@@ -25,8 +25,8 @@ export const providerRoutes: Routes = [
         loadComponent: () => import('./boats/boat-form/boat-form').then((m) => m.BoatForm),
       },
       {
-        path: `${ROUTE_PARTNER.boats}/:boatId/${ROUTE_PARTNER.boatPhotos}`,
-        loadComponent: () => import('./boats/boat-photos/boat-photos').then((m) => m.BoatPhotos),
+        path: `${ROUTE_PARTNER.boats}/:boatId/${ROUTE_PARTNER.boatEdit}`,
+        loadComponent: () => import('./boats/boat-edit/boat-edit').then((m) => m.BoatEdit),
       },
       {
         path: ROUTE_PARTNER.boats,

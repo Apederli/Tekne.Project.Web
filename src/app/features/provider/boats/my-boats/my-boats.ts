@@ -6,7 +6,7 @@ import { BoatType, RentalType } from '@enums';
 import { BoatOutputModel } from '@models';
 import { BoatService, HarborService } from '@services';
 import { PhotoGallery } from '../../../../shared/photo-gallery/photo-gallery';
-import { ROUTE_MARKET, ROUTE_PARTNER } from '../../../../core/routes.const';
+import { BOAT_EDIT_TABS, ROUTE_MARKET, ROUTE_PARTNER } from '../../../../core/routes.const';
 import { BOAT_TYPE_LABELS, RENTAL_TYPE_LABELS } from '../../../../core/util/boat-labels';
 import { formatBoatLocation } from '../../../../core/util/boat-location';
 import { makeBoatSlug } from '../../../../core/util/boat-slug';
@@ -28,15 +28,15 @@ export class MyBoats {
     ROUTE_PARTNER.boatNew,
   ];
 
-  /** Kartın birincil hedefi — `/partner/dashboard/teknelerim/{id}/fotograflar`. */
-  photosUrl(boatId: number): (string | number)[] {
+  /** Kartın birincil hedefi — `/partner/dashboard/teknelerim/{id}/duzenle`. */
+  editUrl(boatId: number): (string | number)[] {
     return [
       '/',
       ROUTE_PARTNER.main,
       ROUTE_PARTNER.dashboard,
       ROUTE_PARTNER.boats,
       boatId,
-      ROUTE_PARTNER.boatPhotos,
+      ROUTE_PARTNER.boatEdit,
     ];
   }
 
@@ -56,6 +56,8 @@ export class MyBoats {
 
   cities = computed(() => (this.citiesResource.hasValue() ? this.citiesResource.value() : []));
 
+  tabs = BOAT_EDIT_TABS;
+
   boatTypeLabel(type: BoatType): string {
     return BOAT_TYPE_LABELS[type] ?? type;
   }
@@ -72,7 +74,7 @@ export class MyBoats {
   /**
    * Swiper nokta/sürükleme tıklamasında preventDefault ediyor ama propagation'ı
    * durdurmuyor; RouterLink ise defaultPrevented'a bakmıyor. Burada kesilmezse
-   * karttaki noktaya dokunmak fotoğraf sayfasına götürürdü.
+   * karttaki noktaya dokunmak düzenleme sayfasına götürürdü.
    */
   swallowSwiperClick(event: Event): void {
     if (event.defaultPrevented) event.stopPropagation();

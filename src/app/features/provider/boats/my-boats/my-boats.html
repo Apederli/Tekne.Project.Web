@@ -22,12 +22,10 @@
   <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
     @for (boat of boats(); track boat.id) {
       <article class="overflow-hidden rounded-xl border border-border bg-background">
-        <!-- Kartın tamamı bugünkü tek yönetim işine, fotoğraf yönetimine gider.
-             Düzenleme geldiğinde yalnızca bu linkin hedefi değişecek (spec: gelecek uyumu). -->
         <a
-          [routerLink]="photosUrl(boat.id)"
+          [routerLink]="editUrl(boat.id)"
           class="block"
-          [attr.aria-label]="boat.name + ' — fotoğrafları yönet'"
+          [attr.aria-label]="boat.name + ' — düzenle'"
         >
           <span class="block" (click)="swallowSwiperClick($event)">
             <app-photo-gallery
@@ -56,10 +54,15 @@
           </div>
         </a>
 
-        <!-- Aksiyon şeridi linkin KARDEŞİ: link içinde link geçersiz HTML olurdu.
-             Düzenleme geldiğinde "Düzenle" buraya birincil buton olarak eklenecek. -->
+        <!-- Aksiyon şeridi linkin KARDEŞİ: link içinde link geçersiz HTML olurdu. -->
         <div class="flex items-center gap-2 border-t border-border p-3">
-          <a hlmBtn variant="outline" class="h-10 px-4" [routerLink]="photosUrl(boat.id)"
+          <a hlmBtn class="h-10 px-4" [routerLink]="editUrl(boat.id)">Düzenle</a>
+          <a
+            hlmBtn
+            variant="outline"
+            class="h-10 px-4"
+            [routerLink]="editUrl(boat.id)"
+            [queryParams]="{ sekme: tabs.photos }"
             >Fotoğraflar</a
           >
           @if (boat.isActive) {
