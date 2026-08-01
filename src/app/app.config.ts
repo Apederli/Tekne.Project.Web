@@ -15,6 +15,7 @@ import { routes } from './app.routes';
 import { AuthStore } from './core/auth/auth-store';
 import { authInterceptor } from '@interceptors/auth.interceptor';
 import { errorInterceptor } from '@interceptors/error.interceptor';
+import { pendingRequestsInterceptor } from '@interceptors/pending-requests.interceptor';
 import { UserService } from '@services';
 
 export const appConfig: ApplicationConfig = {
@@ -47,7 +48,10 @@ export const appConfig: ApplicationConfig = {
     // cookie'sinin gidip gelmesi için withCredentials ekliyor.
     // Sıra anlamlı: authInterceptor isteği hazırlar, errorInterceptor onun
     // dışında kalır ki yanıt yolunda hatayı en son o görsün.
-    provideHttpClient(withInterceptors([errorInterceptor, authInterceptor])),
+    // pendingRequestsInterceptor üstteki ilerleme barının sayacını tutar.
+    provideHttpClient(
+      withInterceptors([pendingRequestsInterceptor, errorInterceptor, authInterceptor]),
+    ),
     provideClientHydration(),
   ],
 };
