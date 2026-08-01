@@ -2,6 +2,9 @@ import { inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpContextToken, HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
+// Doğrudan dosyadan: barrel üzerinden almak user.service → bu dosya döngüsü
+// kurar (barrel başlığındaki uyarı). Bugün zararsız ama TDZ bombası olurdu.
+import { ToastService } from '@services/toast.service';
 
 /**
  * Hatası kullanıcıya gösterilmeyecek istekler için context bayrağı.
@@ -19,12 +22,11 @@ export const SILENT_ERRORS = new HttpContextToken<boolean>(() => false);
  * Auth interceptor'dan ayrı duruyor — onun işi kimlik bilgisi taşımak, bunun
  * işi hata sunmak. İkisini aynı dosyaya koymak dosyayı hızla şişiriyor.
  *
- * TODO: `alert` geçici. Tarayıcıyı kilitliyor, arka arkaya gelen hatalarda
- * kutular sıraya giriyor ve stil verilemiyor — bir toast bileşeniyle
- * değiştirilmeli.
+ * Mesajlar toast ile gösterilir (ToastService); SSR'da yalnızca loglanır.
  */
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  const toastService = inject(ToastService);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
@@ -33,7 +35,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       if (isBrowser) {
-        alert(toMessage(error));
+        toastService.error(toMessage(error));
       } else {
         console.error('SSR HTTP hatası:', error.status, error.message);
       }

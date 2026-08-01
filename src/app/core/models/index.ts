@@ -10,6 +10,7 @@
 
 export * from './boat';
 export * from './boat-photo';
+export * from './confirm';
 export * from './harbor';
 export * from './select-option';
 export * from './user';

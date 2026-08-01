@@ -14,4 +14,5 @@ export * from './boat.service';
 export * from './harbor.service';
 export * from './pending-requests.service';
 export * from './photo-url.service';
+export * from './toast.service';
 export * from './user.service';

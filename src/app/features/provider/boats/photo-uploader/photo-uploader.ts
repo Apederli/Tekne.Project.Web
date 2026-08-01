@@ -11,6 +11,7 @@ import { lucideGripVertical, lucideImagePlus, lucideTrash2 } from '@ng-icons/luc
 import { HlmButton } from '@ui/button';
 import { BoatPhotoOutputModel, sortBoatPhotos } from '@models';
 import { BoatPhotoService, PhotoUrlService } from '@services';
+import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 import { MAX_PHOTOS, rejectionMessage, selectUploadableFiles } from './photo-upload-rules';
 
 /**
@@ -29,6 +30,7 @@ import { MAX_PHOTOS, rejectionMessage, selectUploadableFiles } from './photo-upl
 export class PhotoUploader {
   photoService = inject(BoatPhotoService);
   photoUrl = inject(PhotoUrlService);
+  confirmService = inject(ConfirmService);
 
   boatId = input.required<number>();
   photos = input.required<BoatPhotoOutputModel[]>();
@@ -106,6 +108,25 @@ export class PhotoUploader {
       // kaldırmak, aksi hâlde ızgarada takılı kalırlar.
       error: () => this.uploadingCount.update((n) => n - accepted.length),
     });
+  }
+
+  /**
+   * Çöp butonunun yolu: önce onay, sonra ham silme. `remove()` ayrı kalır —
+   * silme mekaniği (karşılıklı dışlama, emit) onaydan bağımsız.
+   */
+  async confirmRemove(photo: BoatPhotoOutputModel, index: number): Promise<void> {
+    if (this.busy()) return;
+
+    const confirmed = await this.confirmService.confirm({
+      title: `${index + 1}. fotoğraf silinsin mi?`,
+      message: 'Bu işlem geri alınamaz.',
+      confirmText: 'Sil',
+      destructive: true,
+    });
+    // Diyalog açıkken başka bir işlem başlamış olabilir — kapı yeniden kontrol edilir.
+    if (!confirmed || this.busy()) return;
+
+    this.remove(photo);
   }
 
   /**

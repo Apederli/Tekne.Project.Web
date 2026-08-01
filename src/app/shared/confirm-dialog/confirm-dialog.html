@@ -1,0 +1,22 @@
+<hlm-dialog-header>
+  <h3 hlmDialogTitle>{{ options.title }}</h3>
+  @if (options.message) {
+    <p hlmDialogDescription>{{ options.message }}</p>
+  }
+</hlm-dialog-header>
+
+<!-- İki eşit sütun (kullanıcı kararı): buton genişliğini metin değil düzen
+     belirler, her ekranda ikisi de aynı ve parmak boyunda. -->
+<hlm-dialog-footer class="mt-4 grid grid-cols-2 gap-2">
+  <button hlmBtn variant="outline" class="h-10" (click)="ref.close(false)">
+    {{ options.cancelText ?? 'Vazgeç' }}
+  </button>
+  <button
+    hlmBtn
+    [variant]="options.destructive ? 'destructive' : 'default'"
+    class="h-10"
+    (click)="ref.close(true)"
+  >
+    {{ options.confirmText ?? 'Onayla' }}
+  </button>
+</hlm-dialog-footer>

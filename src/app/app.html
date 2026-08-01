@@ -1,2 +1,7 @@
 <app-progress-bar />
+<!-- top-center bilinçli: market mobilde alt navigasyon var, alta konan toast onu örterdi. -->
+<!-- @defer: sonner'ı initial bundle'dan çıkarır (bkz. ToastService başındaki not). -->
+@defer (on idle) {
+  <hlm-toaster richColors position="top-center" />
+}
 <router-outlet />

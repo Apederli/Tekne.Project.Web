@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BoatPhotoOutputModel } from '@models';
+import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 import { MAX_PHOTOS } from './photo-upload-rules';
 import { PhotoUploader } from './photo-uploader';
 
@@ -22,7 +23,11 @@ describe('PhotoUploader', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: ConfirmService, useValue: { confirm: () => Promise.resolve(true) } },
+      ],
     });
     http = TestBed.inject(HttpTestingController);
 
@@ -226,10 +231,11 @@ describe('PhotoUploader', () => {
     request.flush([]);
   });
 
-  it('sil düğmesi fotoğrafı doğru uca gönderir', () => {
+  it('sil düğmesi fotoğrafı doğru uca gönderir', async () => {
     setPhotos([photo(1, 0), photo(2, 1)]);
 
     fixture.nativeElement.querySelectorAll('button')[0].click();
+    await fixture.whenStable();
 
     const request = http.expectOne(
       (r) => r.method === 'DELETE' && r.url.endsWith('/Boats/7/photos/1'),
