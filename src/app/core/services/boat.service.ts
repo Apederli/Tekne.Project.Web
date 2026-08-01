@@ -21,6 +21,16 @@ export class BoatService {
     return this.http.post<number>(this.baseUrl, model);
   }
 
+  /**
+   * Partner kendi teknesini günceller — yalnızca `Partner` rolü.
+   *
+   * Uç henüz backend'de yok (2026-08-01); eklendiğinde çalışacak şekilde
+   * `create` ile aynı gövde şeması varsayılıyor.
+   */
+  update(id: number, model: BoatInputModel): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/${id}`, model);
+  }
+
   /** Tüm tekneler — market listelemesinin kaynağı, sahibe göre süzülmez. */
   getList(): Observable<BoatOutputModel[]> {
     return this.http.get<BoatOutputModel[]>(this.baseUrl);
