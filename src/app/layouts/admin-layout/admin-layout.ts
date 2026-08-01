@@ -28,6 +28,7 @@ export class AdminLayout {
     {
       path: `${ROOT}/${ROUTE_ADMIN.partners}`,
       label: 'Tekne Sahipleri',
+      shortLabel: 'Sahipler',
       exact: false,
       icon: 'lucideUserCog',
     },

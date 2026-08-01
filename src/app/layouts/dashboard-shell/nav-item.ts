@@ -23,4 +23,6 @@ export interface NavItem {
    * görünen tek şey ikondur.
    */
   icon: NavIcon;
+  /** Alt sekme çubuğundaki kısa etiket; yoksa `label` kullanılır. */
+  shortLabel?: string;
 }

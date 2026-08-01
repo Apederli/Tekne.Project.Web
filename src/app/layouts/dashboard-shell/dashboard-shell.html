@@ -58,7 +58,19 @@
   <!-- hlmSidebarInset seçicisi main[...] — başka etikete takılamaz. -->
   <main hlmSidebarInset class="min-w-0">
     <header class="flex h-14 items-center gap-2 border-b border-border px-4 lg:px-6">
-      <button hlmSidebarTrigger size="icon-lg" srOnlyText="Menüyü aç/kapat"></button>
+      <!--
+        Mobilde nav alttaki sekme çubuğunda; trigger gizlenir (drawer'a gerek
+        kalmaz) ve sol slotu panel başlığı alır. md üstünde tersine döner.
+        Trigger'daki `hidden` host sınıfı, hlmBtn'in inline-flex'ine karşı
+        classes() birleşiminde kazanır.
+      -->
+      <p class="text-sm font-semibold md:hidden">{{ panelTitle() }}</p>
+      <button
+        hlmSidebarTrigger
+        size="icon-lg"
+        srOnlyText="Menüyü aç/kapat"
+        class="hidden md:inline-flex"
+      ></button>
 
       <hlm-popover class="ml-auto" align="end" sideOffset="8">
         <button hlmPopoverTrigger hlmBtn variant="ghost">{{ displayName() }}</button>
@@ -80,5 +92,33 @@
     <div class="flex-1 p-4 sm:p-6 lg:p-8">
       <ng-content />
     </div>
+
+    <!--
+      Mobil navigasyon: alt sekme çubuğu. `sticky` bilinçli (fixed değil) —
+      akış içinde yer kapladığı için içeriğe padding telafisi gerekmez.
+      safe-area padding'i Capacitor/iOS home-bar'ı için; tarayıcıda 0.
+      Aktif renk aria-[current=page] üzerinden: routerLinkActive'in sınıf
+      eklemesi taban text-muted-foreground ile aynı özgüllükte çakışırdı,
+      attribute'lu bileşik seçici deterministik kazanır.
+    -->
+    <nav
+      class="sticky bottom-0 z-10 flex border-t border-border bg-background pb-[env(safe-area-inset-bottom)] md:hidden"
+      aria-label="Alt menü"
+    >
+      @for (item of navItems(); track item.path) {
+        <a
+          class="flex h-16 flex-1 flex-col items-center justify-center gap-1 px-1 text-muted-foreground aria-[current=page]:text-primary"
+          [routerLink]="item.path"
+          routerLinkActive
+          ariaCurrentWhenActive="page"
+          [routerLinkActiveOptions]="{ exact: item.exact }"
+        >
+          <ng-icon [name]="item.icon" size="22" />
+          <span class="w-full truncate text-center text-[11px] leading-none">
+            {{ item.shortLabel ?? item.label }}
+          </span>
+        </a>
+      }
+    </nav>
   </main>
 </div>

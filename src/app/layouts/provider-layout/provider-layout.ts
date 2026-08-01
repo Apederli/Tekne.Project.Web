@@ -25,6 +25,7 @@ export class ProviderLayout {
     {
       path: `${ROOT}/${ROUTE_PARTNER.availability}`,
       label: 'Müsaitlik & Fiyat',
+      shortLabel: 'Müsaitlik',
       exact: false,
       icon: 'lucideCalendarDays',
     },
