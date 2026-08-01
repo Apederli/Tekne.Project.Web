@@ -1,6 +1,6 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, computed, effect, inject, input, linkedSignal, output } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormField,
   form,
@@ -11,7 +11,7 @@ import {
   submit,
   validate,
 } from '@angular/forms/signals';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, map } from 'rxjs';
 import { HlmButton } from '@ui/button';
 import { HlmCardImports } from '@ui/card';
 import { HlmFieldImports } from '@ui/field';
@@ -20,10 +20,11 @@ import { HlmTextarea } from '@ui/textarea';
 import { HlmToggleGroupImports } from '@ui/toggle-group';
 import { AppMultiSelect } from '../../../../shared/forms/app-multi-select';
 import { AppSelect } from '../../../../shared/forms/app-select';
-import { BoatType, RentalType } from '@enums';
+import { BoatType, FormMode, RentalType } from '@enums';
 import { BoatFormModel, BoatInputModel } from '@models';
-import { BoatService, HarborService } from '@services';
+import { BoatService, HarborService, ToastService } from '@services';
 import { ROUTE_PARTNER } from '../../../../core/routes.const';
+import { emptyBoatForm, toBoatFormModel } from '../../../../core/util/boat-form-model';
 
 @Component({
   selector: 'app-boat-form',
@@ -43,8 +44,10 @@ import { ROUTE_PARTNER } from '../../../../core/routes.const';
 })
 export class BoatForm {
   router = inject(Router);
+  route = inject(ActivatedRoute);
   boatService = inject(BoatService);
   harborService = inject(HarborService);
+  toast = inject(ToastService);
 
   boatTypeOptions = [
     { value: BoatType.Sailboat, label: 'Yelkenli' },
@@ -61,21 +64,46 @@ export class BoatForm {
   /** Vazgeç linki — teknelerim listesine döner. */
   boatsUrl = ['/', ROUTE_PARTNER.main, ROUTE_PARTNER.dashboard, ROUTE_PARTNER.boats];
 
+  /** Formun hangi amaçla açıldığı; sekme olarak kullanılırken Update verilir. */
+  screenOpenType = input<FormMode>(FormMode.Create);
+
+  /** Update'te kayıt başarılı olunca kapsayıcı başlığı tazelesin diye. */
+  saved = output<void>();
+
+  isUpdate = computed(() => this.screenOpenType() === FormMode.Update);
+
+  /**
+   * Route paramı input'a bağlanmıyor: `withComponentInputBinding` yalnızca
+   * route'a bağlı bileşenlerde çalışır, bu bileşen düzenleme sayfasında
+   * sekme olarak da kullanılıyor. Enjekte edilen route kapsayıcınınkine
+   * çözülür, `:boatId` oradadır.
+   */
+  boatId = toSignal(this.route.paramMap.pipe(map((p) => p.get('boatId'))), {
+    initialValue: null,
+  });
+
+  /** Create modunda `params` undefined kalır; resource hiç istek atmaz. */
+  boatResource = rxResource({
+    params: () => {
+      const id = this.boatId();
+      return this.isUpdate() && id ? Number(id) : undefined;
+    },
+    stream: ({ params }) => this.boatService.getById(params),
+  });
+
+  boat = computed(() => (this.boatResource.hasValue() ? this.boatResource.value() : null));
+  loading = computed(() => this.isUpdate() && this.boatResource.isLoading());
+  failed = computed(() => this.isUpdate() && this.boatResource.status() === 'error');
+
   cities = toSignal(this.harborService.getAll(), { initialValue: [] });
 
-  model = signal<BoatFormModel>({
-    name: '',
-    boatType: '',
-    rentalType: '',
-    manufactureYear: null,
-    lengthInMeters: null,
-    diningCapacity: null,
-    totalCapacity: null,
-    swimmingCapacity: null,
-    cityId: '',
-    primaryHarborId: '',
-    harborIds: [],
-    description: '',
+  /**
+   * Formun çalışma kopyası. `linkedSignal`: Update'te yüklenen tekneden
+   * türetilir, Create'te boş başlar; kullanıcı yazdıkça üzerine yazılır.
+   */
+  model = linkedSignal<BoatFormModel>(() => {
+    const boat = this.boat();
+    return boat ? toBoatFormModel(boat) : emptyBoatForm();
   });
 
   /** Şehir select'inin seçenekleri — değerler form modelindeki gibi string. */
@@ -175,8 +203,15 @@ export class BoatForm {
         description: m.description.trim() || undefined,
       };
       // try/catch bilinçli yok: mesajı errorInterceptor gösterir; başarısızlıkta
-      // navigate'e ulaşılmaz, formda kalınır. Hatanın konsola/ErrorHandler'a
+      // navigate'e/emit'e ulaşılmaz, formda kalınır. Hatanın konsola/ErrorHandler'a
       // düşmesi kabul edilmiştir.
+      if (this.isUpdate()) {
+        await firstValueFrom(this.boatService.update(Number(this.boatId()), input));
+        this.toast.success('Tekne bilgileri güncellendi.');
+        this.saved.emit();
+        return;
+      }
+
       await firstValueFrom(this.boatService.create(input));
       await this.router.navigate(this.boatsUrl);
     });

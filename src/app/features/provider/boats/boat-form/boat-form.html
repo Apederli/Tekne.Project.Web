@@ -1,7 +1,15 @@
-<h1 class="text-2xl font-semibold">Yeni Tekne</h1>
-<p class="mt-2 text-sm text-muted-foreground">
-  İlan bilgilerini girin; fotoğrafları kayıttan sonra ekleyebilirsiniz.
-</p>
+@if (!isUpdate()) {
+  <h1 class="text-2xl font-semibold">Yeni Tekne</h1>
+  <p class="mt-2 text-sm text-muted-foreground">
+    İlan bilgilerini girin; fotoğrafları kayıttan sonra ekleyebilirsiniz.
+  </p>
+}
+
+@if (loading()) {
+  <p class="text-sm text-muted-foreground">Tekne yükleniyor…</p>
+} @else if (failed()) {
+  <p class="text-sm text-destructive">Tekne yüklenemedi. Sayfayı yenileyip tekrar deneyin.</p>
+} @else {
 
 <!--
   novalidate şart: Signal Forms `required`/`min`/`max` kısıtlarını native
@@ -199,8 +207,17 @@
 
   <div class="mt-6 flex items-center gap-3">
     <button hlmBtn type="submit" [disabled]="boatForm().submitting()">
-      {{ boatForm().submitting() ? 'Kaydediliyor…' : 'Tekneyi kaydet' }}
+      @if (boatForm().submitting()) {
+        Kaydediliyor…
+      } @else if (isUpdate()) {
+        Değişiklikleri kaydet
+      } @else {
+        Tekneyi kaydet
+      }
     </button>
-    <a hlmBtn variant="ghost" [routerLink]="boatsUrl">Vazgeç</a>
+    @if (!isUpdate()) {
+      <a hlmBtn variant="ghost" [routerLink]="boatsUrl">Vazgeç</a>
+    }
   </div>
 </form>
+}
