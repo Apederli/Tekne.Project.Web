@@ -66,8 +66,11 @@ yerine `:boatId/duzenle` gelir. Sıra korunur: parametreli girdiler düz
 `app.routes.server.ts` **değişmez** — `partner/**` zaten
 `RenderMode.Client`.
 
-`ROUTE_PARTNER.boatPhotos` sabiti sekme slug'ı olarak yaşamaya devam eder
-(aşağıdaki slug tablosuna bak).
+`ROUTE_PARTNER.boatPhotos` sabiti **kaldırılır** — artık bir URL segmenti
+değil. Yerine sekme slug'ları `routes.const.ts` içinde ayrı bir obje olur
+(aşağıdaki slug tablosuna bak); CLAUDE.md'nin "URL parçaları string literal
+olmasın" kuralı sekme slug'ları için de geçerli, çünkü hem `boat-edit`
+şablonunda hem `my-boats` linkinde geçiyorlar.
 
 ## Sekme ↔ URL senkronu
 
@@ -93,8 +96,13 @@ boatId = input.required<string>();
 sekme = input('genel');
 ```
 
-Slug'lar `boat-edit.ts` içinde bir dizi sabit olarak durur (başlık + slug
-çiftleri); şablon sekme şeridini bu diziden `@for` ile çizer.
+Slug'lar `routes.const.ts` içinde `BOAT_EDIT_TABS` objesinde durur.
+
+Dört tetikleyici şablona **tek tek** yazılır, `@for` ile üretilmez:
+`hlm-paginated-tabs-list` tetikleyicileri `contentChildren(BrnTabsTrigger,
+{ descendants: false })` ile topluyor, `@for`'un ürettiği gömülü görünümler
+bu aramada güvenilir şekilde eşleşmiyor. Dört sabit sekme için döngü zaten
+kazanç sağlamıyor.
 
 Sekme değişince kapsayıcı `router.navigate([], { relativeTo, queryParams,
 replaceUrl: true })` çağırır. `replaceUrl` bilinçli: sekme gezinmesi geçmişe
