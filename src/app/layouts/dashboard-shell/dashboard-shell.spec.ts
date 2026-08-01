@@ -6,6 +6,7 @@ import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { UserType } from '@enums';
 import { UserService } from '@services';
+import { HlmSidebarService } from '@ui/sidebar';
 import { AuthStore } from '../../core/auth/auth-store';
 import { DashboardShell } from './dashboard-shell';
 import { NavItem } from './nav-item';
@@ -23,8 +24,8 @@ class Blank {}
 })
 class Host {
   navItems: NavItem[] = [
-    { path: '/partner', label: 'Genel Bakış', exact: true },
-    { path: '/partner/teknelerim', label: 'Teknelerim', exact: false },
+    { path: '/partner', label: 'Genel Bakış', exact: true, icon: 'lucideLayoutDashboard' },
+    { path: '/partner/teknelerim', label: 'Teknelerim', exact: false, icon: 'lucideShip' },
   ];
 }
 
@@ -32,6 +33,10 @@ describe('DashboardShell', () => {
   let userService: { logout: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
+    // Sidebar açık/kapalı tercihi cookie'de tutuluyor ve jsdom cookie'si
+    // testler arasında yaşıyor; her testin aynı durumdan başlaması için silinir.
+    document.cookie = 'sidebar_state=; path=/; max-age=0';
+
     userService = { logout: vi.fn(() => of(true)) };
 
     await TestBed.configureTestingModule({
@@ -48,9 +53,11 @@ describe('DashboardShell', () => {
     await fixture.whenStable();
     const el = fixture.nativeElement as HTMLElement;
 
-    expect(el.querySelector('aside')?.textContent).toContain('Test Panel');
+    expect(el.querySelector('[data-sidebar="header"]')?.textContent).toContain('Test Panel');
 
-    const links = Array.from(el.querySelectorAll<HTMLAnchorElement>('nav a'));
+    const links = Array.from(
+      el.querySelectorAll<HTMLAnchorElement>('[data-sidebar="menu"] a'),
+    );
     expect(links.map((a) => a.textContent?.trim())).toEqual(['Genel Bakış', 'Teknelerim']);
     expect(links.map((a) => a.getAttribute('href'))).toEqual(['/partner', '/partner/teknelerim']);
   });
@@ -137,47 +144,29 @@ describe('DashboardShell', () => {
     expect(navigateSpy).toHaveBeenCalledWith('/partner/login');
   });
 
-  it('hamburger tetikleyicisi render edilir', async () => {
+  it('sidebar tetikleyicisi render edilir', async () => {
     const fixture = TestBed.createComponent(Host);
     await fixture.whenStable();
-    const trigger = fixture.nativeElement.querySelector('[data-slot="sheet-trigger"]');
+    const trigger = fixture.nativeElement.querySelector('[data-slot="sidebar-trigger"]');
 
+    // toContain: tetikleyicinin şablonu ng-icon + sr-only span, ikonun
+    // metin katkısı boş olsa da eşitlik yerine içerme sınanıyor.
     expect(trigger).toBeTruthy();
-    expect(trigger?.getAttribute('aria-label')).toBe('Menüyü aç');
+    expect(trigger?.textContent).toContain('Menüyü aç/kapat');
   });
 
-  it('hamburger tıklanınca drawer nav linklerini gösterir', async () => {
+  it('tetikleyiciye tıklanınca sidebar daralır', async () => {
     const fixture = TestBed.createComponent(Host);
     await fixture.whenStable();
+    const sidebarService = TestBed.inject(HlmSidebarService);
+
+    expect(sidebarService.state()).toBe('expanded');
 
     (
-      fixture.nativeElement.querySelector('[data-slot="sheet-trigger"]') as HTMLButtonElement
+      fixture.nativeElement.querySelector('[data-slot="sidebar-trigger"]') as HTMLButtonElement
     ).click();
     await fixture.whenStable();
 
-    const content = document.body.querySelector('[data-slot="sheet-content"]');
-    expect(content).toBeTruthy();
-    const links = Array.from(content!.querySelectorAll<HTMLAnchorElement>('nav a'));
-    expect(links.map((a) => a.textContent?.trim())).toEqual(['Genel Bakış', 'Teknelerim']);
-  });
-
-  it('drawer içindeki nav linkine tıklanınca drawer kapanır', async () => {
-    const fixture = TestBed.createComponent(Host);
-    await fixture.whenStable();
-    const shell = fixture.debugElement.query(By.directive(DashboardShell)).componentInstance;
-
-    (
-      fixture.nativeElement.querySelector('[data-slot="sheet-trigger"]') as HTMLButtonElement
-    ).click();
-    await fixture.whenStable();
-    expect(shell.mobileNavState()).toBe('open');
-
-    const link = document.body.querySelector(
-      '[data-slot="sheet-content"] nav a',
-    ) as HTMLAnchorElement;
-    link.click();
-    await fixture.whenStable();
-
-    expect(shell.mobileNavState()).toBe('closed');
+    expect(sidebarService.state()).toBe('collapsed');
   });
 });

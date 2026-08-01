@@ -1,49 +1,64 @@
-<div class="flex min-h-screen bg-background text-foreground">
-  <ng-template #navContent>
-    <nav class="flex flex-col gap-1 px-3">
-      @for (item of navItems(); track item.path) {
-        <a
-          hlmBtn
-          variant="ghost"
-          class="justify-start"
-          [routerLink]="item.path"
-          routerLinkActive="bg-accent text-accent-foreground"
-          ariaCurrentWhenActive="page"
-          [routerLinkActiveOptions]="{ exact: item.exact }"
-          (click)="closeMobileNav()"
-          >{{ item.label }}</a
-        >
-      }
-    </nav>
-  </ng-template>
-
-  <aside class="hidden w-60 shrink-0 border-r border-border bg-muted/40 lg:block">
-    <div class="px-5 py-5">
-      <img src="/img/logo.png" alt="Logo" class="h-10 w-auto" width="200" height="40" />
+<div hlmSidebarWrapper class="text-foreground">
+  <hlm-sidebar collapsible="icon">
+    <!--
+      Daraltılmış modda header'da hiçbir şey kalmaz: logo da başlık da
+      group-data ile gizlenir. `group` sınıfı hlm-sidebar host'unda,
+      data-collapsible da orada — mobil (sheet) dalında host sınıfsız
+      olduğu için bu seçiciler eşleşmez ve ikisi de görünür kalır.
+    -->
+    <div hlmSidebarHeader>
+      <img
+        src="/img/logo.png"
+        alt="Logo"
+        class="h-10 w-auto group-data-[collapsible=icon]:hidden"
+        width="200"
+        height="40"
+      />
+      <p
+        class="text-xs font-semibold tracking-wide text-sidebar-foreground/70 uppercase group-data-[collapsible=icon]:hidden"
+      >
+        {{ panelTitle() }}
+      </p>
     </div>
-    <ng-container [ngTemplateOutlet]="navContent" />
-  </aside>
 
-  <div class="flex min-w-0 flex-1 flex-col">
+    <div hlmSidebarContent>
+      <div hlmSidebarGroup>
+        <ul hlmSidebarMenu>
+          @for (item of navItems(); track item.path) {
+            <li hlmSidebarMenuItem>
+              <!--
+                closeMobileSidebarOnClick bilinçli: girdinin varsayılanı
+                false, bugünkü davranışta drawer linke basınca kapanıyordu.
+                tooltip yalnızca daraltılmış masaüstü modunda görünür,
+                bileşen kendi içinde kapatıyor.
+              -->
+              <a
+                hlmSidebarMenuButton
+                closeMobileSidebarOnClick
+                [tooltip]="item.label"
+                [routerLink]="item.path"
+                routerLinkActive
+                #rla="routerLinkActive"
+                [routerLinkActiveOptions]="{ exact: item.exact }"
+                [isActive]="rla.isActive"
+                ariaCurrentWhenActive="page"
+              >
+                <ng-icon [name]="item.icon" />
+                <span>{{ item.label }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    <button hlmSidebarRail aria-label="Kenar çubuğunu aç/kapat"></button>
+  </hlm-sidebar>
+
+  <!-- hlmSidebarInset seçicisi main[...] — başka etikete takılamaz. -->
+  <main hlmSidebarInset>
     <header class="flex h-14 items-center gap-2 border-b border-border px-4 lg:px-6">
-      <hlm-sheet side="left" [state]="mobileNavState()" (stateChanged)="mobileNavState.set($event)">
-        <button
-          hlmSheetTrigger
-          hlmBtn
-          variant="ghost"
-          size="icon"
-          class="lg:hidden"
-          aria-label="Menüyü aç"
-        >
-          <ng-icon name="lucideMenu" />
-        </button>
-        <hlm-sheet-content *hlmSheetPortal>
-          <div hlmSheetTitle class="px-2 py-4 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-            {{ panelTitle() }}
-          </div>
-          <ng-container [ngTemplateOutlet]="navContent" />
-        </hlm-sheet-content>
-      </hlm-sheet>
+      <button hlmSidebarTrigger srOnlyText="Menüyü aç/kapat"></button>
 
       <hlm-popover class="ml-auto" align="end" sideOffset="8">
         <button hlmPopoverTrigger hlmBtn variant="ghost">{{ displayName() }}</button>
@@ -62,8 +77,8 @@
       </hlm-popover>
     </header>
 
-    <main class="flex-1 p-4 sm:p-6 lg:p-8">
+    <div class="flex-1 p-4 sm:p-6 lg:p-8">
       <ng-content />
-    </main>
-  </div>
+    </div>
+  </main>
 </div>

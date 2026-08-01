@@ -1,36 +1,52 @@
-import { NgTemplateOutlet } from '@angular/common';
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideMenu } from '@ng-icons/lucide';
+import {
+  lucideCalendarDays,
+  lucideClipboardList,
+  lucideLayoutDashboard,
+  lucideShip,
+  lucideUserCog,
+  lucideUsers,
+} from '@ng-icons/lucide';
 import { HlmButton } from '@ui/button';
 import { HlmPopoverImports } from '@ui/popover';
-import { HlmSheetImports } from '@ui/sheet';
+import { HlmSidebarImports } from '@ui/sidebar';
 import { UserService } from '@services';
 import { AuthStore } from '../../core/auth/auth-store';
 import { NavItem } from './nav-item';
 
 /**
- * Panel alanlarının (provider, ileride admin) ortak iskeleti:
- * sidebar + topbar + kullanıcı menüsü. Routed içerik ng-content ile
- * projekte edilir, router-outlet kullanan layout'ta kalır.
+ * Panel alanlarının (provider, admin) ortak iskeleti: spartan sidebar +
+ * topbar + kullanıcı menüsü. Routed içerik ng-content ile projekte edilir,
+ * router-outlet kullanan layout'ta kalır.
  *
- * lg altında sidebar gizlenir; nav, hamburger ile soldan açılan sheet
- * drawer'ında gösterilir. Nav markup'ı tek ng-template'te yaşar, iki
- * yerde (statik sidebar + drawer) outlet ile basılır.
+ * Mobil drawer, daraltma ve tercihin cookie'de saklanması `hlm-sidebar`'ın
+ * kendi işi — bu bileşende responsive dallanma yok.
+ *
+ * İkonlar burada kayıtlı, `NavItem` yalnızca adı taşıyor: iki alanın da
+ * ikon kümesi küçük ve bu bileşen zaten ikisinin ortak iskeleti.
  */
 @Component({
   selector: 'app-dashboard-shell',
   imports: [
-    NgTemplateOutlet,
     RouterLink,
     RouterLinkActive,
     NgIcon,
     HlmButton,
     HlmPopoverImports,
-    HlmSheetImports,
+    HlmSidebarImports,
   ],
-  providers: [provideIcons({ lucideMenu })],
+  providers: [
+    provideIcons({
+      lucideCalendarDays,
+      lucideClipboardList,
+      lucideLayoutDashboard,
+      lucideShip,
+      lucideUserCog,
+      lucideUsers,
+    }),
+  ],
   templateUrl: './dashboard-shell.html',
 })
 export class DashboardShell {
@@ -43,23 +59,11 @@ export class DashboardShell {
   userService = inject(UserService);
   router = inject(Router);
 
-  /** lg altındaki drawer'ın durumu; sheet'in state input'una bağlanır. */
-  mobileNavState = signal<'open' | 'closed'>('closed');
-
   /** Sayfa yenilenince store boşalır; o durumda nötr "Hesap" gösterilir. */
   displayName = computed(() => {
     const user = this.authStore.user();
     return user ? `${user.name} ${user.surname}` : 'Hesap';
   });
-
-  /**
-   * Nav linki tıklanınca drawer kapatılır. Statik sidebar'daki linkler de
-   * aynı template'i kullandığı için burayı çağırır — drawer zaten kapalıyken
-   * no-op'tur.
-   */
-  closeMobileNav(): void {
-    this.mobileNavState.set('closed');
-  }
 
   /**
    * Çıkış: istek başarısız olsa bile lokal oturum düşürülür — cookie
