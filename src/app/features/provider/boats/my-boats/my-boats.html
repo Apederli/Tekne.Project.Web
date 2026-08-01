@@ -18,54 +18,49 @@
     <a hlmBtn class="mt-4" [routerLink]="newBoatUrl">Yeni tekne ekle</a>
   </div>
 } @else {
-  <div hlmTableContainer class="mt-6">
-    <table hlmTable>
-      <caption hlmCaption class="sr-only">
-        Teknelerim listesi
-      </caption>
-      <thead hlmTHead>
-        <tr hlmTr>
-          <th hlmTh>Fotoğraf</th>
-          <th hlmTh>Tekne</th>
-          <th hlmTh>Tip</th>
-          <th hlmTh>Kiralama</th>
-          <th hlmTh>Konum</th>
-          <th hlmTh class="text-right">Kapasite</th>
-          <th hlmTh>Durum</th>
-          <th hlmTh><span class="sr-only">İşlemler</span></th>
-        </tr>
-      </thead>
-      <tbody hlmTBody>
-        @for (boat of boats(); track boat.id) {
-          <tr hlmTr>
-            <td hlmTd>
-              <!-- 300×240 — teknevia kartındaki fotoğraf ebadıyla aynı. -->
-              <app-photo-gallery
-                [photos]="boat.photos"
-                [alt]="boat.name"
-                class="aspect-[5/4] w-[300px]"
-              />
-            </td>
-            <td hlmTd class="font-medium">{{ boat.name }}</td>
-            <td hlmTd>{{ boatTypeLabel(boat.boatType) }}</td>
-            <td hlmTd>{{ rentalTypeLabel(boat.rentalType) }}</td>
-            <td hlmTd>{{ location(boat) }}</td>
-            <td hlmTd class="text-right">{{ boat.totalCapacity }} kişi</td>
-            <td hlmTd>
-              @if (boat.isActive) {
-                <span class="text-sm">Yayında</span>
-              } @else {
-                <span class="text-sm text-muted-foreground">Yayında değil</span>
+  <!-- Taban düzen tek sütun (mobil); sm/lg yalnızca sütun sayısını artırır. -->
+  <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    @for (boat of boats(); track boat.id) {
+      <article class="overflow-hidden rounded-xl border border-border bg-background">
+        <!-- Kartın tamamı bugünkü tek yönetim işine, fotoğraf yönetimine gider.
+             Düzenleme geldiğinde yalnızca bu linkin hedefi değişecek (spec: gelecek uyumu). -->
+        <a
+          [routerLink]="photosUrl(boat.id)"
+          class="block"
+          [attr.aria-label]="boat.name + ' — fotoğrafları yönet'"
+        >
+          <span class="block" (click)="swallowSwiperClick($event)">
+            <app-photo-gallery [photos]="boat.photos" [alt]="boat.name" class="aspect-[5/4] w-full" />
+          </span>
+
+          <div class="p-3">
+            <div class="flex items-center justify-between gap-2">
+              <span class="truncate font-medium">{{ boat.name }}</span>
+              @if (!boat.isActive) {
+                <span
+                  class="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800"
+                >
+                  Yayında değil
+                </span>
               }
-            </td>
-            <td hlmTd>
-              <a hlmBtn variant="outline" size="sm" [routerLink]="photosUrl(boat.id)">
-                Fotoğraflar
-              </a>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+            </div>
+            <span class="mt-1 block text-sm text-muted-foreground">{{ location(boat) }}</span>
+            <span class="mt-1 block text-sm text-muted-foreground">
+              {{ boatTypeLabel(boat.boatType) }} · {{ rentalTypeLabel(boat.rentalType) }} ·
+              {{ boat.totalCapacity }} kişi
+            </span>
+          </div>
+        </a>
+
+        <!-- Aksiyon şeridi linkin KARDEŞİ: link içinde link geçersiz HTML olurdu.
+             Düzenleme geldiğinde "Düzenle" buraya birincil buton olarak eklenecek. -->
+        <div class="flex items-center gap-2 border-t border-border p-3">
+          <a hlmBtn variant="outline" [routerLink]="photosUrl(boat.id)">Fotoğraflar</a>
+          @if (boat.isActive) {
+            <a hlmBtn variant="ghost" [routerLink]="publicUrl(boat)">İlanı gör</a>
+          }
+        </div>
+      </article>
+    }
   </div>
 }

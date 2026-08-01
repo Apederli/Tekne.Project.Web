@@ -56,9 +56,9 @@ describe('MyBoats', () => {
     await flush([boat(1, 'Mavi Rüzgar'), boat(2, 'Poyraz')]);
 
     expect(component.boats().map((b) => b.name)).toEqual(['Mavi Rüzgar', 'Poyraz']);
-    const rows = fixture.nativeElement.querySelectorAll('tbody tr');
-    expect(rows.length).toBe(2);
-    expect(rows[0].textContent).toContain('Mavi Rüzgar');
+    const cards = fixture.nativeElement.querySelectorAll('article');
+    expect(cards.length).toBe(2);
+    expect(cards[0].textContent).toContain('Mavi Rüzgar');
   });
 
   it('konumu bağlı olduğu liman ve şehir olarak gösterir', async () => {
@@ -71,6 +71,6 @@ describe('MyBoats', () => {
     await flush([]);
 
     expect(fixture.nativeElement.textContent).toContain('Henüz ilanınız yok');
-    expect(fixture.nativeElement.querySelector('tbody')).toBeNull();
+    expect(fixture.nativeElement.querySelector('article')).toBeNull();
   });
 });
