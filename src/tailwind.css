@@ -19,57 +19,44 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
+  /* Marka: pastel dolgu + koyu yazı. Pasteller beyaz yazıyı taşımıyor
+     (yeşil 2.1:1) — foreground bilinçli koyu, beyaz değil. */
+  --primary: oklch(0.754 0.096 170); /* #6BC3A6 */
+  --primary-foreground: oklch(0.22 0.05 170);
+  --secondary: oklch(0.699 0.088 228); /* #5FA9C9 */
+  --secondary-foreground: oklch(0.21 0.05 228);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --accent: oklch(0.965 0.025 170);
+  --accent-foreground: oklch(0.25 0.06 170);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  /* Pastel ring beyaz zeminde 2.1:1'de kalırdı; 3:1 üstü koyultulmuş ton. */
+  --ring: oklch(0.65 0.1 170);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-primary: oklch(0.754 0.096 170);
+  --sidebar-primary-foreground: oklch(0.22 0.05 170);
+  --sidebar-accent: oklch(0.965 0.025 170);
+  --sidebar-accent-foreground: oklch(0.25 0.06 170);
   --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-ring: oklch(0.65 0.1 170);
+
+  /* Zemin üstü yazı/ikon için koyu marka adımları (beyazda 4.5:1 üstü).
+     Dolgu her zaman pastel; yazı bunları kullanır. */
+  --primary-deep: oklch(0.55 0.09 170);
+  --secondary-deep: oklch(0.53 0.09 228);
 }
 
-:root.dark {
-  color-scheme: dark;
+/* Dark tema kullanılmıyor (ürün kararı) — eski :root.dark iskeleti bilinçli
+   kaldırıldı. Gerekirse spartan'ın shadcn şablonundan yeniden türetilir. */
 
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.985 0 0);
-  --sidebar-primary-foreground: oklch(0.205 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+/* text-primary-deep / text-secondary-deep utility'lerini üretir
+   (hlm preset'in kalıbı: token :root'ta, eşleme @theme inline'da). */
+@theme inline {
+  --color-primary-deep: var(--primary-deep);
+  --color-secondary-deep: var(--secondary-deep);
 }
 
 @layer base {
