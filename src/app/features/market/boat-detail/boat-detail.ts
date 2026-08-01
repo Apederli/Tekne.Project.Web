@@ -5,6 +5,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { sortBoatPhotos } from '@models';
 import { BoatService, HarborService, PhotoUrlService } from '@services';
 import { PhotoGallery } from '../../../shared/photo-gallery/photo-gallery';
+import { PhotoLightboxService } from '../../../shared/photo-lightbox/photo-lightbox.service';
 import { BOAT_TYPE_LABELS } from '../../../core/util/boat-labels';
 import { formatBoatLocation } from '../../../core/util/boat-location';
 import { parseBoatIdFromSlug } from '../../../core/util/boat-slug';
@@ -23,6 +24,7 @@ export class BoatDetail {
   boatService = inject(BoatService);
   harborService = inject(HarborService);
   photoUrl = inject(PhotoUrlService);
+  lightbox = inject(PhotoLightboxService);
   title = inject(Title);
 
   /** `withComponentInputBinding` route parametresini doğrudan bağlar. */
@@ -60,13 +62,19 @@ export class BoatDetail {
    * Kapak, döşeme sayısına göre büyür: döşeme yoksa ızgaranın tamamını kaplar,
    * varsa hep sol yarıyı. "Boş hücre gösterilmez" kuralı — Tailwind sınıfları
    * derleme zamanında taranıyor, parça birleştirme göremiyor, bu yüzden her
-   * durum tam literal string olarak yazılmalı.
+   * durum tam literal string olarak yazılmalı. Görsel sınıflar şablondaki
+   * `img`'da; burası yalnızca grid konumu (grid çocuğu artık buton).
    */
   coverClass = computed(() =>
-    this.tiles().length === 0
-      ? 'col-span-4 row-span-2 h-full w-full object-cover'
-      : 'col-span-2 row-span-2 h-full w-full object-cover',
+    this.tiles().length === 0 ? 'col-span-4 row-span-2' : 'col-span-2 row-span-2',
   );
+
+  /** index: `photos()` (sıralı) içindeki konum — kapak 0, karolar i+1, çip 5. */
+  openLightbox(index: number): void {
+    const b = this.boat();
+    if (!b) return;
+    this.lightbox.open(this.photos(), index, b.name);
+  }
 
   /**
    * Sağ yarıdaki döşemelerin yerleşimi döşeme sayısına göre değişir ki boş

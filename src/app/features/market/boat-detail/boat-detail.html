@@ -10,19 +10,32 @@
   <p class="text-sm text-muted-foreground">Tekne yükleniyor…</p>
 } @else if (boat(); as b) {
   <!-- Mobil: kaydırmalı galeri. Masaüstü: mozaik. Geçiş saf CSS. -->
-  <app-photo-gallery [photos]="b.photos" [alt]="b.name" class="aspect-[4/3] w-full lg:hidden" />
+  <app-photo-gallery
+    [photos]="b.photos"
+    [alt]="b.name"
+    class="aspect-[4/3] w-full lg:hidden"
+    [interactive]="true"
+    (photoOpened)="openLightbox($event)"
+  />
 
   <div
     data-testid="mosaic"
     class="hidden aspect-[2/1] w-full gap-2 overflow-hidden rounded-xl lg:grid lg:grid-cols-4 lg:grid-rows-2"
   >
     @if (cover(); as coverPhoto) {
-      <img
-        [src]="photoUrl.url(coverPhoto.objectKey)"
-        [alt]="b.name + ' — kapak fotoğrafı'"
-        loading="eager"
-        [class]="coverClass()"
-      />
+      <button
+        type="button"
+        [class]="'relative cursor-pointer ' + coverClass()"
+        aria-label="1. fotoğrafı tam ekran aç"
+        (click)="openLightbox(0)"
+      >
+        <img
+          [src]="photoUrl.url(coverPhoto.objectKey)"
+          [alt]="b.name + ' — kapak fotoğrafı'"
+          loading="eager"
+          class="h-full w-full object-cover"
+        />
+      </button>
     } @else {
       <div
         class="col-span-4 row-span-2 flex items-center justify-center rounded-xl border border-dashed border-input"
@@ -33,20 +46,31 @@
 
     @for (tile of tiles(); track tile.id; let i = $index) {
       <div [class]="tileClass(i)">
-        <img
-          [src]="photoUrl.url(tile.objectKey)"
-          [alt]="b.name + ' — fotoğraf ' + (i + 2)"
-          loading="lazy"
-          decoding="async"
-          class="h-full w-full object-cover"
-        />
-        <!-- Tam ekran görüntüleyici sonraki tur — çip şimdilik bilgi amaçlı. -->
+        <button
+          type="button"
+          class="block h-full w-full cursor-pointer"
+          [attr.aria-label]="i + 2 + '. fotoğrafı tam ekran aç'"
+          (click)="openLightbox(i + 1)"
+        >
+          <img
+            [src]="photoUrl.url(tile.objectKey)"
+            [alt]="b.name + ' — fotoğraf ' + (i + 2)"
+            loading="lazy"
+            decoding="async"
+            class="h-full w-full object-cover"
+          />
+        </button>
+        <!-- Çip karo butonunun KARDEŞİ (iç içe buton olmaz) ve "gerisini göster"
+             işi görür: ilk gizli fotoğraftan (index 5) açar. min-h-10: dokunma
+             hedefi kuralı. -->
         @if (extraCount() > 0 && i === tiles().length - 1) {
-          <span
-            class="absolute bottom-2 end-2 rounded-md bg-white/90 px-2 py-1 text-xs font-medium"
+          <button
+            type="button"
+            class="absolute bottom-2 end-2 flex min-h-10 cursor-pointer items-center rounded-md bg-white/90 px-3 text-xs font-medium hover:bg-white"
+            (click)="openLightbox(5)"
           >
             +{{ extraCount() }} fotoğraf
-          </span>
+          </button>
         }
       </div>
     }

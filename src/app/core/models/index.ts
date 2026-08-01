@@ -12,5 +12,6 @@ export * from './boat';
 export * from './boat-photo';
 export * from './confirm';
 export * from './harbor';
+export * from './photo-lightbox';
 export * from './select-option';
 export * from './user';

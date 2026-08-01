@@ -22,18 +22,38 @@
       @for (photo of visible(); track photo.id; let i = $index) {
         <!-- `block h-full`: upgrade/SSR öncesi de ilk fotoğraf düzgün boyansın. -->
         <swiper-slide class="block h-full w-full">
-          <img
-            [src]="photoUrl.url(photo.objectKey)"
-            [alt]="photoAlt(i)"
-            [attr.loading]="i === 0 ? 'eager' : 'lazy'"
-            decoding="async"
-            draggable="false"
-            class="h-full w-full cursor-grab select-none object-cover active:cursor-grabbing"
-          />
+          @if (interactive()) {
+            <!-- Slayt butonu: swiper sürüklemeyi yutar, tıklama yalnızca kaydırma
+                 olmadığında düşer (preventClicks varsayılanı). Yalnızca görünür
+                 slayt tıklanabildiği için index doğal olarak doğru gelir. -->
+            <button
+              type="button"
+              class="block h-full w-full cursor-pointer"
+              [attr.aria-label]="'Tam ekran aç — ' + photoAlt(i)"
+              (click)="photoOpened.emit(i)"
+            >
+              <img
+                [src]="photoUrl.url(photo.objectKey)"
+                [alt]="photoAlt(i)"
+                [attr.loading]="i === 0 ? 'eager' : 'lazy'"
+                decoding="async"
+                draggable="false"
+                class="h-full w-full select-none object-cover"
+              />
+            </button>
+          } @else {
+            <img
+              [src]="photoUrl.url(photo.objectKey)"
+              [alt]="photoAlt(i)"
+              [attr.loading]="i === 0 ? 'eager' : 'lazy'"
+              decoding="async"
+              draggable="false"
+              class="h-full w-full cursor-grab select-none object-cover active:cursor-grabbing"
+            />
+          }
         </swiper-slide>
       }
     </swiper-container>
-
   }
 
   <!-- Çağrı yerinin etiketi: "Hemen Rezervasyon", "Yayında değil" vb.

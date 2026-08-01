@@ -5,6 +5,7 @@ import {
   CUSTOM_ELEMENTS_SCHEMA,
   inject,
   input,
+  output,
 } from '@angular/core';
 import type { ClassValue } from 'clsx';
 import { register } from 'swiper/element/bundle';
@@ -33,6 +34,12 @@ export class PhotoGallery {
 
   /** Tekne adı — alt metni bundan üretiliyor ("Ayla fotoğraf 2 / 8"). */
   alt = input('');
+
+  /** true iken slaytlar butona dönüşür; tıklanan index `photoOpened`'dan çıkar. */
+  interactive = input(false);
+
+  /** Tıklanan slaytın `visible()` içindeki index'i — lightbox açılış slaytı. */
+  photoOpened = output<number>();
 
   /** Düzeni çağıran belirler; oran/köşe burada override edilir. 5:4 = teknevia kartı. */
   galleryClass = input<ClassValue>('aspect-[5/4]', { alias: 'class' });

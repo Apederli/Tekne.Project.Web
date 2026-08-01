@@ -1,0 +1,43 @@
+<!-- Üst şerit: sayaç ortada, 44px kapat düğmesi sağda (dokunmatikte hover yok,
+     daima görünür). Swiper'ın üstünde durması için z-10. -->
+<div
+  class="pointer-events-none absolute inset-x-0 top-0 z-10 flex h-14 items-center justify-center"
+>
+  @if (scrollable) {
+    <p class="text-sm font-medium text-white" aria-live="polite">
+      {{ current() + 1 }} / {{ photos.length }}
+    </p>
+  }
+  <button
+    type="button"
+    class="pointer-events-auto absolute end-2 top-2 flex size-11 items-center justify-center rounded-full text-white hover:bg-white/10"
+    aria-label="Görüntüleyiciyi kapat"
+    (click)="ref.close()"
+  >
+    <ng-icon name="lucideX" size="24" />
+  </button>
+</div>
+
+<!-- Ok düğmeleri masaüstü işi: tabanda gizli, lg: ile görünür (mobilde kaydırma).
+     Shadow DOM'a ::part ile erişiliyor; renk/boy --swiper-navigation-* ile geçiyor. -->
+<swiper-container
+  class="block h-full w-full [--swiper-navigation-color:#fff] [--swiper-navigation-size:32px] [&::part(button-next)]:hidden [&::part(button-prev)]:hidden lg:[&::part(button-next)]:flex lg:[&::part(button-prev)]:flex"
+  [attr.initial-slide]="data.startIndex"
+  [attr.rewind]="scrollable"
+  [attr.navigation]="scrollable"
+  [attr.keyboard]="scrollable"
+  (swiperslidechange)="onSlideChange($event)"
+>
+  @for (photo of photos; track photo.id; let i = $index) {
+    <swiper-slide class="block h-full w-full">
+      <img
+        [src]="photoUrl.url(photo.objectKey)"
+        [alt]="photoAlt(i)"
+        [attr.loading]="i === data.startIndex ? 'eager' : 'lazy'"
+        decoding="async"
+        draggable="false"
+        class="h-full w-full select-none object-contain"
+      />
+    </swiper-slide>
+  }
+</swiper-container>
