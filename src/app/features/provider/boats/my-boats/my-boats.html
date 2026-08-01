@@ -30,7 +30,11 @@
           [attr.aria-label]="boat.name + ' — fotoğrafları yönet'"
         >
           <span class="block" (click)="swallowSwiperClick($event)">
-            <app-photo-gallery [photos]="boat.photos" [alt]="boat.name" class="aspect-[5/4] w-full" />
+            <app-photo-gallery
+              [photos]="boat.photos"
+              [alt]="boat.name"
+              class="aspect-[5/4] w-full"
+            />
           </span>
 
           <div class="p-3">
@@ -55,9 +59,11 @@
         <!-- Aksiyon şeridi linkin KARDEŞİ: link içinde link geçersiz HTML olurdu.
              Düzenleme geldiğinde "Düzenle" buraya birincil buton olarak eklenecek. -->
         <div class="flex items-center gap-2 border-t border-border p-3">
-          <a hlmBtn variant="outline" [routerLink]="photosUrl(boat.id)">Fotoğraflar</a>
+          <a hlmBtn variant="outline" class="h-10 px-4" [routerLink]="photosUrl(boat.id)"
+            >Fotoğraflar</a
+          >
           @if (boat.isActive) {
-            <a hlmBtn variant="ghost" [routerLink]="publicUrl(boat)">İlanı gör</a>
+            <a hlmBtn variant="ghost" class="h-10 px-4" [routerLink]="publicUrl(boat)">İlanı gör</a>
           }
         </div>
       </article>

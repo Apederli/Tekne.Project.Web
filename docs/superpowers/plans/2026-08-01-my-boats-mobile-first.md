@@ -184,9 +184,9 @@ Dosyanın tam yeni içeriği:
         <!-- Aksiyon şeridi linkin KARDEŞİ: link içinde link geçersiz HTML olurdu.
              Düzenleme geldiğinde "Düzenle" buraya birincil buton olarak eklenecek. -->
         <div class="flex items-center gap-2 border-t border-border p-3">
-          <a hlmBtn variant="outline" [routerLink]="photosUrl(boat.id)">Fotoğraflar</a>
+          <a hlmBtn variant="outline" class="h-10 px-4" [routerLink]="photosUrl(boat.id)">Fotoğraflar</a>
           @if (boat.isActive) {
-            <a hlmBtn variant="ghost" [routerLink]="publicUrl(boat)">İlanı gör</a>
+            <a hlmBtn variant="ghost" class="h-10 px-4" [routerLink]="publicUrl(boat)">İlanı gör</a>
           }
         </div>
       </article>
@@ -197,8 +197,7 @@ Dosyanın tam yeni içeriği:
 
 Dikkat noktaları:
 
-- Şeritteki butonlarda `size="sm"` **yok** — varsayılan boy dokunmatik hedef
-  için bilinçli tercih (CLAUDE.md: parmakla basılabilir boyut).
+- Şeritteki butonlar `class="h-10 px-4"` taşır — hlmBtn'nin varsayılanı `h-8` (32px) dokunmatik hedef için yetersiz; 40px'e bilinçli yükseltme (CLAUDE.md: parmakla basılabilir boyut).
 - "İlanı gör" yalnızca `boat.isActive` iken render edilir (spec kararı).
 - Rozet yalnızca pasifken render edilir; yayındaki tekne rozet taşımaz.
 - Başlık satırı, yükleniyor/hata/boş durum blokları öncekiyle birebir aynı.
