@@ -40,7 +40,8 @@
       "@ui/separator": ["./src/app/shared/ui/separator/src/index.ts"],
       "@ui/toggle-group": ["./src/app/shared/ui/toggle-group/src/index.ts"],
       "@ui/toggle": ["./src/app/shared/ui/toggle/src/index.ts"],
-      "@ui/checkbox": ["./src/app/shared/ui/checkbox/src/index.ts"]
+      "@ui/checkbox": ["./src/app/shared/ui/checkbox/src/index.ts"],
+      "@ui/tabs": ["./src/app/shared/ui/tabs/src/index.ts"]
     }
   },
   "angularCompilerOptions": {
