@@ -8,6 +8,7 @@
 import { BoatType } from '@enums/boat-type';
 import { RentalType } from '@enums/rental-type';
 import { BoatPhotoOutputModel } from '@models/boat-photo';
+import { UsageTermOutputModel } from '@models/usage-term';
 
 /**
  * `POST /api/Boats` istek gövdesi.
@@ -71,4 +72,15 @@ export interface BoatOutputModel {
   description?: string;
   isActive: boolean;
   photos: BoatPhotoOutputModel[];
+  /**
+   * İşaretli kullanım şartları — yalnızca `GET /api/Boats/{id}` doldurur, liste
+   * uçlarında alan hiç gelmez. Bu yüzden `undefined` "şartı yok" demek değil,
+   * "bu yanıt şartları taşımıyor" demektir.
+   *
+   * Katalogda (`GET /api/UsageTerms`) olmayan maddeler de burada dönebilir:
+   * admin sonradan pasifleştirmiş olabilir ve backend bunları bilinçli
+   * filtrelemiyor. Ekranda yok sayılırlarsa bir sonraki kayıtta sessizce
+   * silinirler.
+   */
+  usageTerms?: UsageTermOutputModel[];
 }

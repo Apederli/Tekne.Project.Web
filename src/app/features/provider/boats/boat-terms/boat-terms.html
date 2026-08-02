@@ -1,4 +1,75 @@
-<div class="rounded-lg border border-dashed border-input p-10 text-center">
-  <p class="font-medium">Kullanım şartları</p>
-  <p class="mt-1 text-sm text-muted-foreground">Bu bölüm yakında eklenecek.</p>
-</div>
+@if (loading()) {
+  <p class="text-sm text-muted-foreground">Kullanım şartları yükleniyor…</p>
+} @else if (failed() || !boat()) {
+  <p class="text-sm text-destructive">
+    Kullanım şartları yüklenemedi. Sayfayı yenileyip tekrar deneyin.
+  </p>
+} @else if (empty()) {
+  <p class="text-sm text-muted-foreground">Bu kiralama tipi için tanımlı kullanım şartı yok.</p>
+} @else {
+  <!-- Kayıt göstergesi yok: üstteki app-progress-bar her istekte zaten akıyor. -->
+  <p class="text-sm text-muted-foreground">Seçimler otomatik kaydedilir.</p>
+
+  <!--
+    Mobilde tek sütun. Geniş ekranda gruplar yan yana diziliyor: her grup birkaç
+    satırlık kısa bir liste, tek sütunda bırakılınca hem tüm genişliğe yayılıp
+    seçenekle kenar arasını boş bırakıyor hem de sayfa gereksiz uzuyor.
+    items-start, kartların satırdaki en uzuna göre uzamasını engelliyor.
+  -->
+  <div class="mt-4 grid items-start gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    @for (entry of termGroups(); track entry.group.id) {
+      <div class="rounded-lg border border-input p-4">
+        <app-single-check-group
+          [label]="entry.group.name"
+          [options]="entry.options"
+          [value]="selectionByGroup().get(entry.group.id) ?? null"
+          (valueChange)="onGroupChange(entry, $event)"
+        />
+      </div>
+    }
+
+    @if (ungroupedTerms().length) {
+      <div class="rounded-lg border border-input p-4">
+        <p class="text-sm font-medium">Diğer şartlar</p>
+        <div class="mt-1 flex flex-col gap-1">
+          @for (term of ungroupedTerms(); track term.id) {
+            <label hlmLabel class="min-h-10 cursor-pointer gap-3 rounded-md px-2 hover:bg-accent">
+              <hlm-checkbox
+                [checked]="isSelected(term.id)"
+                (checkedChange)="onTermToggle(term.id, $event)"
+              />
+              <span class="font-normal">{{ term.name }}</span>
+            </label>
+          }
+        </div>
+      </div>
+    }
+
+    <!--
+      Katalogdan düşmüş ama teknede işaretli kalmış şartlar. Gösterilmezlerse
+      bir sonraki kayıtta sessizce silinirler. Kaldırılabilir ama geri
+      eklenemez: backend pasif bir şartın YENİ işaretlenmesini reddediyor.
+    -->
+    @if (retiredTerms().length) {
+      <div class="rounded-lg border border-dashed border-input p-4 sm:col-span-full">
+        <p class="text-sm font-medium">Artık geçerli olmayan şartlar</p>
+        <p class="text-xs text-muted-foreground">
+          Bu şartlar katalogdan kaldırıldı. İşareti kaldırırsan geri ekleyemezsin.
+        </p>
+
+        <div class="mt-1 grid gap-1 sm:grid-cols-2 xl:grid-cols-3">
+          @for (term of retiredTerms(); track term.id) {
+            <label hlmLabel class="min-h-10 cursor-pointer gap-3 rounded-md px-2">
+              <hlm-checkbox
+                [checked]="isSelected(term.id)"
+                [disabled]="!isSelected(term.id)"
+                (checkedChange)="onTermToggle(term.id, $event)"
+              />
+              <span class="font-normal">{{ term.name }}</span>
+            </label>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}

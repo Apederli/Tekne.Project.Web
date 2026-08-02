@@ -9,10 +9,13 @@
  * döngüsel import üretmesi kolaydır. Yeni servis ekleyince buraya satırını yaz.
  */
 
+export * from './amenity.service';
 export * from './boat-photo.service';
+export * from './boat-usage-term.service';
 export * from './boat.service';
 export * from './harbor.service';
 export * from './pending-requests.service';
 export * from './photo-url.service';
 export * from './toast.service';
+export * from './usage-term.service';
 export * from './user.service';

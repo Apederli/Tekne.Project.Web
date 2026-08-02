@@ -8,10 +8,13 @@
  * üretir. Yeni model dosyası ekleyince buraya satırını yaz.
  */
 
+export * from './amenity';
 export * from './boat';
 export * from './boat-photo';
+export * from './boat-usage-term';
 export * from './confirm';
 export * from './harbor';
 export * from './photo-lightbox';
 export * from './select-option';
+export * from './usage-term';
 export * from './user';
