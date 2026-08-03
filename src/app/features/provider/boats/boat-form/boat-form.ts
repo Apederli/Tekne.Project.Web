@@ -15,9 +15,9 @@ import { firstValueFrom, map } from 'rxjs';
 import { HlmButton } from '@ui/button';
 import { HlmCardImports } from '@ui/card';
 import { HlmFieldImports } from '@ui/field';
-import { HlmInput } from '@ui/input';
 import { HlmTextarea } from '@ui/textarea';
 import { HlmToggleGroupImports } from '@ui/toggle-group';
+import { AppInput } from '../../../../shared/forms/app-input';
 import { AppMultiSelect } from '../../../../shared/forms/app-multi-select';
 import { AppSelect } from '../../../../shared/forms/app-select';
 import { BoatType, FormMode, RentalType } from '@enums';
@@ -31,12 +31,12 @@ import { emptyBoatForm, toBoatFormModel } from '../../../../core/util/boat-form-
   imports: [
     FormField,
     RouterLink,
+    AppInput,
     AppMultiSelect,
     AppSelect,
     HlmButton,
     HlmCardImports,
     HlmFieldImports,
-    HlmInput,
     HlmTextarea,
     HlmToggleGroupImports,
   ],

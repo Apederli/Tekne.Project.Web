@@ -25,15 +25,7 @@
         <p hlmCardDescription>Teknenin ilanda görünen kimliği.</p>
       </div>
       <div hlmCardContent class="flex flex-col gap-5">
-        <div hlmField>
-          <label hlmFieldLabel for="name">Tekne adı</label>
-          <input id="name" type="text" hlmInput [formField]="boatForm.name" />
-          @if (boatForm.name().touched()) {
-            @for (error of boatForm.name().errors(); track error.kind) {
-              <hlm-field-error forceShow>{{ error.message }}</hlm-field-error>
-            }
-          }
-        </div>
+        <app-input label="Tekne adı" [field]="boatForm.name" />
 
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div hlmField>
@@ -69,22 +61,13 @@
           </div>
         </div>
 
-        <div hlmField class="sm:max-w-[12rem]">
-          <label hlmFieldLabel for="manufactureYear">
-            Üretim yılı <span class="font-normal text-muted-foreground">(isteğe bağlı)</span>
-          </label>
-          <input
-            id="manufactureYear"
-            type="number"
-            hlmInput
-            [formField]="boatForm.manufactureYear"
-          />
-          @if (boatForm.manufactureYear().touched()) {
-            @for (error of boatForm.manufactureYear().errors(); track error.kind) {
-              <hlm-field-error forceShow>{{ error.message }}</hlm-field-error>
-            }
-          }
-        </div>
+        <app-input
+          class="sm:max-w-[12rem]"
+          label="Üretim yılı"
+          type="number"
+          optional
+          [field]="boatForm.manufactureYear"
+        />
       </div>
     </section>
 
@@ -94,56 +77,26 @@
         <p hlmCardDescription>Uzunluk ve kişi kapasiteleri.</p>
       </div>
       <div hlmCardContent class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        <div hlmField>
-          <label hlmFieldLabel for="lengthInMeters">Uzunluk (metre)</label>
-          <input
-            id="lengthInMeters"
-            type="number"
-            step="0.1"
-            hlmInput
-            [formField]="boatForm.lengthInMeters"
-          />
-          @if (boatForm.lengthInMeters().touched()) {
-            @for (error of boatForm.lengthInMeters().errors(); track error.kind) {
-              <hlm-field-error forceShow>{{ error.message }}</hlm-field-error>
-            }
-          }
-        </div>
+        <app-input
+          label="Uzunluk (metre)"
+          type="number"
+          step="0.1"
+          [field]="boatForm.lengthInMeters"
+        />
 
-        <div hlmField>
-          <label hlmFieldLabel for="totalCapacity">Toplam kapasite (kişi)</label>
-          <input id="totalCapacity" type="number" hlmInput [formField]="boatForm.totalCapacity" />
-          @if (boatForm.totalCapacity().touched()) {
-            @for (error of boatForm.totalCapacity().errors(); track error.kind) {
-              <hlm-field-error forceShow>{{ error.message }}</hlm-field-error>
-            }
-          }
-        </div>
+        <app-input label="Toplam kapasite (kişi)" type="number" [field]="boatForm.totalCapacity" />
 
-        <div hlmField>
-          <label hlmFieldLabel for="diningCapacity">Yemekli kapasite (kişi)</label>
-          <input id="diningCapacity" type="number" hlmInput [formField]="boatForm.diningCapacity" />
-          @if (boatForm.diningCapacity().touched()) {
-            @for (error of boatForm.diningCapacity().errors(); track error.kind) {
-              <hlm-field-error forceShow>{{ error.message }}</hlm-field-error>
-            }
-          }
-        </div>
+        <app-input
+          label="Yemekli kapasite (kişi)"
+          type="number"
+          [field]="boatForm.diningCapacity"
+        />
 
-        <div hlmField>
-          <label hlmFieldLabel for="swimmingCapacity">Yüzme turu kapasitesi (kişi)</label>
-          <input
-            id="swimmingCapacity"
-            type="number"
-            hlmInput
-            [formField]="boatForm.swimmingCapacity"
-          />
-          @if (boatForm.swimmingCapacity().touched()) {
-            @for (error of boatForm.swimmingCapacity().errors(); track error.kind) {
-              <hlm-field-error forceShow>{{ error.message }}</hlm-field-error>
-            }
-          }
-        </div>
+        <app-input
+          label="Yüzme turu kapasitesi (kişi)"
+          type="number"
+          [field]="boatForm.swimmingCapacity"
+        />
       </div>
     </section>
 
