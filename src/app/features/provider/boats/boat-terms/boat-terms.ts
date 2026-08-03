@@ -4,6 +4,7 @@ import { rxResource, takeUntilDestroyed, toSignal } from '@angular/core/rxjs-int
 import { Subject, catchError, debounceTime, map, of, switchMap } from 'rxjs';
 import { HlmCheckboxImports } from '@ui/checkbox';
 import { HlmLabel } from '@ui/label';
+import { HlmSkeleton } from '@ui/skeleton';
 import { AppSingleCheckGroup } from '../../../../shared/forms/app-single-check-group';
 import { SelectOption, UsageTermGroupOutputModel } from '@models';
 import { BoatService, BoatUsageTermService, UsageTermService } from '@services';
@@ -33,7 +34,7 @@ const SAVE_DEBOUNCE_MS = 300;
  */
 @Component({
   selector: 'app-boat-terms',
-  imports: [AppSingleCheckGroup, HlmCheckboxImports, HlmLabel],
+  imports: [AppSingleCheckGroup, HlmCheckboxImports, HlmLabel, HlmSkeleton],
   templateUrl: './boat-terms.html',
 })
 export class BoatTerms {
@@ -123,18 +124,12 @@ export class BoatTerms {
   });
 
   /**
-   * Teknede işaretli ama katalogda olmayan şartlar — admin pasifleştirmiş
-   * demektir. Gösterilmezlerse sonraki kayıtta sessizce silinirler, o yüzden
-   * ayrı blokta listelenir. Katalog yüklenmeden hesaplanmaz; aksi hâlde yükleme
-   * sırasında tüm işaretler "geçersiz" görünürdü.
+   * Yükleme iskeletinin ölçüsü. Katalog daha gelmediği için gerçek grup sayısı
+   * bilinmiyor; altı kart × iki satır tipik bir kataloğa yakın bir yer tutucu.
+   * Şablonda `track` için indeks yeterli, değerler kullanılmıyor.
    */
-  retiredTerms = computed(() => {
-    if (!this.catalogResource.hasValue()) return [];
-    const inCatalog = new Set(this.catalog().map((t) => t.id));
-    return (this.boat()?.usageTerms ?? []).filter((t) => !inCatalog.has(t.id));
-  });
-
-  empty = computed(() => this.catalog().length === 0 && this.retiredTerms().length === 0);
+  skeletonCards = [0, 1, 2, 3, 4, 5];
+  skeletonRows = [0, 1];
 
   saveRequests = new Subject<number[]>();
 

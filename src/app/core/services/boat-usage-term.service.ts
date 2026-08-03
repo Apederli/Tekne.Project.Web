@@ -17,9 +17,10 @@ export class BoatUsageTermService {
    * İşaretli şartları gönderilen listeye eşitler — tam liste gönder, boş liste
    * hepsini kaldırır.
    *
-   * Backend üç kuralı reddeder: aynı gruptan birden çok şart, teknenin kiralama
-   * tipine uymayan şart, ve pasifleştirilmiş bir şartın **yeni** işaretlenmesi.
-   * Zaten işaretli olan pasif şartlar listede kalabilir.
+   * Backend iki kuralı reddeder: aynı gruptan birden çok şart, ve teknenin
+   * kiralama tipine uymayan şart. İkisi de listenin tamamına uygulanır;
+   * "eskiden işaretlenmiş ama artık uymayan" diye bir muafiyet yok, çünkü
+   * katalog değişince backend geçersiz kalan işaretleri kendisi temizliyor.
    */
   set(boatId: number, usageTermIds: number[]): Observable<boolean> {
     const body: BoatUsageTermInputModel = { usageTermIds };

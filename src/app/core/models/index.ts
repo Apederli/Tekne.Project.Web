@@ -10,6 +10,7 @@
 
 export * from './amenity';
 export * from './boat';
+export * from './boat-amenity';
 export * from './boat-photo';
 export * from './boat-usage-term';
 export * from './confirm';

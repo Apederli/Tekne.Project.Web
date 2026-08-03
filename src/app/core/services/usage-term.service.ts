@@ -15,7 +15,7 @@ export class UsageTermService {
   baseUrl = `${inject(API_BASE_URL)}/UsageTerms`;
 
   /**
-   * Aktif kullanım şartları, `order` sırasında.
+   * Kullanım şartları katalogu, `order` sırasında.
    *
    * `rentalType` verilirse yalnızca o tipe ait ve her iki tipte geçerli
    * şartlar döner (tekne formu); verilmezse katalogun tamamı döner
@@ -36,11 +36,6 @@ export class UsageTermService {
     return this.http.put<boolean>(`${this.baseUrl}/${id}`, model);
   }
 
-  /**
-   * Şartı pasifleştirir — yalnızca `Admin`. Gerçek silme değil: şart
-   * katalogdan düşer ama onu işaretlemiş tekneler etkilenmez.
-   */
-  delete(id: number): Observable<boolean> {
-    return this.http.delete<boolean>(`${this.baseUrl}/${id}`);
-  }
+  // Silme metodu yok: API'de DELETE ucu yok. Katalog durağan referans verisidir,
+  // bir madde kalkacaksa veritabanından kontrollü olarak silinir.
 }

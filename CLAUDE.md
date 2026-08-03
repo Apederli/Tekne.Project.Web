@@ -40,9 +40,9 @@ Kendi `CLAUDE.md`'si var ve iş modelini (aktörler, konum hiyerarşisi, rezerva
 
 **Ekranlar önce mobil için tasarlanır**, masaüstü genişleme olarak eklenir. Tailwind'de bu, taban sınıfların mobil düzeni tarif etmesi ve `sm:` / `md:` / `lg:` ön eklerinin yalnızca büyütme yönünde kullanılması demektir — masaüstü düzeni yazıp `sm:` ile daraltmak değil.
 
-Sebebi ürün kararı: uygulama ileride **Capacitor** ile mobil olarak da paketlenecek, özellikle market tarafı ağırlıklı olarak telefonda kullanılacak. Dokunmatik hedefler parmakla basılabilir boyutta olmalı, yalnızca hover ile erişilen (masaüstünde görünüp dokunmatikte kaybolan) etkileşim bırakılmamalı.
+Sebebi ürün kararı: ziyaretçilerin çoğu siteyi telefonda açacak — market tarafı ağırlıklı olarak mobilde kullanılacak ve SEO trafiği de oraya inecek. Bu gerekçe mobil uygulamadan bağımsızdır; web'in kendisi mobil bir üründür. Dokunmatik hedefler parmakla basılabilir boyutta olmalı, yalnızca hover ile erişilen (masaüstünde görünüp dokunmatikte kaybolan) etkileşim bırakılmamalı.
 
-Capacitor henüz kurulu değil; native plugin'lere bugünden bağımlılık yazma.
+Mobil uygulama ayrı bir **React Native** projesi olarak yazılacak; web Angular kalıyor ve RN onu ikame etmiyor, yanına geliyor. **Capacitor** kapalı bir kapı değil — mevcut web'i bir cihazda hızlıca denemek için ucuz bir deney olarak durabilir; ama bugünden ona göre kod yazma, kurulu da değil. Native plugin'lere bağımlılık kurma.
 
 ## Mimari
 

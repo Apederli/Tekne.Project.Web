@@ -14,7 +14,7 @@ export class AmenityService {
   baseUrl = `${inject(API_BASE_URL)}/Amenities`;
 
   /**
-   * Aktif imkan katalogu, `order` sırasında. Kullanım şartlarının aksine
+   * İmkan katalogu, `order` sırasında. Kullanım şartlarının aksine
    * kiralama tipine göre süzülmez — imkanlar tipten bağımsızdır.
    */
   getList(): Observable<AmenityOutputModel[]> {
@@ -31,11 +31,6 @@ export class AmenityService {
     return this.http.put<boolean>(`${this.baseUrl}/${id}`, model);
   }
 
-  /**
-   * İmkanı pasifleştirir — yalnızca `Admin`. Gerçek silme değil: imkan
-   * katalogdan düşer ama onu işaretlemiş tekneler etkilenmez.
-   */
-  delete(id: number): Observable<boolean> {
-    return this.http.delete<boolean>(`${this.baseUrl}/${id}`);
-  }
+  // Silme metodu yok: API'de DELETE ucu yok. Katalog durağan referans verisidir,
+  // bir madde kalkacaksa veritabanından kontrollü olarak silinir.
 }

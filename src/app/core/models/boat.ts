@@ -7,6 +7,7 @@
 
 import { BoatType } from '@enums/boat-type';
 import { RentalType } from '@enums/rental-type';
+import { AmenityOutputModel } from '@models/amenity';
 import { BoatPhotoOutputModel } from '@models/boat-photo';
 import { UsageTermOutputModel } from '@models/usage-term';
 
@@ -77,10 +78,11 @@ export interface BoatOutputModel {
    * uçlarında alan hiç gelmez. Bu yüzden `undefined` "şartı yok" demek değil,
    * "bu yanıt şartları taşımıyor" demektir.
    *
-   * Katalogda (`GET /api/UsageTerms`) olmayan maddeler de burada dönebilir:
-   * admin sonradan pasifleştirmiş olabilir ve backend bunları bilinçli
-   * filtrelemiyor. Ekranda yok sayılırlarsa bir sonraki kayıtta sessizce
-   * silinirler.
+   * Buradaki her madde katalogda da (`GET /api/UsageTerms`) bulunur: katalog
+   * değiştiğinde backend geçersiz kalan işaretleri kendisi temizliyor.
    */
   usageTerms?: UsageTermOutputModel[];
+
+  /** Teknede bulunan imkanlar — `usageTerms` ile aynı kural: yalnızca tekil detayda gelir. */
+  amenities?: AmenityOutputModel[];
 }

@@ -1,4 +1,43 @@
-<div class="rounded-lg border border-dashed border-input p-10 text-center">
-  <p class="font-medium">İmkanlar</p>
-  <p class="mt-1 text-sm text-muted-foreground">Bu bölüm yakında eklenecek.</p>
-</div>
+@if (loading()) {
+  <!--
+    Yükleniyor metni yerine iskelet: üstteki app-progress-bar isteğin sürdüğünü
+    zaten söylüyor, iskeletin işi düzeni yerinde tutmak.
+  -->
+  <div class="mt-4 grid gap-1 sm:grid-cols-2 xl:grid-cols-3" aria-hidden="true">
+    @for (row of skeletonRows; track row) {
+      <div class="flex min-h-10 items-center gap-3 px-2">
+        <hlm-skeleton class="size-4 shrink-0 rounded-sm" />
+        <hlm-skeleton class="h-3.5 w-40 max-w-full" />
+      </div>
+    }
+  </div>
+} @else if (failed() || !boat()) {
+  <!--
+    Sekme içeriği hlmTabsContentLazy ile bir kez oluşturuluyor: sekmeden çıkıp
+    dönmek isteği tekrarlamıyor. Bu yüzden hata mesajı sayfayı yenilemeye
+    yönlendiriyor — kullanıcının başka çıkışı yok.
+  -->
+  <p class="text-sm text-destructive">
+    İmkanlar yüklenemedi. Sayfayı yenileyip tekrar deneyin.
+  </p>
+} @else {
+  <!-- Kayıt göstergesi yok: üstteki app-progress-bar her istekte zaten akıyor. -->
+  <p class="text-sm text-muted-foreground">Seçimler otomatik kaydedilir.</p>
+
+  <!--
+    Şartlar sekmesindeki gibi kart yok: imkanlar gruplanmadığı için sarmalanacak
+    bir başlık da yok, tek düz liste. Geniş ekranda sütunlara bölünüyor —
+    tek sütunda yirmi altı satır gereksiz uzun bir sayfa üretiyor.
+  -->
+  <div class="mt-4 grid gap-1 sm:grid-cols-2 xl:grid-cols-3">
+    @for (amenity of catalog(); track amenity.id) {
+      <label hlmLabel class="min-h-10 cursor-pointer gap-3 rounded-md px-2 hover:bg-accent">
+        <hlm-checkbox
+          [checked]="isSelected(amenity.id)"
+          (checkedChange)="onToggle(amenity.id, $event)"
+        />
+        <span class="font-normal">{{ amenity.name }}</span>
+      </label>
+    }
+  </div>
+}
