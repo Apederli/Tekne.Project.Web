@@ -7,12 +7,22 @@
       olduğu için bu seçiciler eşleşmez ve ikisi de görünür kalır.
     -->
     <div hlmSidebarHeader>
+      <!--
+        width/height dosyanın doğal boyutu olmalı — görünen boyutu `h-8 w-auto`
+        belirler. Attribute'lar tarayıcı en/boy oranını yükleme öncesinde bilsin
+        (yer ayırıp sıçrama yapmasın) diye var, ama `w-auto` genişliği de o
+        orandan türetiliyor: uydurma bir değer yazılırsa `object-fit: fill`
+        varsayılanı görüntüyü yanlış kutuya sıkıştırır ve logo esner.
+
+        h-8: sidebar 16rem, header'ın p-2'si 240px kullanılabilir alan bırakıyor.
+        Logo 6.01:1 olduğu için h-10 tam 240px eder ve kenarlara yapışır.
+      -->
       <img
         src="/img/logo.png"
         alt="Logo"
-        class="h-10 w-auto group-data-[collapsible=icon]:hidden"
-        width="200"
-        height="40"
+        class="h-8 w-auto group-data-[collapsible=icon]:hidden"
+        width="1310"
+        height="218"
       />
       <p
         class="text-xs font-semibold tracking-wide text-sidebar-foreground/70 uppercase group-data-[collapsible=icon]:hidden"
