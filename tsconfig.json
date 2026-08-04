@@ -44,7 +44,8 @@
       "@ui/tabs": ["./src/app/shared/ui/tabs/src/index.ts"],
       "@ui/sidebar": ["./src/app/shared/ui/sidebar/src/index.ts"],
       "@ui/skeleton": ["./src/app/shared/ui/skeleton/src/index.ts"],
-      "@ui/tooltip": ["./src/app/shared/ui/tooltip/src/index.ts"]
+      "@ui/tooltip": ["./src/app/shared/ui/tooltip/src/index.ts"],
+      "@ui/combobox": ["./src/app/shared/ui/combobox/src/index.ts"]
     }
   },
   "angularCompilerOptions": {
