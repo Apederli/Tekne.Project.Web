@@ -6,8 +6,9 @@
  * `200: OK` dönüyor) — output modelleri backend'in `Result<T>` sarmaladığı
  * tiplerden birebir çıkarıldı.
  *
- * Ayrı bir partner login endpoint'i yok: her rol `POST /api/Users/login`
- * üzerinden giriş yapar, rol ayrımı JWT içindeki `UserType` claim'i ile olur.
+ * Partner paneli girişi ayrı adresten yapılır (`POST /api/Users/login/partner`,
+ * yalnızca Partner hesapları); market/mobil girişi `POST /api/Users/login`
+ * tüm hesap türlerini kabul eder. Rol, JWT içindeki `UserType` claim'indedir.
  */
 
 import { UserType } from '@enums/user-type';
@@ -45,11 +46,18 @@ export interface LoginInputModel {
  *
  * Backend token'ı ayrıca HttpOnly cookie olarak da yazıyor; web tarafında
  * asıl taşıyıcı o cookie'dir, gövdedeki token mobil istemciler için duruyor.
+ *
+ * `user` gövdede döner (2026-08-04): web, token'ı cookie'den kullandığı
+ * için claim'leri okuyamıyor — aksi hâlde her girişten sonra ayrıca `/me`
+ * çağırmak gerekirdi. `me()` artık yalnızca açılıştaki oturum geri
+ * yüklemede kullanılır.
  */
 export interface LoginOutputModel {
   token: string;
   /** ISO 8601 tarih dizesi (backend `DateTime`). */
   expiresAt: string;
+  /** Giriş yapan kullanıcı — `/me` yanıtıyla aynı gövde. */
+  user: UserOutputModel;
 }
 
 /** `GET /api/Users/me` yanıt gövdesi. Şifre hash'i hiçbir zaman dönmez. */

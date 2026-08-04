@@ -31,11 +31,10 @@ export class PartnerLogin {
       try {
         // Partner'a özel adres: hesap Partner değilse backend cookie'yi hiç
         // yazmadan 400 döner, yani müşteri hesabı bu panelden içeri giremez.
-        await firstValueFrom(this.userService.loginPartner(this.model()));
+        const login = await firstValueFrom(this.userService.loginPartner(this.model()));
 
-        // Login yanıtı yalnızca token taşıyor (o da mobil için) — kullanıcı
-        // bilgisi ayrı bir istekle alınıyor.
-        this.authStore.setUser(await firstValueFrom(this.userService.me()));
+        // Login yanıtı kullanıcıyı da taşıyor — ayrıca `/me` çağrılmaz.
+        this.authStore.setUser(login.user);
 
         await this.router.navigate(['/', ROUTE_PARTNER.main, ROUTE_PARTNER.dashboard]);
       } catch {
