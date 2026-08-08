@@ -150,6 +150,12 @@ export class AuthModal {
     });
   }
 
+  // Backend'de OAuth ucu yok — butonlar görsel yer tutucu (sözleşme
+  // linkleriyle aynı yaklaşım); uçlar gelince gerçek akış bağlanacak.
+  socialSignIn(provider: 'Google' | 'Apple'): void {
+    void this.toastService.info(`${provider} ile giriş yakında aktif olacak.`);
+  }
+
   finishSignIn(user: UserOutputModel, message: string): void {
     this.authStore.setUser(user);
     void this.toastService.success(message);
