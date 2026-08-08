@@ -43,6 +43,9 @@ let nextTriggerId = 0;
         }
       </label>
       <div class="flex gap-2">
+        @if (fixedCountry()) {
+          <span [class]="fixedClass()">{{ flagEmoji(selected().iso2) }} {{ selected().dialCode }}</span>
+        } @else {
         <label class="sr-only" [for]="triggerId()">Ülke kodu</label>
         <hlm-combobox
           [value]="selected()"
@@ -67,6 +70,7 @@ let nextTriggerId = 0;
             </div>
           </hlm-combobox-content>
         </hlm-combobox>
+        }
         <input
           hlmInput
           type="tel"
@@ -107,6 +111,14 @@ export class AppPhoneInput {
   placeholder = input<string>();
 
   /**
+   * Verilirse (iso2, örn. `"TR"`) ülke seçimi kilitlenir: combobox yerine
+   * statik bayrak+kod gösterilir ve `dialCodeField` bu ülkenin koduna
+   * sabitlenir. Acenta/tekne sahibi formları gibi yalnız TR numara kabul
+   * eden yerler için.
+   */
+  fixedCountry = input<string>();
+
+  /**
    * Etiketi yalnız görsel olarak gizler (`sr-only`) — ekran okuyucu için
    * kalır. Placeholder'lı kompakt formlarda (giriş/kayıt modalı) kullanılır.
    */
@@ -128,6 +140,13 @@ export class AppPhoneInput {
     this.size() === 'lg' ? 'min-w-0 flex-1 h-14 rounded-2xl px-4 md:text-base' : 'min-w-0 flex-1',
   );
 
+  /** Kilitli ülkenin statik gösterimi — trigger'la aynı boy dili, etkileşim yok. */
+  fixedClass = computed(() =>
+    this.size() === 'lg'
+      ? 'flex h-14 w-32 shrink-0 items-center rounded-2xl border border-input px-4 text-base'
+      : 'flex h-10 w-28 shrink-0 items-center rounded-md border border-input px-3 text-sm',
+  );
+
   inputId = input(`app-phone-input-${nextId++}`);
 
   /** Combobox trigger butonunun `sr-only` etiketiyle eşlenen id'si. */
@@ -140,10 +159,21 @@ export class AppPhoneInput {
 
   chosen = signal<DialCodeOption | null>(null);
   selected = computed(() => {
+    const fixed = this.fixedCountry();
+    if (fixed) return DIAL_CODES_SORTED.find((c) => c.iso2 === fixed) ?? TURKEY_DIAL_CODE;
     const dial = this.dialCodeField()().value();
     const chosen = this.chosen();
     if (chosen && chosen.dialCode === dial) return chosen;
     return DIAL_CODES_SORTED.find((c) => c.dialCode === dial) ?? TURKEY_DIAL_CODE;
+  });
+
+  /** Kilitli ülkede model her durumda o ülkenin koduna sabitlenir. */
+  pinFixed = effect(() => {
+    if (!this.fixedCountry()) return;
+    const dialCode = this.selected().dialCode;
+    if (this.dialCodeField()().value() !== dialCode) {
+      this.dialCodeField()().value.set(dialCode);
+    }
   });
 
   /**
