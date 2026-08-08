@@ -4,9 +4,10 @@ import { BrnDialogOverlay } from '@spartan-ng/brain/dialog';
 import { hlm } from '@ui/utils';
 import type { ClassValue } from 'clsx';
 
-export const hlmDialogOverlayClass = hlm(
-  'data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 isolate bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs',
-);
+/* Perde tamamen şeffaf (ürün kararı): karartma ve blur yok, arkadaki sayfa
+   olduğu gibi görünür. Eleman yine de tıklamayı yutar ve dışarı-tıkla-kapat
+   davranışını taşır. */
+export const hlmDialogOverlayClass = hlm('isolate');
 
 @Directive({
   selector: '[hlmDialogOverlay],hlm-dialog-overlay',
