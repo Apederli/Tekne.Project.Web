@@ -25,9 +25,13 @@ export class UserService {
   http = inject(HttpClient);
   baseUrl = `${inject(API_BASE_URL)}/Users`;
 
-  /** Public kayıt — oluşan kullanıcı her zaman `Customer` tipindedir. */
-  register(model: RegisterUserInputModel): Observable<boolean> {
-    return this.http.post<boolean>(`${this.baseUrl}/register`, model);
+  /**
+   * Public kayıt — oluşan kullanıcı her zaman `Customer` tipindedir.
+   * Başarıda otomatik giriş: backend cookie'yi yazar, oturum döner —
+   * ayrıca `login()` çağrılmaz.
+   */
+  register(model: RegisterUserInputModel): Observable<LoginOutputModel> {
+    return this.http.post<LoginOutputModel>(`${this.baseUrl}/register`, model);
   }
 
   /**

@@ -129,24 +129,11 @@ export class AuthModal {
         phoneNumberDialCode: model.phoneNumber ? model.phoneNumberDialCode : undefined,
       };
 
-      try {
-        await firstValueFrom(this.userService.register(input));
-      } catch {
-        // Kayıt düştü (mesajı interceptor gösterdi) — otomatik girişe geçilmez.
-        return;
-      }
-
-      try {
-        const login = await firstValueFrom(
-          this.userService.login({ email: model.email, password: model.password }),
-        );
-        this.finishSignIn(login.user, 'Hesabın oluşturuldu, hoş geldin');
-      } catch {
-        // Hesap OLUŞTU ama otomatik giriş düştü (uç durum): tekrar kayıt
-        // denenmesin diye login görünümüne e-posta dolu geçilir.
-        this.loginModel.update((m) => ({ ...m, email: model.email }));
-        this.view.set('login');
-      }
+      // Kayıt başarıda giriş yapılmış döner (cookie + oturum) — ayrı login yok.
+      // try/catch bilinçli yok: mesajı errorInterceptor gösterir; başarısızlıkta
+      // finishSignIn'e ulaşılmaz, modal açık kalır.
+      const session = await firstValueFrom(this.userService.register(input));
+      this.finishSignIn(session.user, 'Hesabın oluşturuldu, hoş geldin');
     });
   }
 

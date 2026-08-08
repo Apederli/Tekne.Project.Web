@@ -42,7 +42,9 @@ export interface LoginInputModel {
 }
 
 /**
- * `POST /api/Users/login` yanıt gövdesi.
+ * `POST /api/Users/login` ve `POST /api/Users/register` yanıt gövdesi —
+ * kayıt başarıda login ile aynı davranır (2026-08-08): cookie yazılır,
+ * oturum döner; ayrıca login çağrısı gerekmez.
  *
  * Backend token'ı ayrıca HttpOnly cookie olarak da yazıyor; web tarafında
  * asıl taşıyıcı o cookie'dir, gövdedeki token mobil istemciler için duruyor.
