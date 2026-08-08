@@ -80,6 +80,13 @@ export class AuthModal {
         : undefined,
     );
     maxLength(path.phoneNumber, 14, { message: 'Telefon en fazla 14 hane olabilir.' });
+    // Frontend'e özgü ek kural (backend'de karşılığı yok): +90 numarası
+    // girildiyse tam 10 hane olmalı — maske eksik bırakılmışsa submit'te yakala.
+    validate(path.phoneNumber, ({ value, valueOf }) =>
+      value() && valueOf(path.phoneNumberDialCode) === '+90' && value().length < 10
+        ? { kind: 'phoneIncomplete', message: 'Telefon numarası eksik — 10 hane olmalı.' }
+        : undefined,
+    );
     validate(path.termsAccepted, ({ value }) =>
       value()
         ? undefined
