@@ -27,6 +27,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "express": "^5.1.0",
+    "ngx-mask": "^22.1.0",
     "rxjs": "~7.8.0",
     "swiper": "^14.0.7",
     "tailwind-merge": "^3.5.0",

@@ -1,5 +1,6 @@
-import { booleanAttribute, Component, computed, input, signal } from '@angular/core';
+import { booleanAttribute, Component, computed, effect, input, signal } from '@angular/core';
 import { FieldTree, FormField } from '@angular/forms/signals';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { HlmComboboxImports } from '@ui/combobox';
 import { HlmFieldImports } from '@ui/field';
 import { HlmInput } from '@ui/input';
@@ -16,17 +17,23 @@ let nextTriggerId = 0;
  * map'lemeyi form yapar:
  * `<app-phone-input label="Telefon" [dialCodeField]="f.phoneNumberDialCode" [numberField]="f.phoneNumber" />`
  *
+ * Görsel biçim ngx-mask ile: +90 seçiliyken `5XX XXX XX XX` gruplaması,
+ * diğer ülkelerde ayraçsız yalnız-rakam maskesi. Model her durumda
+ * boşluksuz düz rakam tutar (`dropSpecialCharacters` varsayılanı);
+ * maskenin kendi validasyonu kapalı — hata üretimi formun işi.
+ *
  * `app-select`'teki gibi elle `inputId`: etiketin `for`'u telefon
  * input'una bağlanır; combobox trigger butonu ise erişilebilir adını
  * `buttonId` ile eşlenen görsel-gizli (`sr-only`) bir `<label>`'dan alır.
  *
  * `dialCodeField` başlangıç değeri olarak `'+90'` verilmesi beklenir; boş
  * başlarsa kullanıcı ilk rakamı yazdığı anda ekranda gösterilen varsayılan
- * (TR) o alana yazılır — bkz. `sanitize()`.
+ * (TR) o alana yazılır — bkz. `normalize` effect'i.
  */
 @Component({
   selector: 'app-phone-input',
-  imports: [FormField, HlmComboboxImports, HlmFieldImports, HlmInput],
+  imports: [FormField, HlmComboboxImports, HlmFieldImports, HlmInput, NgxMaskDirective],
+  providers: [provideNgxMask()],
   template: `
     <div hlmField>
       <label hlmFieldLabel [for]="inputId()" [class.sr-only]="hideLabel()">
@@ -69,7 +76,8 @@ let nextTriggerId = 0;
           [id]="inputId()"
           [attr.placeholder]="placeholder()"
           [formField]="numberField()"
-          (input)="sanitize($event)"
+          [mask]="mask()"
+          [validation]="false"
         />
       </div>
       @if (numberState().touched() || dialState().touched()) {
@@ -138,6 +146,31 @@ export class AppPhoneInput {
     return DIAL_CODES_SORTED.find((c) => c.dialCode === dial) ?? TURKEY_DIAL_CODE;
   });
 
+  /**
+   * +90: `5XX XXX XX XX` (10 hane, gruplu). Diğer ülkeler: ayraçsız, en çok
+   * 15 hane (E.164 üst sınırı) — `9` ngx-mask'te isteğe bağlı rakam demek,
+   * yani maske yalnız rakam kabulünü de üstlenir.
+   */
+  mask = computed(() =>
+    this.selected().dialCode === '+90' ? '000 000 00 00' : '999999999999999',
+  );
+
+  /**
+   * Model değerini normalize eder: ilk rakamla birlikte boş `dialCodeField`
+   * ekranda seçili görünen koda sabitlenir; +90'da TR alışkanlığıyla yazılan
+   * baştaki `0`(lar) sessizce atılır.
+   */
+  normalize = effect(() => {
+    const value = this.numberField()().value();
+    if (!value) return;
+    if (!this.dialCodeField()().value()) {
+      this.dialCodeField()().value.set(this.selected().dialCode);
+    }
+    if (this.selected().dialCode === '+90' && value.startsWith('0')) {
+      this.numberField()().value.set(value.replace(/^0+/, ''));
+    }
+  });
+
   itemToString = (c: DialCodeOption): string => `${countryName(c.iso2)} ${c.dialCode}`;
 
 
@@ -147,19 +180,6 @@ export class AppPhoneInput {
     if (!country) return;
     this.chosen.set(country);
     this.dialCodeField()().value.set(country.dialCode);
-  }
-
-  /** Rakam dışı her şeyi anında temizler (yapıştırma dahil). */
-  sanitize(event: Event): void {
-    const el = event.target as HTMLInputElement;
-    const clean = el.value.replace(/\D/g, '');
-    if (clean && !this.dialCodeField()().value()) {
-      this.dialCodeField()().value.set(this.selected().dialCode);
-    }
-    if (clean !== el.value) {
-      el.value = clean;
-      this.numberField()().value.set(clean);
-    }
   }
 
   numberState = computed(() => this.numberField()());
