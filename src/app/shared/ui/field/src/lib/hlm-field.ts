@@ -3,8 +3,11 @@ import { BrnField } from '@spartan-ng/brain/field';
 import { classes } from '@ui/utils';
 import { cva, VariantProps } from 'class-variance-authority';
 
+// Yerel ayar: text-destructive üst sarmalayıcıya değil yalnız etikete uygulanır
+// (bkz. hlm-field-label) — sarmalayıcıya basılınca input içindeki değer de
+// kalıtımla kızarıyordu.
 const fieldVariants = cva(
-  'data-[matches-spartan-invalid=true]:text-destructive gap-2 group/field flex w-full',
+  'gap-2 group/field flex w-full',
   {
     variants: {
       orientation: {
