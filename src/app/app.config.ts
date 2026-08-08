@@ -10,6 +10,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
 import { provideClientHydration } from '@angular/platform-browser';
 import { catchError, of, tap } from 'rxjs';
+import { provideSpartanHlm } from '@ui/utils';
 
 import { routes } from './app.routes';
 import { AuthStore } from './core/auth/auth-store';
@@ -21,6 +22,9 @@ import { UserService } from '@services';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
+    // CDK overlay'in v21+ Popover API davranışını kapatır: top layer her
+    // z-index'in üstünde olduğundan toast'lar dialog'un arkasında kalıyordu.
+    provideSpartanHlm(),
     // Oturum geri yükleme: auth cookie'si hâlâ geçerliyse kullanıcıyı açılışta
     // hatırla. Bu, ilk yönlendirmeden ÖNCE bitmek zorunda — yoksa roleGuard boş
     // store'u görüp login'e atar (sayfa yenilemede yaşanan sorun buydu).

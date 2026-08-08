@@ -13,6 +13,9 @@ export class AuthModalService {
       // Helm content'in hazır X'i kapalı — kapatma düğmesini modalın kendi
       // başlık şeridi çiziyor (geri okuyla hizalı dursun diye).
       showCloseButton: false,
+      // Genel dialog perdesi şeffaf; oturum modalı odak istediği için istisna —
+      // arka sayfa görünür kalacak kadar hafif bir karartma.
+      backdropClass: 'bg-black/20',
       // Mobile-first: tabanda tam ekran (alttan kayar), sm üstünde ortalanmış
       // kart. CDK overlay paneli içeriğe göre daraldığı için genişlik max-w
       // ile DEĞİL, belirli w ile verilir (max-w yalnız tavan olurdu ve içerik
