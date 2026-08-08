@@ -1,5 +1,4 @@
-<!-- Dialog'un hazır X'i kapalı ($showCloseButton: false, bkz. AuthModalService):
-     başlık şeridi geri okuyla birlikte kendi kapatma düğmesini çizer. -->
+
 <header
   class="-mx-4 -mt-4 flex items-center gap-1 border-b border-border px-3 py-3 sm:-mx-6 sm:-mt-6"
 >
@@ -45,13 +44,12 @@
       autocomplete="email"
       [field]="loginForm.email"
     />
-    <app-input
+    <app-password-input
       label="Şifre"
       hideLabel
-      icon="lock"
+      icon
       size="lg"
       placeholder="Şifrenizi Girin"
-      type="password"
       autocomplete="current-password"
       [field]="loginForm.password"
     />
@@ -115,23 +113,21 @@
       autocomplete="email"
       [field]="registerForm.email"
     />
-    <app-input
+    <app-password-input
       label="Şifre"
       hideLabel
-      icon="lock"
+      icon
       size="lg"
       placeholder="Şifrenizi Girin"
-      type="password"
       autocomplete="new-password"
       [field]="registerForm.password"
     />
-    <app-input
+    <app-password-input
       label="Şifre (Tekrar)"
       hideLabel
-      icon="lock"
+      icon
       size="lg"
       placeholder="Şifrenizi Girin (Tekrar)"
-      type="password"
       autocomplete="new-password"
       [field]="registerForm.passwordRepeat"
     />

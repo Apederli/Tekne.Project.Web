@@ -17,6 +17,7 @@ import { HlmCheckboxImports } from '@ui/checkbox';
 import { HlmDialogTitle } from '@ui/dialog';
 import { AuthStore } from '../../../core/auth/auth-store';
 import { AppInput } from '../../../shared/forms/app-input';
+import { AppPasswordInput } from '../../../shared/forms/app-password-input';
 import { AppPhoneInput } from '../../../shared/forms/app-phone-input';
 import {
   AuthModalContext,
@@ -29,7 +30,15 @@ import { ToastService, UserService } from '@services';
 
 @Component({
   selector: 'app-auth-modal',
-  imports: [AppInput, AppPhoneInput, HlmButton, HlmCheckboxImports, HlmDialogTitle, NgIcon],
+  imports: [
+    AppInput,
+    AppPasswordInput,
+    AppPhoneInput,
+    HlmButton,
+    HlmCheckboxImports,
+    HlmDialogTitle,
+    NgIcon,
+  ],
   viewProviders: [provideIcons({ lucideChevronLeft, lucideX })],
   templateUrl: './auth-modal.html',
 })
