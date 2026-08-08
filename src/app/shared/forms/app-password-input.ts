@@ -4,6 +4,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideEye, lucideEyeOff, lucideLock } from '@ng-icons/lucide';
 import { HlmFieldImports } from '@ui/field';
 import { HlmInputGroupImports } from '@ui/input-group';
+import { ErrorMessagePipe } from './error-message-pipe';
 
 /**
  * Signal Forms'a bağlı şifre girişi: sağda göster/gizle butonu, `icon`
@@ -16,7 +17,7 @@ import { HlmInputGroupImports } from '@ui/input-group';
  */
 @Component({
   selector: 'app-password-input',
-  imports: [FormField, HlmFieldImports, HlmInputGroupImports, NgIcon],
+  imports: [ErrorMessagePipe, FormField, HlmFieldImports, HlmInputGroupImports, NgIcon],
   viewProviders: [provideIcons({ lucideEye, lucideEyeOff, lucideLock })],
   template: `
     <div hlmField>
@@ -48,7 +49,7 @@ import { HlmInputGroupImports } from '@ui/input-group';
       </div>
       @if (state().touched()) {
         @for (error of state().errors(); track error.kind) {
-          <hlm-field-error forceShow>{{ error.message }}</hlm-field-error>
+          <hlm-field-error forceShow>{{ error | errorMessage }}</hlm-field-error>
         }
       }
     </div>

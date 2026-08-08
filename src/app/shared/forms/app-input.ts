@@ -4,6 +4,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideMail, lucidePhone, lucideUser } from '@ng-icons/lucide';
 import { HlmFieldImports } from '@ui/field';
 import { HlmInputGroupImports } from '@ui/input-group';
+import { ErrorMessagePipe } from './error-message-pipe';
 
 /**
  * `icon` girdisinin kabul ettiği kısa adlar → lucide ikon adları.
@@ -19,7 +20,7 @@ export type AppInputIcon = keyof typeof ICON_MAP;
 
 @Component({
   selector: 'app-input',
-  imports: [FormField, HlmFieldImports, HlmInputGroupImports, NgIcon],
+  imports: [ErrorMessagePipe, FormField, HlmFieldImports, HlmInputGroupImports, NgIcon],
   viewProviders: [provideIcons({ lucideMail, lucidePhone, lucideUser })],
   template: `
     <div hlmField>
@@ -44,7 +45,7 @@ export type AppInputIcon = keyof typeof ICON_MAP;
       </div>
       @if (state().touched()) {
         @for (error of state().errors(); track error.kind) {
-          <hlm-field-error forceShow>{{ error.message }}</hlm-field-error>
+          <hlm-field-error forceShow>{{ error | errorMessage }}</hlm-field-error>
         }
       }
     </div>

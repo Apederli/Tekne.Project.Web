@@ -6,6 +6,7 @@ import { HlmFieldImports } from '@ui/field';
 import { HlmInput } from '@ui/input';
 import { DialCodeOption } from '@models';
 import { DIAL_CODES_SORTED, TURKEY_DIAL_CODE, countryName, flagEmoji } from './dial-codes.const';
+import { ErrorMessagePipe } from './error-message-pipe';
 
 let nextId = 0;
 let nextTriggerId = 0;
@@ -32,7 +33,7 @@ let nextTriggerId = 0;
  */
 @Component({
   selector: 'app-phone-input',
-  imports: [FormField, HlmComboboxImports, HlmFieldImports, HlmInput, NgxMaskDirective],
+  imports: [ErrorMessagePipe, FormField, HlmComboboxImports, HlmFieldImports, HlmInput, NgxMaskDirective],
   providers: [provideNgxMask()],
   template: `
     <div hlmField>
@@ -86,10 +87,10 @@ let nextTriggerId = 0;
       </div>
       @if (numberState().touched() || dialState().touched()) {
         @for (error of numberState().errors(); track error.kind) {
-          <hlm-field-error forceShow>{{ error.message }}</hlm-field-error>
+          <hlm-field-error forceShow>{{ error | errorMessage }}</hlm-field-error>
         }
         @for (error of dialState().errors(); track error.kind) {
-          <hlm-field-error forceShow>{{ error.message }}</hlm-field-error>
+          <hlm-field-error forceShow>{{ error | errorMessage }}</hlm-field-error>
         }
       }
     </div>
