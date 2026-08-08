@@ -1,9 +1,20 @@
 import { Component, inject, signal } from '@angular/core';
-import { email, form, maxLength, minLength, required, submit } from '@angular/forms/signals';
+import {
+  email,
+  form,
+  maxLength,
+  minLength,
+  required,
+  submit,
+  validate,
+} from '@angular/forms/signals';
 import { firstValueFrom } from 'rxjs';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideChevronLeft, lucideX } from '@ng-icons/lucide';
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
 import { HlmButton } from '@ui/button';
-import { HlmDialogDescription, HlmDialogHeader, HlmDialogTitle } from '@ui/dialog';
+import { HlmCheckboxImports } from '@ui/checkbox';
+import { HlmDialogTitle } from '@ui/dialog';
 import { AuthStore } from '../../../core/auth/auth-store';
 import { AppInput } from '../../../shared/forms/app-input';
 import { AppPhoneInput } from '../../../shared/forms/app-phone-input';
@@ -18,7 +29,8 @@ import { ToastService, UserService } from '@services';
 
 @Component({
   selector: 'app-auth-modal',
-  imports: [AppInput, AppPhoneInput, HlmButton, HlmDialogDescription, HlmDialogHeader, HlmDialogTitle],
+  imports: [AppInput, AppPhoneInput, HlmButton, HlmCheckboxImports, HlmDialogTitle, NgIcon],
+  viewProviders: [provideIcons({ lucideChevronLeft, lucideX })],
   templateUrl: './auth-modal.html',
 })
 export class AuthModal {
@@ -41,12 +53,15 @@ export class AuthModal {
   registerModel = signal<RegisterFormModel>({
     email: '',
     password: '',
+    passwordRepeat: '',
     name: '',
     surname: '',
     phoneNumber: '',
     phoneNumberDialCode: '+90',
+    termsAccepted: false,
   });
-  // Kayıt kuralları backend'in register doğrulayıcısıyla birebir.
+  // Kayıt kuralları backend'in register doğrulayıcısıyla birebir;
+  // passwordRepeat ve termsAccepted yalnız formda yaşar, API'ye gitmez.
   registerForm = form(this.registerModel, (path) => {
     required(path.name, { message: 'Ad gerekli.' });
     maxLength(path.name, 50, { message: 'Ad en fazla 50 karakter olabilir.' });
@@ -58,7 +73,18 @@ export class AuthModal {
     required(path.password, { message: 'Şifre gerekli.' });
     minLength(path.password, 6, { message: 'Şifre en az 6 karakter olmalı.' });
     maxLength(path.password, 100, { message: 'Şifre en fazla 100 karakter olabilir.' });
+    required(path.passwordRepeat, { message: 'Şifre tekrarı gerekli.' });
+    validate(path.passwordRepeat, ({ value, valueOf }) =>
+      value() && value() !== valueOf(path.password)
+        ? { kind: 'passwordMismatch', message: 'Şifreler eşleşmiyor.' }
+        : undefined,
+    );
     maxLength(path.phoneNumber, 14, { message: 'Telefon en fazla 14 hane olabilir.' });
+    validate(path.termsAccepted, ({ value }) =>
+      value()
+        ? undefined
+        : { kind: 'termsRequired', message: 'Devam etmek için sözleşmeleri kabul etmelisin.' },
+    );
   });
 
   async signIn(): Promise<void> {
@@ -76,8 +102,12 @@ export class AuthModal {
   async signUp(): Promise<void> {
     await submit(this.registerForm, async () => {
       const model = this.registerModel();
+      // Form-only alanlar (passwordRepeat, termsAccepted) API'ye taşınmaz.
       const input: RegisterUserInputModel = {
-        ...model,
+        email: model.email,
+        password: model.password,
+        name: model.name,
+        surname: model.surname,
         // Numara boşsa iki alan da gönderilmez — tek başına alan kodu anlamsız.
         phoneNumber: model.phoneNumber || undefined,
         phoneNumberDialCode: model.phoneNumber ? model.phoneNumberDialCode : undefined,

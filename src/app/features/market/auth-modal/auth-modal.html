@@ -1,27 +1,67 @@
-<hlm-dialog-header>
-  <h2 hlmDialogTitle>{{ view() === 'login' ? 'Giriş yap' : 'Kayıt ol' }}</h2>
-  <p hlmDialogDescription>
-    {{
-      view() === 'login'
-        ? 'Rezervasyonlarını görmek ve tekne kiralamak için giriş yap.'
-        : 'Tekne kiralamak için ücretsiz hesap oluştur.'
-    }}
-  </p>
-</hlm-dialog-header>
+<!-- Dialog'un hazır X'i kapalı ($showCloseButton: false, bkz. AuthModalService):
+     başlık şeridi geri okuyla birlikte kendi kapatma düğmesini çizer. -->
+<header
+  class="-mx-4 -mt-4 flex items-center gap-1 border-b border-border px-3 py-3 sm:-mx-6 sm:-mt-6"
+>
+  @if (view() === 'register') {
+    <button
+      hlmBtn
+      variant="ghost"
+      size="icon-sm"
+      type="button"
+      aria-label="Geri"
+      (click)="view.set('login')"
+    >
+      <ng-icon name="lucideChevronLeft" class="text-[length:--spacing(5)]" />
+    </button>
+  }
+  <h2 hlmDialogTitle class="ps-1 text-lg font-bold">
+    {{ view() === 'login' ? 'Giriş Yap' : 'Hesabımı Oluştur' }}
+  </h2>
+  <button
+    hlmBtn
+    variant="ghost"
+    size="icon-sm"
+    type="button"
+    aria-label="Kapat"
+    class="ms-auto"
+    (click)="ref.close()"
+  >
+    <ng-icon name="lucideX" class="text-[length:--spacing(5)]" />
+  </button>
+</header>
 
 @if (view() === 'login') {
   <!-- novalidate: Signal Forms native `required` attribute'unu da basıyor;
        onsuz tarayıcı submit olayını yutup signIn()'i hiç çağırmıyor. -->
   <form class="flex flex-col gap-4" novalidate (submit)="$event.preventDefault(); signIn()">
-    <app-input label="E-posta" type="email" autocomplete="email" [field]="loginForm.email" />
+    <app-input
+      label="E-posta"
+      hideLabel
+      icon="mail"
+      size="lg"
+      placeholder="E-Posta Adresiniz"
+      type="email"
+      autocomplete="email"
+      [field]="loginForm.email"
+    />
     <app-input
       label="Şifre"
+      hideLabel
+      icon="lock"
+      size="lg"
+      placeholder="Şifrenizi Girin"
       type="password"
       autocomplete="current-password"
       [field]="loginForm.password"
     />
-    <button hlmBtn type="submit" class="h-10" [disabled]="loginForm().submitting()">
-      {{ loginForm().submitting() ? 'Giriş yapılıyor…' : 'Giriş yap' }}
+    <button
+      hlmBtn
+      type="submit"
+      class="h-14 rounded-2xl text-base font-semibold"
+      [disabled]="loginForm().submitting()"
+    >
+      {{ loginForm().submitting() ? 'Giriş yapılıyor…' : 'Giriş Yap' }}
     </button>
   </form>
   <p class="text-center text-sm text-muted-foreground">
@@ -37,24 +77,94 @@
 } @else {
   <form class="flex flex-col gap-4" novalidate (submit)="$event.preventDefault(); signUp()">
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <app-input label="Ad" autocomplete="given-name" [field]="registerForm.name" />
-      <app-input label="Soyad" autocomplete="family-name" [field]="registerForm.surname" />
+      <app-input
+        label="Ad"
+        hideLabel
+        icon="user"
+        size="lg"
+        placeholder="Adınız"
+        autocomplete="given-name"
+        [field]="registerForm.name"
+      />
+      <app-input
+        label="Soyad"
+        hideLabel
+        icon="user"
+        size="lg"
+        placeholder="Soyadınız"
+        autocomplete="family-name"
+        [field]="registerForm.surname"
+      />
     </div>
-    <app-input label="E-posta" type="email" autocomplete="email" [field]="registerForm.email" />
-    <app-input
-      label="Şifre"
-      type="password"
-      autocomplete="new-password"
-      [field]="registerForm.password"
-    />
     <app-phone-input
       label="Telefon"
+      hideLabel
+      size="lg"
+      placeholder="Telefon Numarası"
       optional
       [dialCodeField]="registerForm.phoneNumberDialCode"
       [numberField]="registerForm.phoneNumber"
     />
-    <button hlmBtn type="submit" class="h-10" [disabled]="registerForm().submitting()">
-      {{ registerForm().submitting() ? 'Kayıt yapılıyor…' : 'Kayıt ol' }}
+    <app-input
+      label="E-posta"
+      hideLabel
+      icon="mail"
+      size="lg"
+      placeholder="E-Posta Adresiniz"
+      type="email"
+      autocomplete="email"
+      [field]="registerForm.email"
+    />
+    <app-input
+      label="Şifre"
+      hideLabel
+      icon="lock"
+      size="lg"
+      placeholder="Şifrenizi Girin"
+      type="password"
+      autocomplete="new-password"
+      [field]="registerForm.password"
+    />
+    <app-input
+      label="Şifre (Tekrar)"
+      hideLabel
+      icon="lock"
+      size="lg"
+      placeholder="Şifrenizi Girin (Tekrar)"
+      type="password"
+      autocomplete="new-password"
+      [field]="registerForm.passwordRepeat"
+    />
+
+    <div class="flex flex-col gap-1">
+      <div class="flex items-center gap-2.5">
+        <hlm-checkbox
+          aria-labelledby="auth-modal-terms-label"
+          [checked]="registerForm.termsAccepted().value()"
+          (checkedChange)="registerForm.termsAccepted().value.set($event)"
+        />
+        <!-- Sözleşme sayfaları henüz yok; linkler yer tutucu. -->
+        <p id="auth-modal-terms-label" class="text-sm">
+          <a href="#" class="font-medium text-primary-deep hover:underline">Müşteri Sözleşmesini</a>
+          ve
+          <a href="#" class="font-medium text-primary-deep hover:underline">Gizlilik Politikasını</a>
+          okudum ve kabul ediyorum.
+        </p>
+      </div>
+      @if (registerForm.termsAccepted().touched()) {
+        @for (error of registerForm.termsAccepted().errors(); track error.kind) {
+          <p class="text-sm text-destructive">{{ error.message }}</p>
+        }
+      }
+    </div>
+
+    <button
+      hlmBtn
+      type="submit"
+      class="h-14 rounded-2xl text-base font-semibold"
+      [disabled]="registerForm().submitting()"
+    >
+      {{ registerForm().submitting() ? 'Hesap oluşturuluyor…' : 'Hesabımı Oluştur' }}
     </button>
   </form>
   <p class="text-center text-sm text-muted-foreground">

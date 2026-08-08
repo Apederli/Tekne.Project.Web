@@ -29,7 +29,7 @@ let nextTriggerId = 0;
   imports: [FormField, HlmComboboxImports, HlmFieldImports, HlmInput],
   template: `
     <div hlmField>
-      <label hlmFieldLabel [for]="inputId()">
+      <label hlmFieldLabel [for]="inputId()" [class.sr-only]="hideLabel()">
         {{ label() }}
         @if (optional()) {
           <span class="font-normal text-muted-foreground">(isteğe bağlı)</span>
@@ -43,7 +43,7 @@ let nextTriggerId = 0;
           [itemToString]="itemToString"
           [filterOptions]="filterOptions"
         >
-          <hlm-combobox-trigger class="w-28 shrink-0 justify-between" [buttonId]="triggerId()">
+          <hlm-combobox-trigger [class]="triggerClass()" [buttonId]="triggerId()">
             <span>{{ flagEmoji(selected().iso2) }} {{ selected().dialCode }}</span>
           </hlm-combobox-trigger>
           <hlm-combobox-content *hlmComboboxPortal class="min-w-72">
@@ -65,8 +65,9 @@ let nextTriggerId = 0;
           type="tel"
           inputmode="tel"
           autocomplete="tel-national"
-          class="min-w-0 flex-1"
+          [class]="numberClass()"
           [id]="inputId()"
+          [attr.placeholder]="placeholder()"
           [formField]="numberField()"
           (input)="sanitize($event)"
         />
@@ -94,6 +95,31 @@ export class AppPhoneInput {
   /** Etiketin yanına "(isteğe bağlı)" notunu ekler. */
   optional = input(false, { transform: booleanAttribute });
 
+  /** Verilirse telefon input'una basılır; `hideLabel` ile birlikte etiketsiz form kurar. */
+  placeholder = input<string>();
+
+  /**
+   * Etiketi yalnız görsel olarak gizler (`sr-only`) — ekran okuyucu için
+   * kalır. Placeholder'lı kompakt formlarda (giriş/kayıt modalı) kullanılır.
+   */
+  hideLabel = input(false, { transform: booleanAttribute });
+
+  /**
+   * `lg`: giriş/kayıt modalındaki büyük görünüm — 56px, tam yuvarlak hat,
+   * masaüstünde de `text-base`. Varsayılan boy formların geri kalanında.
+   */
+  size = input<'default' | 'lg'>('default');
+
+  triggerClass = computed(() =>
+    this.size() === 'lg'
+      ? 'h-14 w-32 shrink-0 justify-between rounded-2xl px-4 text-base'
+      : 'h-10 w-28 shrink-0 justify-between',
+  );
+
+  numberClass = computed(() =>
+    this.size() === 'lg' ? 'min-w-0 flex-1 h-14 rounded-2xl px-4 md:text-base' : 'min-w-0 flex-1',
+  );
+
   inputId = input(`app-phone-input-${nextId++}`);
 
   /** Combobox trigger butonunun `sr-only` etiketiyle eşlenen id'si. */
@@ -103,11 +129,7 @@ export class AppPhoneInput {
   countryName = countryName;
   flagEmoji = flagEmoji;
 
-  /**
-   * Ekranda gösterilen ülke. Kod paylaşımlı olduğu için (+1 gibi) son
-   * SEÇİLEN ülke burada tutulur; alan değeri dışarıdan geldiyse (profil
-   * doldurma gibi) koda göre ilk eşleşmeye, o da yoksa TR'ye düşülür.
-   */
+
   chosen = signal<DialCodeOption | null>(null);
   selected = computed(() => {
     const dial = this.dialCodeField()().value();
@@ -116,17 +138,9 @@ export class AppPhoneInput {
     return DIAL_CODES_SORTED.find((c) => c.dialCode === dial) ?? TURKEY_DIAL_CODE;
   });
 
-  /** Arama bu metinde yapılır: ad + kod ("alm" de "+49" da bulur). */
   itemToString = (c: DialCodeOption): string => `${countryName(c.iso2)} ${c.dialCode}`;
 
-  /**
-   * Arama collator'ını `DIAL_CODES_SORTED`'daki sıralamayla aynı locale'e
-   * (`tr`) sabitler; aksi halde ziyaretçinin tarayıcı locale'i kullanılır.
-   * `BrnCombobox` bunu enjekte edilen varsayılan `filterOptions` ile
-   * (`usage: 'search'`, `sensitivity: 'base'`, `ignorePunctuation: true`)
-   * birleştirir (merge), üzerine yazmaz — bu yüzden burada yalnızca
-   * `locale` vermek yeterli.
-   */
+
   filterOptions = { locale: 'tr' } as const;
 
   selectCountry(country: DialCodeOption | null | undefined): void {
