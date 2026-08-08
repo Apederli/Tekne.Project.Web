@@ -11,17 +11,9 @@
         >Tekneler</a
       >
 
-      <!-- Giriş/kayıt modal üzerinden açılacak; henüz bağlanmadı.
-           Mobilde bu işler alt çubukta — burada yalnızca masaüstünde görünür. -->
-      <div class="ml-auto hidden items-center gap-4 lg:flex">
-        <button type="button" class="text-sm text-slate-600 hover:text-slate-900">Giriş</button>
-        <button
-          type="button"
-          class="rounded-md bg-slate-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-700"
-        >
-          Kayıt Ol
-        </button>
-      </div>
+      <!-- Misafir/girişli dallanması bileşenin içinde; ngSkipHydration'ı da
+           o taşıyor. Mobilde bu işler alt çubukta — burada yalnız masaüstü. -->
+      <app-market-user-menu class="ml-auto hidden items-center gap-4 lg:flex" />
     </nav>
 
     <!-- Arama başlığı — şimdilik görsel, tıklama bağlı değil. Açılacak panelin
@@ -51,8 +43,8 @@
   </footer>
 
   <!-- Mobil alt navigasyon. `env(safe-area-inset-bottom)`: Capacitor/iOS'ta home
-       çubuğunun altında kalmasın (webde 0'a düşer, zararsız). Keşfet dışındakiler
-       henüz bağlı değil — favoriler/gelen kutusu backend'i, giriş modalı bekliyor. -->
+       çubuğunun altında kalmasın (webde 0'a düşer, zararsız). Favoriler ve
+       gelen kutusu henüz bağlı değil — backend bekliyor. -->
   <nav
     class="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] lg:hidden"
   >
@@ -71,10 +63,7 @@
         <span class="text-[11px]">Favoriler</span>
       </button>
 
-      <button type="button" class="flex flex-col items-center gap-1 py-2 text-slate-500">
-        <ng-icon name="lucideUser" size="22" />
-        <span class="text-[11px]">Giriş yap</span>
-      </button>
+      <app-market-account-tab />
 
       <button type="button" class="flex flex-col items-center gap-1 py-2 text-slate-500">
         <ng-icon name="lucideInbox" size="22" />

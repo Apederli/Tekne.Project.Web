@@ -23,7 +23,13 @@ import { HlmInput } from '@ui/input';
           <span class="font-normal text-muted-foreground">(isteğe bağlı)</span>
         }
       </label>
-      <input hlmInput [type]="type()" [attr.step]="step()" [formField]="field()" />
+      <input
+        hlmInput
+        [type]="type()"
+        [attr.step]="step()"
+        [attr.autocomplete]="autocomplete()"
+        [formField]="field()"
+      />
       @if (state().touched()) {
         @for (error of state().errors(); track error.kind) {
           <hlm-field-error forceShow>{{ error.message }}</hlm-field-error>
@@ -48,6 +54,9 @@ export class AppInput {
 
   /** `type="number"` alanlarında ondalık adımı; verilmezse attribute basılmaz. */
   step = input<string>();
+
+  /** Tarayıcı otomatik doldurması (`email`, `new-password` …); verilmezse basılmaz. */
+  autocomplete = input<string>();
 
   /** Etiketin yanına "(isteğe bağlı)" notunu ekler. */
   optional = input(false, { transform: booleanAttribute });

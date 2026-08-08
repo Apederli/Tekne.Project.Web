@@ -1,0 +1,70 @@
+<hlm-dialog-header>
+  <h2 hlmDialogTitle>{{ view() === 'login' ? 'Giriş yap' : 'Kayıt ol' }}</h2>
+  <p hlmDialogDescription>
+    {{
+      view() === 'login'
+        ? 'Rezervasyonlarını görmek ve tekne kiralamak için giriş yap.'
+        : 'Tekne kiralamak için ücretsiz hesap oluştur.'
+    }}
+  </p>
+</hlm-dialog-header>
+
+@if (view() === 'login') {
+  <!-- novalidate: Signal Forms native `required` attribute'unu da basıyor;
+       onsuz tarayıcı submit olayını yutup signIn()'i hiç çağırmıyor. -->
+  <form class="flex flex-col gap-4" novalidate (submit)="$event.preventDefault(); signIn()">
+    <app-input label="E-posta" type="email" autocomplete="email" [field]="loginForm.email" />
+    <app-input
+      label="Şifre"
+      type="password"
+      autocomplete="current-password"
+      [field]="loginForm.password"
+    />
+    <button hlmBtn type="submit" class="h-10" [disabled]="loginForm().submitting()">
+      {{ loginForm().submitting() ? 'Giriş yapılıyor…' : 'Giriş yap' }}
+    </button>
+  </form>
+  <p class="text-center text-sm text-muted-foreground">
+    Hesabın yok mu?
+    <button
+      type="button"
+      class="font-medium text-primary-deep hover:underline"
+      (click)="view.set('register')"
+    >
+      Kayıt ol
+    </button>
+  </p>
+} @else {
+  <form class="flex flex-col gap-4" novalidate (submit)="$event.preventDefault(); signUp()">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <app-input label="Ad" autocomplete="given-name" [field]="registerForm.name" />
+      <app-input label="Soyad" autocomplete="family-name" [field]="registerForm.surname" />
+    </div>
+    <app-input label="E-posta" type="email" autocomplete="email" [field]="registerForm.email" />
+    <app-input
+      label="Şifre"
+      type="password"
+      autocomplete="new-password"
+      [field]="registerForm.password"
+    />
+    <app-phone-input
+      label="Telefon"
+      optional
+      [dialCodeField]="registerForm.phoneNumberDialCode"
+      [numberField]="registerForm.phoneNumber"
+    />
+    <button hlmBtn type="submit" class="h-10" [disabled]="registerForm().submitting()">
+      {{ registerForm().submitting() ? 'Kayıt yapılıyor…' : 'Kayıt ol' }}
+    </button>
+  </form>
+  <p class="text-center text-sm text-muted-foreground">
+    Zaten hesabın var mı?
+    <button
+      type="button"
+      class="font-medium text-primary-deep hover:underline"
+      (click)="view.set('login')"
+    >
+      Giriş yap
+    </button>
+  </p>
+}

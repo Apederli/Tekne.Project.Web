@@ -7,13 +7,14 @@ import {
   lucideHeart,
   lucideInbox,
   lucideSearch,
-  lucideUser,
 } from '@ng-icons/lucide';
 import { ROUTE_MARKET } from '../../core/routes.const';
+import { MarketAccountTab } from './market-account-tab';
+import { MarketUserMenu } from './market-user-menu';
 
 @Component({
   selector: 'app-market-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgIcon],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgIcon, MarketAccountTab, MarketUserMenu],
   providers: [
     provideIcons({
       lucideCompass,
@@ -21,7 +22,6 @@ import { ROUTE_MARKET } from '../../core/routes.const';
       lucideHeart,
       lucideInbox,
       lucideSearch,
-      lucideUser,
     }),
   ],
   templateUrl: './market-layout.html',

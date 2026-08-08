@@ -9,11 +9,13 @@
  */
 
 export * from './amenity';
+export * from './auth-modal';
 export * from './boat';
 export * from './boat-amenity';
 export * from './boat-photo';
 export * from './boat-usage-term';
 export * from './confirm';
+export * from './dial-code';
 export * from './harbor';
 export * from './photo-lightbox';
 export * from './select-option';
