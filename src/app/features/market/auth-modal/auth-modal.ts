@@ -71,24 +71,27 @@ export class AuthModal {
   });
   // Kayıt kuralları backend'in register doğrulayıcısıyla birebir;
   // passwordRepeat ve termsAccepted yalnız formda yaşar, API'ye gitmez.
+  // Yerleşik doğrulayıcılara mesaj yazılmaz — varsayılan metni gösterim
+  // anında ErrorMessagePipe üretir; yalnız custom kurallar mesaj taşır.
   registerForm = form(this.registerModel, (path) => {
-    required(path.name, { message: 'Ad gerekli.' });
-    maxLength(path.name, 50, { message: 'Ad en fazla 50 karakter olabilir.' });
-    required(path.surname, { message: 'Soyad gerekli.' });
-    maxLength(path.surname, 50, { message: 'Soyad en fazla 50 karakter olabilir.' });
-    required(path.email, { message: 'E-posta adresi gerekli.' });
-    email(path.email, { message: 'Geçerli bir e-posta adresi girin.' });
-    maxLength(path.email, 300, { message: 'E-posta en fazla 300 karakter olabilir.' });
-    required(path.password, { message: 'Şifre gerekli.' });
-    minLength(path.password, 6, { message: 'Şifre en az 6 karakter olmalı.' });
-    maxLength(path.password, 100, { message: 'Şifre en fazla 100 karakter olabilir.' });
-    required(path.passwordRepeat, { message: 'Şifre tekrarı gerekli.' });
+    required(path.name);
+    maxLength(path.name, 50);
+    required(path.surname);
+    maxLength(path.surname, 50);
+    required(path.email);
+    email(path.email);
+    maxLength(path.email, 300);
+    required(path.password);
+    minLength(path.password, 6);
+    maxLength(path.password, 100);
+    required(path.passwordRepeat);
     validate(path.passwordRepeat, ({ value, valueOf }) =>
       value() && value() !== valueOf(path.password)
         ? { kind: 'passwordMismatch', message: 'Şifreler eşleşmiyor.' }
         : undefined,
     );
-    maxLength(path.phoneNumber, 14, { message: 'Telefon en fazla 14 hane olabilir.' });
+    required(path.phoneNumber);
+    maxLength(path.phoneNumber, 14);
     // Frontend'e özgü ek kural (backend'de karşılığı yok): +90 numarası
     // girildiyse tam 10 hane olmalı — maske eksik bırakılmışsa submit'te yakala.
     validate(path.phoneNumber, ({ value, valueOf }) =>
@@ -124,9 +127,8 @@ export class AuthModal {
         password: model.password,
         name: model.name,
         surname: model.surname,
-        // Numara boşsa iki alan da gönderilmez — tek başına alan kodu anlamsız.
-        phoneNumber: model.phoneNumber || undefined,
-        phoneNumberDialCode: model.phoneNumber ? model.phoneNumberDialCode : undefined,
+        phoneNumber: model.phoneNumber,
+        phoneNumberDialCode: model.phoneNumberDialCode,
       };
 
       // Kayıt başarıda giriş yapılmış döner (cookie + oturum) — ayrı login yok.

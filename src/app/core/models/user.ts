@@ -23,8 +23,8 @@ export interface RegisterUserInputModel {
   password: string;
   name: string;
   surname: string;
-  phoneNumber?: string;
-  phoneNumberDialCode?: string;
+  phoneNumber: string;
+  phoneNumberDialCode: string;
 }
 
 /**
