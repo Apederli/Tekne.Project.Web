@@ -1,14 +1,13 @@
 import { Component, computed, inject } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { BoatOutputModel } from '@models';
-import { BoatService, HarborService } from '@services';
-import { formatBoatLocation } from '../../../core/util/boat-location';
+import { BoatCardOutputModel } from '@models';
+import { BoatService } from '@services';
 import { BoatCard } from './boat-card';
 
 /**
  * Tekne arama/listeleme sayfası. Filtreler henüz yok; şimdilik tüm ilanlar
- * kart ızgarasında listeleniyor — kart üzerindeki rozet/kalp overlay'inin
- * gerçek veriyle görülebildiği ilk müşteri ekranı.
+ * kart ızgarasında listeleniyor. Konum adları backend'den hazır gelir —
+ * sayfa şehir/liman lookup'ı yapmaz.
  */
 @Component({
   selector: 'app-boat-search',
@@ -32,19 +31,14 @@ import { BoatCard } from './boat-card';
 })
 export class BoatSearch {
   boatService = inject(BoatService);
-  harborService = inject(HarborService);
 
   boatsResource = rxResource({ stream: () => this.boatService.getList() });
-  citiesResource = rxResource({ stream: () => this.harborService.getAll() });
 
   loading = computed(() => this.boatsResource.isLoading());
 
   boats = computed(() => (this.boatsResource.hasValue() ? this.boatsResource.value() : []));
 
-  cities = computed(() => (this.citiesResource.hasValue() ? this.citiesResource.value() : []));
-
-  /** Bağlı liman + şehir — `MyBoats.location` ile aynı kural (ana liman gösterilir). */
-  location(boat: BoatOutputModel): string {
-    return formatBoatLocation(boat, this.cities());
+  location(boat: BoatCardOutputModel): string {
+    return `${boat.primaryHarborName}, ${boat.cityName}`;
   }
 }

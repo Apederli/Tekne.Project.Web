@@ -1,24 +1,37 @@
-<div class="relative overflow-hidden rounded-xl border border-border bg-background">
+<div class="relative">
   <a [routerLink]="detailUrl()" class="block" [attr.aria-label]="cardLabel()">
-    <span class="block" (click)="swallowSwiperClick($event)">
-      <app-photo-gallery [photos]="boat().photos" [alt]="boat().name" class="aspect-[5/4] w-full" />
+    <span class="block overflow-hidden rounded-xl" (click)="swallowSwiperClick($event)">
+      <app-photo-gallery [photos]="boat().photos" [alt]="cardLabel()" class="aspect-[5/4] w-full" />
     </span>
 
-    <div class="p-3">
-      <div class="flex items-center justify-between gap-2">
-        <span class="truncate font-medium">{{ boat().name }}</span>
-        <span class="shrink-0 text-sm text-muted-foreground">{{ boat().totalCapacity }} kişi</span>
+    <div class="pt-3">
+      <div class="flex items-start justify-between gap-2">
+        <span class="min-w-0 truncate font-medium">
+          {{ location() || typeLabel() }}
+          @if (location() && departure()) {
+            <span class="text-sm font-normal text-muted-foreground">
+              - ({{ departure() }} Kalkışlı)
+            </span>
+          }
+        </span>
+
+        <!-- TODO(backend): yorum/puan uçları yok; değerler test için sabit. -->
+        <span class="flex shrink-0 items-center gap-1 text-sm">
+          <ng-icon name="lucideStar" size="14" class="[&_svg]:fill-current" aria-hidden="true" />
+          4.8
+          <span class="text-muted-foreground">(12)</span>
+        </span>
       </div>
+
       @if (location()) {
-        <span class="mt-1 block text-sm text-muted-foreground">{{ location() }}</span>
+        <span class="mt-1 block text-sm text-muted-foreground">{{ typeLabel() }}</span>
       }
+      <span class="mt-0.5 block text-sm text-muted-foreground">
+        Kapasite: {{ boat().totalCapacity }} kişi
+      </span>
     </div>
   </a>
 
-  <!-- Overlay linkin KARDEŞİ: link içinde buton geçersiz HTML olurdu ve ekran
-       okuyucu linkin adına düğme metnini katardı. Kapsayıcı pointer-events-none,
-       düğme pointer-events-auto — rozet ile kalp arasındaki boş şerit tıklamayı
-       linke geçirir. -->
   <div
     class="pointer-events-none absolute inset-x-1.5 top-1.5 z-20 flex items-start justify-between"
   >
@@ -34,8 +47,6 @@
       class="pointer-events-auto rounded-full p-1 transition-transform duration-100 ease-in active:scale-90"
       (click)="toggleFavorite()"
     >
-      <!-- Lucide çizgi seti: dolu/boş ayrımı fill ile. Yarı saydam dolgu + beyaz
-           çizgi, fotoğraf üzerinde her zeminde okunur (teknevia kalıbı). -->
       <ng-icon
         name="lucideHeart"
         size="26"

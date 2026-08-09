@@ -1,26 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { BoatType, RentalType } from '@enums';
-import { BoatOutputModel } from '@models';
+import { BoatType } from '@enums';
+import { BoatCardOutputModel } from '@models';
 import { vi } from 'vitest';
 import { BoatCard } from './boat-card';
 
 /** Fotoğrafsız tekne: galeri boş durumunu çizer, jsdom'da Swiper'a hiç girilmez. */
-function boat(): BoatOutputModel {
+function boat(): BoatCardOutputModel {
   return {
     id: 5,
     name: 'Mavi Rüzgar',
     boatType: BoatType.Sailboat,
-    rentalType: RentalType.Hourly,
-    lengthInMeters: 12,
-    diningCapacity: 0,
     totalCapacity: 10,
-    swimmingCapacity: 8,
-    cityId: 1,
     primaryHarborId: 3,
-    harborIds: [3],
-    ownerId: 7,
-    isActive: true,
+    primaryHarborName: 'Kandilli',
+    cityName: 'İstanbul',
     photos: [],
   };
 }
@@ -40,9 +34,9 @@ describe('BoatCard', () => {
     expect(link?.getAttribute('href')).toBe('/tekne/mavi-ruzgar-5');
   });
 
-  it('konum verilmediğinde linkin erişilebilir adı yalnızca tekne adıdır', () => {
+  it('konum verilmediğinde linkin erişilebilir adı yalnızca tekne tipidir', () => {
     const link = fixture.nativeElement.querySelector('a');
-    expect(link?.getAttribute('aria-label')).toBe('Mavi Rüzgar');
+    expect(link?.getAttribute('aria-label')).toBe('Yelkenli');
   });
 
   it('kalp tıklaması favoriyi değiştirir, navigasyon tetiklemez', () => {

@@ -2,7 +2,12 @@ import { Service, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../api/api.config';
-import { BoatInputModel, BoatOutputModel } from '@models';
+import {
+  BoatCardOutputModel,
+  BoatInputModel,
+  BoatListFilterInputModel,
+  BoatOutputModel,
+} from '@models';
 
 /**
  * `BoatsController` (`/api/Boats`) karşılığı. Liste ve detay uçları,
@@ -31,9 +36,14 @@ export class BoatService {
     return this.http.put<void>(`${this.baseUrl}/${id}`, model);
   }
 
-  /** Tüm tekneler — market listelemesinin kaynağı, sahibe göre süzülmez. */
-  getList(): Observable<BoatOutputModel[]> {
-    return this.http.get<BoatOutputModel[]>(this.baseUrl);
+  /**
+   * Pazar yeri kartları — yalnızca yayında olan tekneler, kart alanlarıyla sınırlı.
+   * Dolu filtre alanları sorgu parametresi olarak gider; boş alanlar hiç yazılmaz.
+   */
+  getList(filter?: BoatListFilterInputModel): Observable<BoatCardOutputModel[]> {
+    const params: Record<string, string | number> = {};
+    if (filter?.harborId != null) params['harborId'] = filter.harborId;
+    return this.http.get<BoatCardOutputModel[]>(this.baseUrl, { params });
   }
 
   /**

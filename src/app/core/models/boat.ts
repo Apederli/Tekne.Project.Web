@@ -55,7 +55,34 @@ export interface BoatFormModel {
   description: string;
 }
 
-/** `GET /api/Boats` ve `GET /api/Boats/{id}` yanıt gövdesi. */
+/**
+ * `GET /api/Boats` sorgu filtreleri — tüm alanlar opsiyonel, boş alan süzmez.
+ * Yeni filtreler (tarih/müsaitlik, kapasite…) backend'e eklendikçe buraya alan
+ * olarak gelir; tarih filtresi rezervasyon modeli kurulduğunda eklenecek.
+ */
+export interface BoatListFilterInputModel {
+  /** Bu limandan müşteri alan tekneler. */
+  harborId?: number;
+}
+
+/**
+ * `GET /api/Boats` yanıt elemanı — pazar yeri kartı. Kartın gösterdiği alanlarla
+ * sınırlıdır; liman/şehir adları backend'de doldurulur, istemci lookup yapmaz.
+ * `name` kartta gösterilmez ama detay linkinin slug'ı ondan üretilir.
+ */
+export interface BoatCardOutputModel {
+  id: number;
+  name: string;
+  boatType: BoatType;
+  totalCapacity: number;
+  /** Bağlı liman — liman filtresi "X Kalkışlı" kıyasını bu id ile yapar. */
+  primaryHarborId: number;
+  primaryHarborName: string;
+  cityName: string;
+  photos: BoatPhotoOutputModel[];
+}
+
+/** `GET /api/Boats/mine` ve `GET /api/Boats/{id}` yanıt gövdesi. */
 export interface BoatOutputModel {
   id: number;
   name: string;
