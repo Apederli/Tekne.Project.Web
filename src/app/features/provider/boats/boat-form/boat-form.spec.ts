@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { BoatType, RentalType } from '@enums';
+import { BoatType, HullMaterial, PaymentMethod, RentalType } from '@enums';
 import { BoatFormModel } from '@models';
 import { BoatForm } from './boat-form';
 
@@ -18,6 +18,10 @@ const validModel: BoatFormModel = {
   swimmingCapacity: 8,
   toiletCount: 2,
   minimumRentalDuration: 1,
+  brandId: '22',
+  modelId: '90',
+  hullMaterial: HullMaterial.Fiberglass,
+  remainingPaymentMethods: [PaymentMethod.Cash, PaymentMethod.CreditCard],
   cityId: '1',
   primaryHarborId: '3',
   harborIds: [3, 4],
@@ -55,9 +59,33 @@ describe('BoatForm', () => {
           ],
         },
       ]);
+    http
+      .expectOne((req) => req.method === 'GET' && req.url.endsWith('/Boats/brands'))
+      .flush([
+        { id: 1, name: 'Özel Tasarım' },
+        { id: 22, name: 'Beneteau' },
+      ]);
   });
 
-  afterEach(() => http.verify());
+  /**
+   * Marka seçili hâle gelince modelleri istenir. Testlerin çoğu marka/model
+   * akışına bakmıyor ama istek kuyrukta kalırsa `verify()` düşürür.
+   */
+  function flushModels(): void {
+    for (const req of http.match(
+      (r) => r.method === 'GET' && /\/brands\/\d+\/models$/.test(r.url),
+    )) {
+      if (!req.cancelled) req.flush([{ id: 90, name: 'Oceanis 40' }]);
+    }
+  }
+
+  // `ignoreCancelled`: marka değişince rxResource önceki model isteğini iptal
+  // ediyor. İptal edilmiş istek flush edilemez ama verify onu yine de açık
+  // sayar — bu akışta iptal beklenen davranış.
+  afterEach(() => {
+    flushModels();
+    http.verify({ ignoreCancelled: true });
+  });
 
   /**
    * Regresyon: form `novalidate` olmazsa, Signal Forms'un bastığı native
@@ -67,6 +95,7 @@ describe('BoatForm', () => {
   it('kaydet butonuna tıklamak tüm alanları touched yapar ve hataları gösterir', async () => {
     const el = fixture.nativeElement as HTMLElement;
     fixture.detectChanges();
+    flushModels();
 
     el.querySelector<HTMLButtonElement>('button[type=submit]')!.click();
     await fixture.whenStable();
@@ -104,6 +133,10 @@ describe('BoatForm', () => {
       swimmingCapacity: 8,
       toiletCount: 2,
       minimumRentalDuration: 1,
+      brandId: 22,
+      modelId: 90,
+      hullMaterial: HullMaterial.Fiberglass,
+      remainingPaymentMethods: [PaymentMethod.Cash, PaymentMethod.CreditCard],
       cityId: 1,
       primaryHarborId: 3,
       harborIds: [3, 4],

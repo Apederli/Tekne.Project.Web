@@ -34,6 +34,12 @@
         />
 
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <app-select label="Marka" [field]="boatForm.brandId" [options]="brandOptions()" />
+
+          <app-select label="Model" [field]="boatForm.modelId" [options]="modelOptions()" />
+        </div>
+
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <app-input
             label="Uzunluk (metre)"
             type="number"
@@ -47,6 +53,15 @@
             optional
             [field]="boatForm.manufactureYear"
           />
+
+          <app-input label="Tuvalet sayısı" type="number" [field]="boatForm.toiletCount" />
+
+          <app-select
+            label="Yapım malzemesi"
+            optional
+            [field]="boatForm.hullMaterial"
+            [options]="hullMaterialOptions"
+          />
         </div>
       </div>
     </section>
@@ -54,7 +69,10 @@
     <section hlmCard>
       <div hlmCardHeader>
         <h2 hlmCardTitle>Çalışma</h2>
-        <p hlmCardDescription>Teknenin kiralama modeli ve kabul ettiği minimum süre.</p>
+        <p hlmCardDescription>
+          Teknenin kiralama modeli, kabul ettiği minimum süre ve kalan ödemenin nasıl
+          alınabildiği.
+        </p>
       </div>
       <div hlmCardContent class="grid grid-cols-1 items-start gap-5 sm:grid-cols-2">
         <app-toggle-group
@@ -69,13 +87,20 @@
           type="number"
           [field]="boatForm.minimumRentalDuration"
         />
+
+        <app-multi-select
+          class="sm:col-span-2"
+          label="Kalan ödeme yöntemleri"
+          [field]="boatForm.remainingPaymentMethods"
+          [options]="paymentMethodOptions"
+        />
       </div>
     </section>
 
     <section hlmCard>
       <div hlmCardHeader>
         <h2 hlmCardTitle>Kapasite</h2>
-        <p hlmCardDescription>Kişi kapasiteleri ve teknedeki tuvalet sayısı.</p>
+        <p hlmCardDescription>Kişi kapasiteleri.</p>
       </div>
       <div hlmCardContent class="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <app-input label="Toplam kapasite (kişi)" type="number" [field]="boatForm.totalCapacity" />
@@ -91,8 +116,6 @@
           type="number"
           [field]="boatForm.swimmingCapacity"
         />
-
-        <app-input label="Tuvalet sayısı" type="number" [field]="boatForm.toiletCount" />
       </div>
     </section>
 

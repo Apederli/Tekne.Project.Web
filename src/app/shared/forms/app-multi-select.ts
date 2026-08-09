@@ -15,6 +15,9 @@ let nextId = 0;
  * Temizle / Tamam butonları vardır.
  *
  * Kullanım: `<app-multi-select label="Limanlar" [field]="form.harborIds" [options]="harborOptions()" />`
+ *
+ * Değer tipi jenerik: liman id'leri `number`, isimle serialize edilen enum
+ * listeleri (ödeme yöntemi gibi) `string` taşır.
  */
 @Component({
   selector: 'app-multi-select',
@@ -49,10 +52,10 @@ let nextId = 0;
     </div>
   `,
 })
-export class AppMultiSelect {
+export class AppMultiSelect<T extends string | number> {
   label = input.required<string>();
-  field = input.required<FieldTree<number[]>>();
-  options = input.required<SelectOption<number>[]>();
+  field = input.required<FieldTree<T[]>>();
+  options = input.required<SelectOption<T>[]>();
   placeholder = input('Seçin');
   selectId = input(`app-multi-select-${nextId++}`);
 
@@ -60,7 +63,7 @@ export class AppMultiSelect {
 
   state = computed(() => this.field()());
 
-  isSelected(value: number): boolean {
+  isSelected(value: T): boolean {
     return this.state().value().includes(value);
   }
 
@@ -68,12 +71,12 @@ export class AppMultiSelect {
    * Trigger'da seçili etiketleri virgülle birleştirir. Brain, çoklu seçimde
    * `itemToString`'e tek değer değil dizinin tamamını verir.
    */
-  itemToString = (value: number | number[]): string =>
+  itemToString = (value: T | T[]): string =>
     Array.isArray(value)
       ? value.map((v) => this.optionLabel(v)).join(', ')
       : this.optionLabel(value);
 
-  optionLabel(value: number): string {
+  optionLabel(value: T): string {
     return this.options().find((o) => o.value === value)?.label ?? String(value);
   }
 

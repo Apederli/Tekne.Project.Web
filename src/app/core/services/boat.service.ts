@@ -6,7 +6,9 @@ import {
   BoatCardOutputModel,
   BoatInputModel,
   BoatListFilterInputModel,
+  BoatModelOutputModel,
   BoatOutputModel,
+  BrandOutputModel,
 } from '@models';
 
 @Service()
@@ -34,5 +36,14 @@ export class BoatService {
 
   getById(id: number): Observable<BoatOutputModel> {
     return this.http.get<BoatOutputModel>(`${this.baseUrl}/${id}`);
+  }
+
+  getBrands(): Observable<BrandOutputModel[]> {
+    return this.http.get<BrandOutputModel[]>(`${this.baseUrl}/brands`);
+  }
+
+  /** Markanın modelleri. Katalogda olmayan marka 404 döner. */
+  getModels(brandId: number): Observable<BoatModelOutputModel[]> {
+    return this.http.get<BoatModelOutputModel[]>(`${this.baseUrl}/brands/${brandId}/models`);
   }
 }

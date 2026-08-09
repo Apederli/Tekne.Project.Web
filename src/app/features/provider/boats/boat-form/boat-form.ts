@@ -23,7 +23,7 @@ import {
   AppToggleGroup,
   ErrorMessagePipe,
 } from '@forms';
-import { BoatType, FormMode, RentalType } from '@enums';
+import { BoatType, FormMode, HullMaterial, PaymentMethod, RentalType } from '@enums';
 import { BoatFormModel, BoatInputModel } from '@models';
 import { BoatService, HarborService, ToastService } from '@services';
 import { ROUTE_PARTNER } from '../../../../core/routes.const';
@@ -65,6 +65,21 @@ export class BoatForm {
     { value: RentalType.Nightly, label: 'Gecelik' },
   ];
 
+  paymentMethodOptions = [
+    { value: PaymentMethod.Cash, label: 'Nakit' },
+    { value: PaymentMethod.BankTransfer, label: 'Havale' },
+    { value: PaymentMethod.CreditCard, label: 'Kredi Kartı' },
+  ];
+
+  hullMaterialOptions = [
+    { value: HullMaterial.Wood, label: 'Ahşap' },
+    { value: HullMaterial.Fiberglass, label: 'Fiberglas' },
+    { value: HullMaterial.Steel, label: 'Çelik' },
+    { value: HullMaterial.Aluminum, label: 'Alüminyum' },
+    { value: HullMaterial.Composite, label: 'Kompozit' },
+    { value: HullMaterial.Other, label: 'Diğer' },
+  ];
+
   boatsUrl = ['/', ROUTE_PARTNER.main, ROUTE_PARTNER.dashboard, ROUTE_PARTNER.boats];
 
   screenOpenType = input<FormMode>(FormMode.Create);
@@ -102,10 +117,41 @@ export class BoatForm {
 
   cities = toSignal(this.harborService.getAll(), { initialValue: [] });
 
+  brands = toSignal(this.boatService.getBrands(), { initialValue: [] });
+
   model = linkedSignal<BoatFormModel>(() => {
     const boat = this.boat();
     return boat ? toBoatFormModel(boat) : emptyBoatForm();
   });
+
+  /**
+   * Ayrı computed şart: `params` doğrudan `model()` okusaydı formdaki HERHANGİ
+   * bir alan değişince yeniden çalışır ve kaynak aynı markayı tekrar isterdi —
+   * gelen modeller `modelId`'yi yazdığı için istek kendini besleyen bir döngüye
+   * giriyordu. Aradaki computed yalnızca marka gerçekten değişince haber verir.
+   */
+  selectedBrandId = computed(() => {
+    const brandId = Number(this.model().brandId);
+    return brandId > 0 ? brandId : undefined;
+  });
+
+  /** Seçili markanın modelleri; marka değişince yeniden istenir. */
+  modelsResource = rxResource({
+    params: () => this.selectedBrandId(),
+    stream: ({ params }) => this.boatService.getModels(params),
+  });
+
+  boatModels = computed(() =>
+    this.modelsResource.hasValue() ? this.modelsResource.value() : [],
+  );
+
+  brandOptions = computed(() =>
+    this.brands().map((b) => ({ value: String(b.id), label: b.name })),
+  );
+
+  modelOptions = computed(() =>
+    this.boatModels().map((m) => ({ value: String(m.id), label: m.name })),
+  );
 
   cityOptions = computed(() =>
     this.cities().map((c) => ({ value: String(c.cityId), label: c.cityName })),
@@ -128,6 +174,29 @@ export class BoatForm {
   });
 
   constructor() {
+    // Marka boş kaldığı sürece listenin ilki seçili gelir. Sunucu "Özel
+    // Tasarım"ı başa koyuyor — katalogda karşılığı olmayan tekneler için
+    // zaten doğru olan seçenek.
+    effect(() => {
+      const brands = this.brands();
+      if (brands.length === 0 || this.model().brandId !== '') return;
+      this.model.update((x) => ({ ...x, brandId: String(brands[0].id) }));
+    });
+
+    // Model, seçili markanın listesinde yoksa ilkine düşer: marka değişince
+    // eskisi gider, yenisinin ilki seçili gelir. `hasValue()` şart — liste
+    // yüklenirken boş görünüyor ve düzenlemede API'den gelen modeli silerdi.
+    effect(() => {
+      if (!this.modelsResource.hasValue()) return;
+      const options = this.boatModels();
+      const modelId = this.model().modelId;
+      if (options.some((m) => String(m.id) === modelId)) return;
+      this.model.update((x) => ({
+        ...x,
+        modelId: options.length > 0 ? String(options[0].id) : '',
+      }));
+    });
+
     // Şehir değişince önceki şehrin limanları temizlenir. Select'in
     // (valueChange)'ine bağlanmıyor: BrnSelect o event'i programatik
     // yazımda da yayınlıyor — update modunda API'den dolan formun
@@ -186,6 +255,13 @@ export class BoatForm {
           }
         : undefined;
     });
+    required(path.brandId);
+    required(path.modelId);
+    validate(path.remainingPaymentMethods, (ctx) =>
+      ctx.value().length === 0
+        ? { kind: 'minSelected', message: 'En az bir ödeme yöntemi seçin.' }
+        : undefined,
+    );
     required(path.cityId);
     validate(path.harborIds, (ctx) =>
       ctx.value().length === 0
@@ -219,6 +295,10 @@ export class BoatForm {
         swimmingCapacity: m.swimmingCapacity ?? 0,
         toiletCount: m.toiletCount ?? 0,
         minimumRentalDuration: m.minimumRentalDuration ?? 1,
+        brandId: Number(m.brandId),
+        modelId: Number(m.modelId),
+        hullMaterial: m.hullMaterial || undefined,
+        remainingPaymentMethods: m.remainingPaymentMethods,
         cityId: Number(m.cityId),
         primaryHarborId: Number(m.primaryHarborId),
         harborIds: m.harborIds,

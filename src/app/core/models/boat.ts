@@ -1,4 +1,6 @@
 import { BoatType } from '@enums/boat-type';
+import { HullMaterial } from '@enums/hull-material';
+import { PaymentMethod } from '@enums/payment-method';
 import { RentalType } from '@enums/rental-type';
 import { AmenityOutputModel } from '@models/amenity';
 import { BoatPhotoOutputModel } from '@models/boat-photo';
@@ -15,6 +17,10 @@ export interface BoatInputModel {
   swimmingCapacity: number;
   toiletCount: number;
   minimumRentalDuration?: number;
+  brandId: number;
+  modelId: number;
+  hullMaterial?: HullMaterial;
+  remainingPaymentMethods: PaymentMethod[];
   cityId: number;
   primaryHarborId: number;
   harborIds: number[];
@@ -32,6 +38,10 @@ export interface BoatFormModel {
   swimmingCapacity: number | null;
   toiletCount: number | null;
   minimumRentalDuration: number | null;
+  brandId: string;
+  modelId: string;
+  hullMaterial: HullMaterial | '';
+  remainingPaymentMethods: PaymentMethod[];
   cityId: string;
   primaryHarborId: string;
   harborIds: number[];
@@ -69,6 +79,15 @@ export interface BoatOutputModel {
   swimmingCapacity: number;
   toiletCount: number;
   minimumRentalDuration: number;
+  brandId: number;
+  brandName: string;
+  modelId: number;
+  modelName: string;
+  hullMaterial?: HullMaterial;
+  hullMaterialLabel?: string;
+  remainingPaymentMethods: PaymentMethod[];
+  /** Sunucuda türetilir (`ToLabel`) — istemci kendi etiket haritasını tutmaz. */
+  remainingPaymentMethodLabels: string[];
   cityId: number;
   primaryHarborId: number;
   harborIds: number[];

@@ -8,5 +8,7 @@
 
 export * from './boat-type';
 export * from './form-mode';
+export * from './hull-material';
+export * from './payment-method';
 export * from './rental-type';
 export * from './user-type';

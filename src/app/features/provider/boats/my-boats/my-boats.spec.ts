@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { BoatType, RentalType } from '@enums';
+import { BoatType, PaymentMethod, RentalType } from '@enums';
 import { BoatOutputModel } from '@models';
 import { MyBoats } from './my-boats';
 
@@ -20,6 +20,12 @@ function boat(id: number, name: string): BoatOutputModel {
     totalCapacity: 10,
     swimmingCapacity: 8,
     toiletCount: 1,
+    brandId: 22,
+    brandName: 'Beneteau',
+    modelId: 90,
+    modelName: 'Oceanis 40',
+    remainingPaymentMethods: [PaymentMethod.Cash],
+    remainingPaymentMethodLabels: ['Nakit'],
     cityId: 1,
     primaryHarborId: 3,
     harborIds: [3],

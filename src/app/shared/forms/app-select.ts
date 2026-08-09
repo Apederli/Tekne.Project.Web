@@ -1,4 +1,4 @@
-import { Component, computed, input, output } from '@angular/core';
+import { booleanAttribute, Component, computed, input, output } from '@angular/core';
 import { FieldTree, FormField } from '@angular/forms/signals';
 import { HlmFieldImports } from '@ui/field';
 import { HlmSelectImports } from '@ui/select';
@@ -15,7 +15,12 @@ let nextId = 0;
   imports: [FormField, HlmFieldImports, HlmSelectImports],
   template: `
     <div hlmField>
-      <label hlmFieldLabel [for]="selectId()">{{ label() }}</label>
+      <label hlmFieldLabel [for]="selectId()">
+        {{ label() }}
+        @if (optional()) {
+          <span class="font-normal text-muted-foreground">(isteğe bağlı)</span>
+        }
+      </label>
       <hlm-select
         [formField]="field()"
         [itemToString]="itemToString"
@@ -43,6 +48,7 @@ export class AppSelect {
   field = input.required<FieldTree<string>>();
   options = input.required<SelectOption<string>[]>();
   placeholder = input('Seçin');
+  optional = input(false, { transform: booleanAttribute });
   selectId = input(`app-select-${nextId++}`);
 
   /** Seçim değiştiğinde tetiklenir; yeni değer `field` üzerinden okunur. */
