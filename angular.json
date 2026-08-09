@@ -104,7 +104,9 @@
           "options": {
             // Builder varsayılan olarak `build:development` arar; o konfigürasyon
             // `local` olarak adlandırıldığı için hedef açıkça yazılıyor.
-            "buildTarget": "tekne-web:build:local"
+            "buildTarget": "tekne-web:build:local",
+            // jsdom'da eksik tarayıcı API'leri — gerekçesi dosyanın içinde.
+            "setupFiles": ["src/test-setup.ts"]
           }
         }
       }
