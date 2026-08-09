@@ -1,4 +1,4 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideHeart, lucideStar } from '@ng-icons/lucide';
@@ -6,6 +6,8 @@ import { BoatCardOutputModel } from '@models';
 import { PhotoGallery } from '../../../shared/photo-gallery/photo-gallery';
 import { makeBoatSlug } from '../../../core/util/boat-slug';
 import { ROUTE_MARKET } from '../../../core/routes.const';
+import { AuthStore } from '../../../core/auth/auth-store';
+import { AuthModalService } from '../auth-modal/auth-modal.service';
 
 @Component({
   selector: 'app-boat-card',
@@ -14,6 +16,9 @@ import { ROUTE_MARKET } from '../../../core/routes.const';
   templateUrl: './boat-card.html',
 })
 export class BoatCard {
+  authStore = inject(AuthStore);
+  authModal = inject(AuthModalService);
+
   boat = input.required<BoatCardOutputModel>();
 
   location = input('');
@@ -40,6 +45,10 @@ export class BoatCard {
   }
 
   toggleFavorite(): void {
+    if (!this.authStore.isAuthenticated()) {
+      this.authModal.open('login');
+      return;
+    }
     this.favorite.update((f) => !f);
   }
 }
