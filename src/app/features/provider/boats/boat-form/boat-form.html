@@ -11,12 +11,7 @@
   <p class="text-sm text-destructive">Tekne yüklenemedi. Sayfayı yenileyip tekrar deneyin.</p>
 } @else {
 
-<!--
-  novalidate şart: Signal Forms `required`/`min`/`max` kısıtlarını native
-  attribute olarak da basıyor. Onsuz tarayıcı kendi doğrulamasını çalıştırıp
-  submit olayını hiç yayınlamıyor — save() çağrılmıyor, alanlar touched
-  olmuyor ve yalnızca ilk geçersiz alanda native balon çıkıyor.
--->
+
 <form class="mt-6" novalidate (submit)="$event.preventDefault(); save()">
   <div class="grid gap-6 lg:grid-cols-2">
     <section hlmCard>
@@ -133,6 +128,7 @@
         @if (harbors().length > 0) {
           <app-multi-select
             label="Ücretsiz kalkış limanları"
+            search
             [field]="boatForm.harborIds"
             [options]="harborOptions()"
           />

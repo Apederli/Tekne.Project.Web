@@ -1,49 +1,57 @@
-import { Component, computed, input, viewChild } from '@angular/core';
+import { booleanAttribute, Component, computed, input, viewChild } from '@angular/core';
 import { FieldTree, FormField } from '@angular/forms/signals';
 import { BrnPopover } from '@spartan-ng/brain/popover';
 import { HlmButton } from '@ui/button';
 import { HlmCheckbox } from '@ui/checkbox';
+import { HlmComboboxImports } from '@ui/combobox';
 import { HlmFieldImports } from '@ui/field';
-import { HlmSelectImports } from '@ui/select';
 import { SelectOption } from '@models';
 
 let nextId = 0;
 
-/**
- * Signal Forms alanına bağlı, etiket + hata gösterimini içeren çoklu select.
- * Öğelerin yanında seçim durumunu gösteren checkbox, panelin altında
- * Temizle / Tamam butonları vardır.
- *
- * Kullanım: `<app-multi-select label="Limanlar" [field]="form.harborIds" [options]="harborOptions()" />`
- *
- * Değer tipi jenerik: liman id'leri `number`, isimle serialize edilen enum
- * listeleri (ödeme yöntemi gibi) `string` taşır.
- */
 @Component({
   selector: 'app-multi-select',
-  imports: [FormField, HlmButton, HlmCheckbox, HlmFieldImports, HlmSelectImports],
+  imports: [FormField, HlmButton, HlmCheckbox, HlmComboboxImports, HlmFieldImports],
   template: `
     <div hlmField>
-      <label hlmFieldLabel [for]="selectId()">{{ label() }}</label>
-      <hlm-select-multiple [formField]="field()" [itemToString]="itemToString">
-        <hlm-select-trigger class="w-full" [buttonId]="selectId()">
-          <hlm-select-value [placeholder]="placeholder()" />
-        </hlm-select-trigger>
-        <hlm-select-content *hlmSelectPortal>
-          @for (option of options(); track option.value) {
-            <hlm-select-item [value]="option.value">
-              <hlm-checkbox class="pointer-events-none" [checked]="isSelected(option.value)" />
-              <span class="ms-1.5">{{ option.label }}</span>
-            </hlm-select-item>
-          }
-          <div class="border-border mt-1 flex items-center justify-between gap-2 border-t p-1.5">
+      <label hlmFieldLabel [for]="inputId()">{{ label() }}</label>
+      <hlm-combobox-multiple [formField]="field()" [itemToString]="itemToString">
+        <hlm-combobox-chips class="min-h-10">
+          <ng-container *hlmComboboxValues="let values">
+            @for (value of values; track value) {
+              <hlm-combobox-chip [value]="value">{{ optionLabel(value) }}</hlm-combobox-chip>
+            }
+          </ng-container>
+          <input
+            hlmComboboxChipInput
+            [id]="inputId()"
+            [readOnly]="!search()"
+            [placeholder]="inputPlaceholder()"
+          />
+        </hlm-combobox-chips>
+
+        <hlm-combobox-content *hlmComboboxPortal>
+          <div hlmComboboxList>
+            @for (option of options(); track option.value) {
+              <hlm-combobox-item [value]="option.value" [showCheck]="false">
+                <hlm-checkbox class="pointer-events-none" [checked]="isSelected(option.value)" />
+                <span class="ms-1.5">{{ option.label }}</span>
+              </hlm-combobox-item>
+            }
+            @if (search()) {
+              <hlm-combobox-empty class="text-muted-foreground block p-2 text-sm">
+                Sonuç bulunamadı.
+              </hlm-combobox-empty>
+            }
+          </div>
+          <div class="border-border flex items-center justify-between gap-2 border-t p-1.5">
             <button hlmBtn variant="ghost" size="sm" type="button" (click)="clear()">
               Temizle
             </button>
             <button hlmBtn size="sm" type="button" (click)="close()">Tamam</button>
           </div>
-        </hlm-select-content>
-      </hlm-select-multiple>
+        </hlm-combobox-content>
+      </hlm-combobox-multiple>
       @if (state().touched()) {
         @for (error of state().errors(); track error.kind) {
           <hlm-field-error forceShow>{{ error.message }}</hlm-field-error>
@@ -57,20 +65,21 @@ export class AppMultiSelect<T extends string | number> {
   field = input.required<FieldTree<T[]>>();
   options = input.required<SelectOption<T>[]>();
   placeholder = input('Seçin');
-  selectId = input(`app-multi-select-${nextId++}`);
+
+  search = input(false, { transform: booleanAttribute });
+
+  inputId = input(`app-multi-select-${nextId++}`);
 
   popover = viewChild.required(BrnPopover);
 
   state = computed(() => this.field()());
 
+  inputPlaceholder = computed(() => (this.state().value().length > 0 ? '' : this.placeholder()));
+
   isSelected(value: T): boolean {
     return this.state().value().includes(value);
   }
 
-  /**
-   * Trigger'da seçili etiketleri virgülle birleştirir. Brain, çoklu seçimde
-   * `itemToString`'e tek değer değil dizinin tamamını verir.
-   */
   itemToString = (value: T | T[]): string =>
     Array.isArray(value)
       ? value.map((v) => this.optionLabel(v)).join(', ')

@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import type { BooleanInput } from '@angular/cdk/coercion';
+import { booleanAttribute, ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideCheck } from '@ng-icons/lucide';
 import { BrnComboboxItem } from '@spartan-ng/brain/combobox';
@@ -13,7 +14,7 @@ import { classes } from '@ui/utils';
   host: { 'data-slot': 'combobox-item' },
   template: `
     <ng-content />
-    @if (_active()) {
+    @if (showCheck() && _active()) {
       <ng-icon
         name="lucideCheck"
         class="pointer-events-none absolute end-2 flex items-center justify-center text-[length:--spacing(4)]"
@@ -23,6 +24,14 @@ import { classes } from '@ui/utils';
   `,
 })
 export class HlmComboboxItem {
+  /**
+   * Seçili öğedeki tik ikonu. Öğenin içine kendi göstergesini (checkbox gibi)
+   * koyan kullanımlar bunu kapatır — yoksa aynı bilgi iki işaretle anlatılır.
+   */
+  public readonly showCheck = input<boolean, BooleanInput>(true, {
+    transform: booleanAttribute,
+  });
+
   private readonly _brnComboboxItem = inject(BrnComboboxItem);
 
   protected readonly _active = this._brnComboboxItem.active;
