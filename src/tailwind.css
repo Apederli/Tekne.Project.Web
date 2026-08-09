@@ -48,10 +48,15 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.65 0.1 170);
 
-  /* Zemin üstü yazı/ikon için koyu marka adımları (beyazda 4.5:1 üstü).
-     Dolgu her zaman pastel; yazı bunları kullanır. */
-  --primary-deep: oklch(0.55 0.09 170);
-  --secondary-deep: oklch(0.53 0.09 228);
+  /* Koyu marka adımları. İki yerde kullanılır: beyaz zemin üstünde yazı/ikon
+     (4.5:1 üstü) ve beyaz yazı taşıyan dolgular — pastel tonlar beyazı
+     taşımadığı için dolu butonlar ve seçili toggle buradan beslenir.
+     `-hover` adımları daha koyudur: dolguyu açmak (örn. /80 karışımı)
+     beyaz yazıyı 4.5:1'in altına düşürüyordu. */
+  --primary-deep: oklch(0.55 0.09 170); /* beyaz yazı 4.6:1 */
+  --primary-deep-hover: oklch(0.48 0.09 170); /* beyaz yazı 6.2:1 */
+  --secondary-deep: oklch(0.53 0.09 228); /* beyaz yazı 5.2:1 */
+  --secondary-deep-hover: oklch(0.46 0.09 228); /* beyaz yazı 7.0:1 */
 }
 
 /* Dark tema kullanılmıyor (ürün kararı) — eski :root.dark iskeleti bilinçli
@@ -61,7 +66,9 @@
    (hlm preset'in kalıbı: token :root'ta, eşleme @theme inline'da). */
 @theme inline {
   --color-primary-deep: var(--primary-deep);
+  --color-primary-deep-hover: var(--primary-deep-hover);
   --color-secondary-deep: var(--secondary-deep);
+  --color-secondary-deep-hover: var(--secondary-deep-hover);
 }
 
 @layer base {
