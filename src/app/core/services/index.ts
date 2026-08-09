@@ -11,6 +11,7 @@
 
 export * from './amenity.service';
 export * from './boat-amenity.service';
+export * from './boat-favorite.service';
 export * from './boat-photo.service';
 export * from './boat-usage-term.service';
 export * from './boat.service';

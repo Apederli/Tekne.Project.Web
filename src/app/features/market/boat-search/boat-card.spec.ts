@@ -3,6 +3,7 @@ import { Router, provideRouter } from '@angular/router';
 import { BoatType } from '@enums';
 import { BoatCardOutputModel } from '@models';
 import { vi } from 'vitest';
+import { AuthModalService } from '../auth-modal/auth-modal.service';
 import { BoatCard } from './boat-card';
 
 /** Fotoğrafsız tekne: galeri boş durumunu çizer, jsdom'da Swiper'a hiç girilmez. */
@@ -17,6 +18,7 @@ function boat(): BoatCardOutputModel {
     primaryHarborName: 'Kandilli',
     cityName: 'İstanbul',
     photos: [],
+    isFavorite: false,
   };
 }
 
@@ -40,9 +42,12 @@ describe('BoatCard', () => {
     expect(link?.getAttribute('aria-label')).toBe('Yelkenli');
   });
 
-  it('kalp tıklaması favoriyi değiştirir, navigasyon tetiklemez', () => {
+  it('misafirin kalp tıklaması giriş modalını açar, navigasyon tetiklemez', () => {
     const router = TestBed.inject(Router);
     const navigate = vi.spyOn(router, 'navigateByUrl');
+    const openModal = vi
+      .spyOn(TestBed.inject(AuthModalService), 'open')
+      .mockImplementation(() => {});
 
     const link = fixture.nativeElement.querySelector('a');
     const button = fixture.nativeElement.querySelector('button');
@@ -52,7 +57,8 @@ describe('BoatCard', () => {
     button.click();
     fixture.detectChanges();
 
-    expect(fixture.componentInstance.favorite()).toBe(true);
+    expect(openModal).toHaveBeenCalledWith('login');
+    expect(fixture.componentInstance.favorite()).toBe(false);
     expect(navigate).not.toHaveBeenCalled();
   });
 });

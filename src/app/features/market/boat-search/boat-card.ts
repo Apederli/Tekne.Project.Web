@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideHeart, lucideStar } from '@ng-icons/lucide';
@@ -8,6 +8,7 @@ import { makeBoatSlug } from '../../../core/util/boat-slug';
 import { ROUTE_MARKET } from '../../../core/routes.const';
 import { AuthStore } from '../../../core/auth/auth-store';
 import { AuthModalService } from '../auth-modal/auth-modal.service';
+import { BoatFavoriteService } from '@services';
 
 @Component({
   selector: 'app-boat-card',
@@ -18,6 +19,7 @@ import { AuthModalService } from '../auth-modal/auth-modal.service';
 export class BoatCard {
   authStore = inject(AuthStore);
   authModal = inject(AuthModalService);
+  favoriteService = inject(BoatFavoriteService);
 
   boat = input.required<BoatCardOutputModel>();
 
@@ -25,8 +27,8 @@ export class BoatCard {
 
   departure = input('');
 
-  // TODO(backend): favori uçları yok — durum sayfa ömürlük, yalnızca görsel test için.
-  favorite = signal(false);
+  // Sunucudan gelen durumla başlar, kart başka tekneye geçerse sıfırlanır.
+  favorite = linkedSignal(() => this.boat().isFavorite);
 
   detailUrl = computed(() => [
     '/',
@@ -44,11 +46,21 @@ export class BoatCard {
     if (event.defaultPrevented) event.stopPropagation();
   }
 
+  // Optimistic: kalp anında boyanır, istek arkadan gider; hata olursa geri
+  // alınır (mesajı interceptor gösterir). Uçlar idempotent olduğundan hızlı
+  // art arda tıklamalar durum bozmaz.
   toggleFavorite(): void {
     if (!this.authStore.isAuthenticated()) {
       this.authModal.open('login');
       return;
     }
-    this.favorite.update((f) => !f);
+
+    const next = !this.favorite();
+    this.favorite.set(next);
+
+    const request = next
+      ? this.favoriteService.add(this.boat().id)
+      : this.favoriteService.remove(this.boat().id);
+    request.subscribe({ error: () => this.favorite.set(!next) });
   }
 }

@@ -83,6 +83,8 @@ export interface BoatCardOutputModel {
   cityName: string;
   /** Fotoğrafların tam URL listesi — sıralı gelir, kapak ilk eleman. */
   photos: string[];
+  /** Giriş yapmış kullanıcı tekneyi favorilemiş mi — misafirde her zaman false. */
+  isFavorite: boolean;
 }
 
 /** `GET /api/Boats/mine` ve `GET /api/Boats/{id}` yanıt gövdesi. */
