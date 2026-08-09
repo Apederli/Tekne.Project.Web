@@ -11,6 +11,7 @@ function boat(): BoatCardOutputModel {
     id: 5,
     name: 'Mavi Rüzgar',
     boatType: BoatType.Sailboat,
+    boatTypeLabel: 'Yelkenli',
     totalCapacity: 10,
     primaryHarborId: 3,
     primaryHarborName: 'Kandilli',

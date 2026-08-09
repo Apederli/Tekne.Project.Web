@@ -12,12 +12,13 @@
  * Fotoğraf kaydı. `POST /api/Boats/{boatId}/photos` yanıtında ve
  * `BoatOutputModel.photos` içinde döner.
  *
- * Yalnızca `objectKey` var — backend public URL tutmuyor (ilgili alan
- * migration ile kaldırıldı), görsel adresi istemci tarafında üretilir.
+ * `url` görüntülenebilir tam adrestir — backend yanıt üretilirken CDN kökünden
+ * hesaplar (DB'de saklamaz). İstemci CDN adresini bilmez; imzalı URL'e geçiş
+ * de istemciye dokunmadan yapılabilir.
  */
 export interface BoatPhotoOutputModel {
   id: number;
-  objectKey: string;
+  url: string;
   sortOrder: number;
 }
 

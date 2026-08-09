@@ -3,14 +3,11 @@ import {
   Component,
   computed,
   CUSTOM_ELEMENTS_SCHEMA,
-  inject,
   input,
   output,
 } from '@angular/core';
 import type { ClassValue } from 'clsx';
 import { register } from 'swiper/element/bundle';
-import { BoatPhotoOutputModel, sortBoatPhotos } from '@models';
-import { PhotoUrlService } from '@services';
 
 /**
  * Fotoğraf galerisi — Swiper Element (web component) üzerine kurulu.
@@ -28,9 +25,12 @@ import { PhotoUrlService } from '@services';
   templateUrl: './photo-gallery.html',
 })
 export class PhotoGallery {
-  photoUrl = inject(PhotoUrlService);
-
-  photos = input.required<BoatPhotoOutputModel[]>();
+  /**
+   * Fotoğrafların tam URL listesi — gösterim sırasında, kapak ilk eleman.
+   * Sıralama çağıranın sözleşmesi: kart ucu backend'den sıralı gelir, tam
+   * modelli ekranlar `sortBoatPhotos(...).map(p => p.url)` ile üretir.
+   */
+  photos = input.required<string[]>();
 
   /** Tekne adı — alt metni bundan üretiliyor ("Ayla fotoğraf 2 / 8"). */
   alt = input('');
@@ -44,11 +44,8 @@ export class PhotoGallery {
   /** Düzeni çağıran belirler; oran/köşe burada override edilir. 5:4 = teknevia kartı. */
   galleryClass = input<ClassValue>('aspect-[5/4]', { alias: 'class' });
 
-  /** Sıra `PhotoUploader` ile ortak (`sortBoatPhotos`) — iki ekran aynı fotoğrafı kapak saysın. */
-  visible = computed(() => sortBoatPhotos(this.photos()));
-
   /** Nokta ve rewind tek fotoğrafta anlamsız — hiç render edilmiyor. */
-  scrollable = computed(() => this.visible().length > 1);
+  scrollable = computed(() => this.photos().length > 1);
 
   constructor() {
     // `customElements` sunucuda yok; Swiper'ın `register`'ı zaten tanımlıysa atlar,
@@ -57,7 +54,7 @@ export class PhotoGallery {
   }
 
   photoAlt(index: number): string {
-    const position = `fotoğraf ${index + 1} / ${this.visible().length}`;
+    const position = `fotoğraf ${index + 1} / ${this.photos().length}`;
     const name = this.alt().trim();
     return name ? `${name} — ${position}` : position;
   }

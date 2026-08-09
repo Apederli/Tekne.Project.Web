@@ -14,7 +14,4 @@ export const environment = {
    * `Cors:Origins` listesine dev alan adı eklenmeli.
    */
   apiBaseUrl: '/api',
-
-  /** Görsel kökü — dev de aynı R2 bucket'ı kullanıyor. */
-  cdnBaseUrl: 'https://pub-bb40570c5053405caedb5b68bd78ca83.r2.dev',
 };

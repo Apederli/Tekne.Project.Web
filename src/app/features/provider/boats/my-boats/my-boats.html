@@ -29,7 +29,7 @@
         >
           <span class="block" (click)="swallowSwiperClick($event)">
             <app-photo-gallery
-              [photos]="boat.photos"
+              [photos]="photoUrls(boat)"
               [alt]="boat.name"
               class="aspect-[5/4] w-full"
             />
@@ -48,7 +48,7 @@
             </div>
             <span class="mt-1 block text-sm text-muted-foreground">{{ location(boat) }}</span>
             <span class="mt-1 block text-sm text-muted-foreground">
-              {{ boatTypeLabel(boat.boatType) }} · {{ rentalTypeLabel(boat.rentalType) }} ·
+              {{ boat.boatTypeLabel }} · {{ boat.rentalTypeLabel }} ·
               {{ boat.totalCapacity }} kişi
             </span>
           </div>

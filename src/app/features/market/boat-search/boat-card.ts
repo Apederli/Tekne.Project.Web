@@ -5,7 +5,6 @@ import { lucideHeart, lucideStar } from '@ng-icons/lucide';
 import { BoatCardOutputModel } from '@models';
 import { PhotoGallery } from '../../../shared/photo-gallery/photo-gallery';
 import { makeBoatSlug } from '../../../core/util/boat-slug';
-import { BOAT_TYPE_LABELS } from '../../../core/util/boat-labels';
 import { ROUTE_MARKET } from '../../../core/routes.const';
 
 @Component({
@@ -30,7 +29,7 @@ export class BoatCard {
     makeBoatSlug(this.boat().name, this.boat().id),
   ]);
 
-  typeLabel = computed(() => BOAT_TYPE_LABELS[this.boat().boatType]);
+  typeLabel = computed(() => this.boat().boatTypeLabel);
 
   cardLabel = computed(() =>
     this.location() ? this.typeLabel() + ' — ' + this.location() : this.typeLabel(),

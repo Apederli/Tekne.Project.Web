@@ -17,15 +17,4 @@ export const environment = {
    * ve backend'in `Cors:Origins` listesi güncellenmeli.
    */
   apiBaseUrl: '/api',
-
-  /**
-   * Görsellerin servis edildiği R2 bucket kökü. `BoatPhotoOutputModel.objectKey`
-   * bunun peşine eklenir (`boat-image/` prefix'i key'in kendi içinde).
-   *
-   * TODO: burada duran adres Cloudflare'in `r2.dev` geliştirme URL'i — rate-limit'li
-   * ve production için önerilmiyor. Yayına çıkmadan bucket kendi alan adımıza
-   * bağlanmalı (`cdn.teknevia.com` gibi); resize/`srcset` desteği de ancak o zaman
-   * açılıyor.
-   */
-  cdnBaseUrl: 'https://pub-bb40570c5053405caedb5b68bd78ca83.r2.dev',
 };

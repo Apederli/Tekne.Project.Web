@@ -31,7 +31,7 @@
   @for (photo of photos; track photo.id; let i = $index) {
     <swiper-slide class="block h-full w-full">
       <img
-        [src]="photoUrl.url(photo.objectKey)"
+        [src]="photo.url"
         [alt]="photoAlt(i)"
         [attr.loading]="i === data.startIndex ? 'eager' : 'lazy'"
         decoding="async"

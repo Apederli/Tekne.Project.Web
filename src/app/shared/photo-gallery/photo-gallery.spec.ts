@@ -1,26 +1,22 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
-import { BoatPhotoOutputModel } from '@models';
 
 // jsdom Swiper'ın shadow DOM render'ını taşıyamıyor (connectedCallback fırlatıyor);
 // custom element hiç tanımlanmasın — testler Angular'ın render ettiği light DOM'u doğruluyor.
 vi.mock('swiper/element/bundle', () => ({ register: () => {} }));
-import { CDN_BASE_URL } from '../../core/api/cdn.config';
 import { PhotoGallery } from './photo-gallery';
 
 const CDN = 'https://cdn.test';
 
-function photo(id: number, sortOrder: number): BoatPhotoOutputModel {
-  return { id, objectKey: `boat-image/${id}.webp`, sortOrder };
+function photo(id: number): string {
+  return `${CDN}/boat-image/${id}.webp`;
 }
 
 describe('PhotoGallery', () => {
   let fixture: ComponentFixture<PhotoGallery>;
 
-  function create(photos: BoatPhotoOutputModel[], alt = '') {
-    TestBed.configureTestingModule({
-      providers: [{ provide: CDN_BASE_URL, useValue: CDN }],
-    });
+  function create(photos: string[], alt = '') {
+    TestBed.configureTestingModule({});
 
     fixture = TestBed.createComponent(PhotoGallery);
     fixture.componentRef.setInput('photos', photos);
@@ -45,7 +41,7 @@ describe('PhotoGallery', () => {
   });
 
   it('disables pagination dots and rewind for a single photo', () => {
-    create([photo(1, 0)]);
+    create([photo(1)]);
 
     expect(images().length).toBe(1);
     expect(swiper()!.getAttribute('pagination')).toBe('false');
@@ -53,7 +49,7 @@ describe('PhotoGallery', () => {
   });
 
   it('enables dynamic pagination dots and rewind for multiple photos', () => {
-    create([photo(1, 0), photo(2, 1)]);
+    create([photo(1), photo(2)]);
 
     expect(swiper()!.getAttribute('pagination')).toBe('true');
     expect(swiper()!.getAttribute('rewind')).toBe('true');
@@ -62,26 +58,30 @@ describe('PhotoGallery', () => {
     expect(fixture.nativeElement.querySelectorAll('button').length).toBe(0);
   });
 
-  it('orders photos by ascending sortOrder', () => {
-    create([photo(3, 2), photo(1, 0), photo(2, 1)]);
+  it('renders photos in the given order — ordering is the callers contract', () => {
+    create([photo(3), photo(1), photo(2)]);
 
-    expect(fixture.componentInstance.visible().map((p) => p.id)).toEqual([1, 2, 3]);
+    expect(images().map((img) => img.getAttribute('src'))).toEqual([
+      `${CDN}/boat-image/3.webp`,
+      `${CDN}/boat-image/1.webp`,
+      `${CDN}/boat-image/2.webp`,
+    ]);
   });
 
-  it('builds the src from the CDN token without duplicating the key prefix', () => {
-    create([photo(7, 0)]);
+  it('uses the given URL as the image src untouched', () => {
+    create([photo(7)]);
 
     expect(images()[0].getAttribute('src')).toBe(`${CDN}/boat-image/7.webp`);
   });
 
   it('describes the boat and the position in the alt text', () => {
-    create([photo(1, 0), photo(2, 1)], 'Ayla');
+    create([photo(1), photo(2)], 'Ayla');
 
     expect(images()[0].getAttribute('alt')).toBe('Ayla — fotoğraf 1 / 2');
   });
 
   it('loads the first photo eagerly and the rest lazily', () => {
-    create([photo(1, 0), photo(2, 1)]);
+    create([photo(1), photo(2)]);
 
     expect(images()[0].getAttribute('loading')).toBe('eager');
     expect(images()[1].getAttribute('loading')).toBe('lazy');

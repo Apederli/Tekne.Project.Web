@@ -10,7 +10,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideGripVertical, lucideImagePlus, lucideTrash2 } from '@ng-icons/lucide';
 import { HlmButton } from '@ui/button';
 import { BoatPhotoOutputModel, sortBoatPhotos } from '@models';
-import { BoatPhotoService, PhotoUrlService } from '@services';
+import { BoatPhotoService } from '@services';
 import { ConfirmService } from '../../../../shared/confirm-dialog/confirm.service';
 import { MAX_PHOTOS, rejectionMessage, selectUploadableFiles } from './photo-upload-rules';
 
@@ -29,7 +29,6 @@ import { MAX_PHOTOS, rejectionMessage, selectUploadableFiles } from './photo-upl
 })
 export class PhotoUploader {
   photoService = inject(BoatPhotoService);
-  photoUrl = inject(PhotoUrlService);
   confirmService = inject(ConfirmService);
 
   boatId = input.required<number>();

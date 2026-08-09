@@ -42,7 +42,7 @@
         [class]="deletingId() === photo.id ? 'opacity-50' : ''"
       >
         <img
-          [src]="photoUrl.url(photo.objectKey)"
+          [src]="photo.url"
           [alt]="photoAlt(i)"
           loading="lazy"
           decoding="async"

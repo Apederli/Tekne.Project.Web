@@ -12,7 +12,7 @@ vi.mock('swiper/element/bundle', () => ({ register: () => {} }));
 import { BoatDetail } from './boat-detail';
 
 function photo(id: number, sortOrder: number): BoatPhotoOutputModel {
-  return { id, objectKey: `boat-image/${id}.webp`, sortOrder };
+  return { id, url: `https://cdn.test/boat-image/${id}.webp`, sortOrder };
 }
 
 function boat(photos: BoatPhotoOutputModel[]): BoatOutputModel {
@@ -20,7 +20,9 @@ function boat(photos: BoatPhotoOutputModel[]): BoatOutputModel {
     id: 5,
     name: 'Mavi Rüzgar',
     boatType: BoatType.Sailboat,
+    boatTypeLabel: 'Yelkenli',
     rentalType: RentalType.Hourly,
+    rentalTypeLabel: 'Saatlik',
     manufactureYear: 2019,
     lengthInMeters: 12,
     diningCapacity: 0,

@@ -7,7 +7,7 @@ import { MAX_PHOTOS } from './photo-upload-rules';
 import { PhotoUploader } from './photo-uploader';
 
 function photo(id: number, sortOrder: number): BoatPhotoOutputModel {
-  return { id, objectKey: `boat-image/${id}.jpg`, sortOrder };
+  return { id, url: `https://cdn.test/boat-image/${id}.jpg`, sortOrder };
 }
 
 function imageFile(name = 'a.jpg', type = 'image/jpeg', size = 1024): File {

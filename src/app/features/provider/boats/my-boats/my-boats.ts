@@ -2,12 +2,10 @@ import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { HlmButton } from '@ui/button';
-import { BoatType, RentalType } from '@enums';
-import { BoatOutputModel } from '@models';
+import { BoatOutputModel, sortBoatPhotos } from '@models';
 import { BoatService, HarborService } from '@services';
 import { PhotoGallery } from '../../../../shared/photo-gallery/photo-gallery';
 import { BOAT_EDIT_TABS, ROUTE_MARKET, ROUTE_PARTNER } from '../../../../core/routes.const';
-import { BOAT_TYPE_LABELS, RENTAL_TYPE_LABELS } from '../../../../core/util/boat-labels';
 import { formatBoatLocation } from '../../../../core/util/boat-location';
 import { makeBoatSlug } from '../../../../core/util/boat-slug';
 
@@ -58,12 +56,9 @@ export class MyBoats {
 
   tabs = BOAT_EDIT_TABS;
 
-  boatTypeLabel(type: BoatType): string {
-    return BOAT_TYPE_LABELS[type] ?? type;
-  }
-
-  rentalTypeLabel(type: RentalType): string {
-    return RENTAL_TYPE_LABELS[type] ?? type;
+  /** Galeri sıralı URL listesi ister — kapak kuralı `sortBoatPhotos` ile ortak. */
+  photoUrls(boat: BoatOutputModel): string[] {
+    return sortBoatPhotos(boat.photos).map((p) => p.url);
   }
 
   /** Listede gösterilen konum: bağlı olduğu limanın adı, yanında şehir. */

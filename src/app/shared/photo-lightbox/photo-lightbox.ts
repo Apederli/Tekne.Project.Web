@@ -5,7 +5,6 @@ import { lucideX } from '@ng-icons/lucide';
 import { register } from 'swiper/element/bundle';
 import type { Swiper } from 'swiper/types';
 import { PhotoLightboxData, sortBoatPhotos } from '@models';
-import { PhotoUrlService } from '@services';
 
 /**
  * Tam ekran fotoğraf görüntüleyici. Tek başına kullanılmaz —
@@ -29,7 +28,6 @@ import { PhotoUrlService } from '@services';
 export class PhotoLightbox {
   ref = inject<DialogRef<void>>(DialogRef);
   data = inject<PhotoLightboxData>(DIALOG_DATA);
-  photoUrl = inject(PhotoUrlService);
 
   /** Sıra her yerdeki gibi `sortBoatPhotos` — tetikleyen index'ler bu sırayla üretildi. */
   photos = sortBoatPhotos(this.data.photos);

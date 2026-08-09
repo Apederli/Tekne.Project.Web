@@ -74,12 +74,15 @@ export interface BoatCardOutputModel {
   id: number;
   name: string;
   boatType: BoatType;
+  /** Tipin ekran etiketi ("Motoryat") — etiketlerin tek kaynağı backend. */
+  boatTypeLabel: string;
   totalCapacity: number;
   /** Bağlı liman — liman filtresi "X Kalkışlı" kıyasını bu id ile yapar. */
   primaryHarborId: number;
   primaryHarborName: string;
   cityName: string;
-  photos: BoatPhotoOutputModel[];
+  /** Fotoğrafların tam URL listesi — sıralı gelir, kapak ilk eleman. */
+  photos: string[];
 }
 
 /** `GET /api/Boats/mine` ve `GET /api/Boats/{id}` yanıt gövdesi. */
@@ -87,7 +90,11 @@ export interface BoatOutputModel {
   id: number;
   name: string;
   boatType: BoatType;
+  /** Tipin ekran etiketi — etiketlerin tek kaynağı backend. */
+  boatTypeLabel: string;
   rentalType: RentalType;
+  /** Kiralama tipinin ekran etiketi ("Saatlik"). */
+  rentalTypeLabel: string;
   manufactureYear?: number;
   lengthInMeters: number;
   diningCapacity: number;

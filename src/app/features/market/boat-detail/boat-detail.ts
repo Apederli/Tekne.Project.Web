@@ -3,10 +3,9 @@ import { RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { sortBoatPhotos } from '@models';
-import { BoatService, HarborService, PhotoUrlService } from '@services';
+import { BoatService, HarborService } from '@services';
 import { PhotoGallery } from '../../../shared/photo-gallery/photo-gallery';
 import { PhotoLightboxService } from '../../../shared/photo-lightbox/photo-lightbox.service';
-import { BOAT_TYPE_LABELS } from '../../../core/util/boat-labels';
 import { formatBoatLocation } from '../../../core/util/boat-location';
 import { parseBoatIdFromSlug } from '../../../core/util/boat-slug';
 import { ROUTE_MARKET } from '../../../core/routes.const';
@@ -23,7 +22,6 @@ import { ROUTE_MARKET } from '../../../core/routes.const';
 export class BoatDetail {
   boatService = inject(BoatService);
   harborService = inject(HarborService);
-  photoUrl = inject(PhotoUrlService);
   lightbox = inject(PhotoLightboxService);
   title = inject(Title);
 
@@ -52,6 +50,9 @@ export class BoatDetail {
 
   /** Sıra her yerdeki gibi `sortBoatPhotos` — kapak başta. */
   photos = computed(() => sortBoatPhotos(this.boat()?.photos ?? []));
+
+  /** Mobil galeri sıralı URL listesi ister; lightbox/mozaik tam modelle çalışmayı sürdürür. */
+  photoUrls = computed(() => this.photos().map((p) => p.url));
 
   cover = computed(() => this.photos()[0]);
   tiles = computed(() => this.photos().slice(1, 5));
@@ -97,11 +98,7 @@ export class BoatDetail {
     return b ? formatBoatLocation(b, this.cities()) : '';
   });
 
-  typeLabel = computed(() => {
-    const b = this.boat();
-    // Bilinmeyen enum değeri sessizce "undefined" basmasın diye ham değere düş.
-    return b ? (BOAT_TYPE_LABELS[b.boatType] ?? b.boatType) : '';
-  });
+  typeLabel = computed(() => this.boat()?.boatTypeLabel ?? '');
 
   constructor() {
     // SEO: başlık tekne adına çekilir; Title servisi SSR'da da çalışır.
