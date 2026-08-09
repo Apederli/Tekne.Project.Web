@@ -75,7 +75,7 @@
     <section hlmCard>
       <div hlmCardHeader>
         <h2 hlmCardTitle>Kapasite</h2>
-        <p hlmCardDescription>Kişi kapasiteleri.</p>
+        <p hlmCardDescription>Kişi kapasiteleri ve teknedeki tuvalet sayısı.</p>
       </div>
       <div hlmCardContent class="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <app-input label="Toplam kapasite (kişi)" type="number" [field]="boatForm.totalCapacity" />
@@ -91,6 +91,8 @@
           type="number"
           [field]="boatForm.swimmingCapacity"
         />
+
+        <app-input label="Tuvalet sayısı" type="number" [field]="boatForm.toiletCount" />
       </div>
     </section>
 
@@ -103,12 +105,7 @@
         </p>
       </div>
       <div hlmCardContent class="grid grid-cols-1 items-start gap-5 sm:grid-cols-3">
-        <app-select
-          label="Şehir"
-          [field]="boatForm.cityId"
-          [options]="cityOptions()"
-          (valueChange)="onCityChange()"
-        />
+        <app-select label="Şehir" [field]="boatForm.cityId" [options]="cityOptions()" />
 
         @if (harbors().length > 0) {
           <app-multi-select

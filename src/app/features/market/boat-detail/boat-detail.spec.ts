@@ -29,6 +29,7 @@ function boat(photos: BoatPhotoOutputModel[]): BoatOutputModel {
     diningCapacity: 0,
     totalCapacity: 10,
     swimmingCapacity: 8,
+    toiletCount: 1,
     cityId: 1,
     primaryHarborId: 3,
     harborIds: [3],

@@ -128,6 +128,21 @@ export class BoatForm {
   });
 
   constructor() {
+    // Şehir değişince önceki şehrin limanları temizlenir. Select'in
+    // (valueChange)'ine bağlanmıyor: BrnSelect o event'i programatik
+    // yazımda da yayınlıyor — update modunda API'den dolan formun
+    // limanlarını siliyordu. Modelden süzmek iki durumu da doğru ayırır:
+    // yüklenen kaydın limanları şehrine ait olduğu için dokunulmaz.
+    effect(() => {
+      if (this.cities().length === 0) return;
+      const valid = new Set(this.harbors().map((h) => h.id));
+      const m = this.model();
+      const harborIds = m.harborIds.filter((id) => valid.has(id));
+      if (harborIds.length !== m.harborIds.length) {
+        this.model.update((x) => ({ ...x, harborIds }));
+      }
+    });
+
     effect(() => {
       const m = this.model();
       if (m.primaryHarborId !== '' && !m.harborIds.includes(Number(m.primaryHarborId))) {
@@ -156,6 +171,8 @@ export class BoatForm {
     min(path.diningCapacity, 0);
     required(path.swimmingCapacity);
     min(path.swimmingCapacity, 0);
+    required(path.toiletCount);
+    min(path.toiletCount, 0);
     required(path.minimumRentalDuration);
     min(path.minimumRentalDuration, 1);
     validate(path.minimumRentalDuration, (ctx) => {
@@ -188,10 +205,6 @@ export class BoatForm {
     maxLength(path.description, 1000);
   });
 
-  onCityChange(): void {
-    this.model.update((m) => ({ ...m, harborIds: [], primaryHarborId: '' }));
-  }
-
   async save(): Promise<void> {
     await submit(this.boatForm, async () => {
       const m = this.model();
@@ -204,6 +217,7 @@ export class BoatForm {
         diningCapacity: m.diningCapacity ?? 0,
         totalCapacity: m.totalCapacity ?? 0,
         swimmingCapacity: m.swimmingCapacity ?? 0,
+        toiletCount: m.toiletCount ?? 0,
         minimumRentalDuration: m.minimumRentalDuration ?? 1,
         cityId: Number(m.cityId),
         primaryHarborId: Number(m.primaryHarborId),
@@ -211,7 +225,13 @@ export class BoatForm {
         description: m.description.trim() || undefined,
       };
       if (this.isUpdate()) {
-        await firstValueFrom(this.boatService.update(Number(this.boatId()), input));
+        const updated = await firstValueFrom(
+          this.boatService.update(Number(this.boatId()), input),
+        );
+        if (!updated) {
+          this.toast.error('Tekne bilgileri güncellenemedi.');
+          return;
+        }
         this.toast.success('Tekne bilgileri güncellendi.');
         this.saved.emit();
         return;

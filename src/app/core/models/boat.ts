@@ -13,6 +13,7 @@ export interface BoatInputModel {
   diningCapacity: number;
   totalCapacity: number;
   swimmingCapacity: number;
+  toiletCount: number;
   minimumRentalDuration?: number;
   cityId: number;
   primaryHarborId: number;
@@ -29,6 +30,7 @@ export interface BoatFormModel {
   diningCapacity: number | null;
   totalCapacity: number | null;
   swimmingCapacity: number | null;
+  toiletCount: number | null;
   minimumRentalDuration: number | null;
   cityId: string;
   primaryHarborId: string;
@@ -65,6 +67,7 @@ export interface BoatOutputModel {
   diningCapacity: number;
   totalCapacity: number;
   swimmingCapacity: number;
+  toiletCount: number;
   minimumRentalDuration: number;
   cityId: number;
   primaryHarborId: number;

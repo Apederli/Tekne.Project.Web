@@ -16,6 +16,7 @@ const validModel: BoatFormModel = {
   diningCapacity: 0,
   totalCapacity: 10,
   swimmingCapacity: 8,
+  toiletCount: 2,
   minimumRentalDuration: 1,
   cityId: '1',
   primaryHarborId: '3',
@@ -101,6 +102,7 @@ describe('BoatForm', () => {
       diningCapacity: 0,
       totalCapacity: 10,
       swimmingCapacity: 8,
+      toiletCount: 2,
       minimumRentalDuration: 1,
       cityId: 1,
       primaryHarborId: 3,
@@ -162,10 +164,20 @@ describe('BoatForm', () => {
 
   it('şehir değişince liman seçimlerini sıfırlar', () => {
     component.model.set(validModel);
+    fixture.detectChanges();
 
-    component.onCityChange();
+    component.model.update((m) => ({ ...m, cityId: '2' }));
+    fixture.detectChanges();
 
     expect(component.model().harborIds).toEqual([]);
     expect(component.model().primaryHarborId).toBe('');
+  });
+
+  it('yüklenen kaydın kendi şehrine ait limanlarına dokunmaz', () => {
+    component.model.set(validModel);
+    fixture.detectChanges();
+
+    expect(component.model().harborIds).toEqual([3, 4]);
+    expect(component.model().primaryHarborId).toBe('3');
   });
 });
