@@ -27,63 +27,57 @@
       <div hlmCardContent class="flex flex-col gap-5">
         <app-input label="Tekne adı" [field]="boatForm.name" />
 
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <div hlmField>
-            <span hlmFieldLabel>Tekne tipi</span>
-            <hlm-toggle-group type="single" [formField]="boatForm.boatType">
-              @for (option of boatTypeOptions; track option.value) {
-                <button hlmToggleGroupItem type="button" [value]="option.value">
-                  {{ option.label }}
-                </button>
-              }
-            </hlm-toggle-group>
-            @if (boatForm.boatType().touched()) {
-              @for (error of boatForm.boatType().errors(); track error.kind) {
-                <hlm-field-error forceShow>{{ error.message }}</hlm-field-error>
-              }
-            }
-          </div>
+        <app-toggle-group
+          label="Tekne tipi"
+          [field]="boatForm.boatType"
+          [options]="boatTypeOptions"
+        />
 
-          <div hlmField>
-            <span hlmFieldLabel>Kiralama tipi</span>
-            <hlm-toggle-group type="single" [formField]="boatForm.rentalType">
-              @for (option of rentalTypeOptions; track option.value) {
-                <button hlmToggleGroupItem type="button" [value]="option.value">
-                  {{ option.label }}
-                </button>
-              }
-            </hlm-toggle-group>
-            @if (boatForm.rentalType().touched()) {
-              @for (error of boatForm.rentalType().errors(); track error.kind) {
-                <hlm-field-error forceShow>{{ error.message }}</hlm-field-error>
-              }
-            }
-          </div>
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <app-input
+            label="Uzunluk (metre)"
+            type="number"
+            step="0.1"
+            [field]="boatForm.lengthInMeters"
+          />
+
+          <app-input
+            label="Üretim yılı"
+            type="number"
+            optional
+            [field]="boatForm.manufactureYear"
+          />
         </div>
+      </div>
+    </section>
+
+    <section hlmCard>
+      <div hlmCardHeader>
+        <h2 hlmCardTitle>Çalışma</h2>
+        <p hlmCardDescription>Teknenin kiralama modeli ve kabul ettiği minimum süre.</p>
+      </div>
+      <div hlmCardContent class="grid grid-cols-1 items-start gap-5 sm:grid-cols-2">
+        <app-toggle-group
+          label="Kiralama tipi"
+          [field]="boatForm.rentalType"
+          [options]="rentalTypeOptions"
+        />
 
         <app-input
           class="sm:max-w-[12rem]"
-          label="Üretim yılı"
+          [label]="minimumDurationLabel()"
           type="number"
-          optional
-          [field]="boatForm.manufactureYear"
+          [field]="boatForm.minimumRentalDuration"
         />
       </div>
     </section>
 
     <section hlmCard>
       <div hlmCardHeader>
-        <h2 hlmCardTitle>Boyut ve kapasite</h2>
-        <p hlmCardDescription>Uzunluk ve kişi kapasiteleri.</p>
+        <h2 hlmCardTitle>Kapasite</h2>
+        <p hlmCardDescription>Kişi kapasiteleri.</p>
       </div>
       <div hlmCardContent class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        <app-input
-          label="Uzunluk (metre)"
-          type="number"
-          step="0.1"
-          [field]="boatForm.lengthInMeters"
-        />
-
         <app-input label="Toplam kapasite (kişi)" type="number" [field]="boatForm.totalCapacity" />
 
         <app-input
@@ -150,7 +144,7 @@
           ></textarea>
           @if (boatForm.description().touched()) {
             @for (error of boatForm.description().errors(); track error.kind) {
-              <hlm-field-error forceShow>{{ error.message }}</hlm-field-error>
+              <hlm-field-error forceShow>{{ error | errorMessage }}</hlm-field-error>
             }
           }
         </div>

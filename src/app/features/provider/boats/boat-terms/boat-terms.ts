@@ -5,7 +5,7 @@ import { Subject, catchError, debounceTime, map, of, switchMap } from 'rxjs';
 import { HlmCheckboxImports } from '@ui/checkbox';
 import { HlmLabel } from '@ui/label';
 import { HlmSkeleton } from '@ui/skeleton';
-import { AppSingleCheckGroup } from '../../../../shared/forms/app-single-check-group';
+import { AppSingleCheckGroup } from '@forms';
 import { SelectOption, UsageTermGroupOutputModel } from '@models';
 import { BoatService, BoatUsageTermService, UsageTermService } from '@services';
 

@@ -19,6 +19,7 @@
       "@services": ["./src/app/core/services/index.ts"],
       "@services/*": ["./src/app/core/services/*"],
       "@interceptors/*": ["./src/app/core/interceptors/*"],
+      "@forms": ["./src/app/shared/forms/index.ts"],
       "@ui/button": ["./src/app/shared/ui/button/src/index.ts"],
       "@ui/utils": ["./src/app/shared/ui/utils/src/index.ts"],
       "@ui/card": ["./src/app/shared/ui/card/src/index.ts"],

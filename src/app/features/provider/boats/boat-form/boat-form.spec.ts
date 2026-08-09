@@ -16,6 +16,7 @@ const validModel: BoatFormModel = {
   diningCapacity: 0,
   totalCapacity: 10,
   swimmingCapacity: 8,
+  minimumRentalDuration: 1,
   cityId: '1',
   primaryHarborId: '3',
   harborIds: [3, 4],
@@ -80,7 +81,7 @@ describe('BoatForm', () => {
 
     http.expectNone((req) => req.method === 'POST');
     expect(component.boatForm().invalid()).toBe(true);
-    expect(component.boatForm.name().errors()[0].message).toBe('Tekne adı gerekli.');
+    expect(component.boatForm.name().errors()[0].kind).toBe('required');
   });
 
   it('geçerli formu sayısal alanları çevirerek POST eder', async () => {
@@ -100,6 +101,7 @@ describe('BoatForm', () => {
       diningCapacity: 0,
       totalCapacity: 10,
       swimmingCapacity: 8,
+      minimumRentalDuration: 1,
       cityId: 1,
       primaryHarborId: 3,
       harborIds: [3, 4],
@@ -128,11 +130,9 @@ describe('BoatForm', () => {
     component.model.set({ ...validModel, lengthInMeters: 0, totalCapacity: 0 });
 
     expect(component.boatForm.lengthInMeters().errors()[0].message).toBe(
-      'Uzunluk 0’dan büyük olmalı.',
+      '0’dan büyük olmalı.',
     );
-    expect(component.boatForm.totalCapacity().errors()[0].message).toBe(
-      'Toplam kapasite en az 1 olmalı.',
-    );
+    expect(component.boatForm.totalCapacity().errors()[0].kind).toBe('min');
   });
 
   it('seçili limanlar arasından çıkan ana liman temizlenir', () => {

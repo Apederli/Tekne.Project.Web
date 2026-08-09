@@ -16,10 +16,13 @@ import { HlmButton } from '@ui/button';
 import { HlmCardImports } from '@ui/card';
 import { HlmFieldImports } from '@ui/field';
 import { HlmTextarea } from '@ui/textarea';
-import { HlmToggleGroupImports } from '@ui/toggle-group';
-import { AppInput } from '../../../../shared/forms/app-input';
-import { AppMultiSelect } from '../../../../shared/forms/app-multi-select';
-import { AppSelect } from '../../../../shared/forms/app-select';
+import {
+  AppInput,
+  AppMultiSelect,
+  AppSelect,
+  AppToggleGroup,
+  ErrorMessagePipe,
+} from '@forms';
 import { BoatType, FormMode, RentalType } from '@enums';
 import { BoatFormModel, BoatInputModel } from '@models';
 import { BoatService, HarborService, ToastService } from '@services';
@@ -29,16 +32,17 @@ import { emptyBoatForm, toBoatFormModel } from '../../../../core/util/boat-form-
 @Component({
   selector: 'app-boat-form',
   imports: [
+    ErrorMessagePipe,
     FormField,
     RouterLink,
     AppInput,
     AppMultiSelect,
     AppSelect,
+    AppToggleGroup,
     HlmButton,
     HlmCardImports,
     HlmFieldImports,
     HlmTextarea,
-    HlmToggleGroupImports,
   ],
   templateUrl: './boat-form.html',
 })
@@ -58,31 +62,32 @@ export class BoatForm {
 
   rentalTypeOptions = [
     { value: RentalType.Hourly, label: 'Saatlik' },
-    { value: RentalType.Daily, label: 'Günlük' },
+    { value: RentalType.Nightly, label: 'Gecelik' },
   ];
 
-  /** Vazgeç linki — teknelerim listesine döner. */
   boatsUrl = ['/', ROUTE_PARTNER.main, ROUTE_PARTNER.dashboard, ROUTE_PARTNER.boats];
 
-  /** Formun hangi amaçla açıldığı; sekme olarak kullanılırken Update verilir. */
   screenOpenType = input<FormMode>(FormMode.Create);
 
-  /** Update'te kayıt başarılı olunca kapsayıcı başlığı tazelesin diye. */
   saved = output<void>();
 
   isUpdate = computed(() => this.screenOpenType() === FormMode.Update);
 
-  /**
-   * Route paramı input'a bağlanmıyor: `withComponentInputBinding` yalnızca
-   * route'a bağlı bileşenlerde çalışır, bu bileşen düzenleme sayfasında
-   * sekme olarak da kullanılıyor. Enjekte edilen route kapsayıcınınkine
-   * çözülür, `:boatId` oradadır.
-   */
+  minimumDurationLabel = computed(() => {
+    switch (this.model().rentalType) {
+      case RentalType.Hourly:
+        return 'Minimum süre (saat)';
+      case RentalType.Nightly:
+        return 'Minimum süre (gece)';
+      default:
+        return 'Minimum süre';
+    }
+  });
+
   boatId = toSignal(this.route.paramMap.pipe(map((p) => p.get('boatId'))), {
     initialValue: null,
   });
 
-  /** Create modunda `params` undefined kalır; resource hiç istek atmaz. */
   boatResource = rxResource({
     params: () => {
       const id = this.boatId();
@@ -97,32 +102,24 @@ export class BoatForm {
 
   cities = toSignal(this.harborService.getAll(), { initialValue: [] });
 
-  /**
-   * Formun çalışma kopyası. `linkedSignal`: Update'te yüklenen tekneden
-   * türetilir, Create'te boş başlar; kullanıcı yazdıkça üzerine yazılır.
-   */
   model = linkedSignal<BoatFormModel>(() => {
     const boat = this.boat();
     return boat ? toBoatFormModel(boat) : emptyBoatForm();
   });
 
-  /** Şehir select'inin seçenekleri — değerler form modelindeki gibi string. */
   cityOptions = computed(() =>
     this.cities().map((c) => ({ value: String(c.cityId), label: c.cityName })),
   );
 
-  /** Seçili şehrin limanları — chip listesi buradan çizilir. */
   harbors = computed(() => {
     const cityId = Number(this.model().cityId);
     return this.cities().find((c) => c.cityId === cityId)?.harbors ?? [];
   });
 
-  /** Ücretsiz kalkış limanları multi-select'inin seçenekleri. */
   harborOptions = computed(() =>
     this.harbors().map((h) => ({ value: h.id, label: h.name })),
   );
 
-  /** Bağlı olduğu liman select'inin seçenekleri — yalnızca seçili limanlar. */
   primaryHarborOptions = computed(() => {
     const selected = this.model().harborIds;
     return this.harbors()
@@ -131,8 +128,6 @@ export class BoatForm {
   });
 
   constructor() {
-    // Liman chip'i kaldırılınca ona bağlı ana liman seçimi de düşmeli —
-    // aksi hâlde listede olmayan bir ana liman gönderilebilir (backend kuralı ihlali).
     effect(() => {
       const m = this.model();
       if (m.primaryHarborId !== '' && !m.harborIds.includes(Number(m.primaryHarborId))) {
@@ -141,34 +136,46 @@ export class BoatForm {
     });
   }
 
-  /** Kurallar backend'in `BoatInputModelValidator`'ıyla birebir. */
   boatForm = form(this.model, (path) => {
-    required(path.name, { message: 'Tekne adı gerekli.' });
-    maxLength(path.name, 100, { message: 'Tekne adı en fazla 100 karakter olabilir.' });
-    required(path.boatType, { message: 'Tekne tipi seçin.' });
-    required(path.rentalType, { message: 'Kiralama tipi seçin.' });
-    min(path.manufactureYear, 1900, { message: 'Üretim yılı 1900 veya sonrası olmalı.' });
-    max(path.manufactureYear, 2100, { message: 'Üretim yılı 2100 veya öncesi olmalı.' });
-    required(path.lengthInMeters, { message: 'Tekne uzunluğu gerekli.' });
+    required(path.name);
+    maxLength(path.name, 100);
+    required(path.boatType);
+    required(path.rentalType);
+    min(path.manufactureYear, 1900);
+    max(path.manufactureYear, 2100);
+    required(path.lengthInMeters);
     validate(path.lengthInMeters, (ctx) => {
       const value = ctx.value();
       return value !== null && value <= 0
-        ? { kind: 'greaterThanZero', message: 'Uzunluk 0’dan büyük olmalı.' }
+        ? { kind: 'greaterThanZero', message: '0’dan büyük olmalı.' }
         : undefined;
     });
-    required(path.totalCapacity, { message: 'Toplam kapasite gerekli.' });
-    min(path.totalCapacity, 1, { message: 'Toplam kapasite en az 1 olmalı.' });
-    required(path.diningCapacity, { message: 'Yemekli kapasite gerekli.' });
-    min(path.diningCapacity, 0, { message: 'Yemekli kapasite negatif olamaz.' });
-    required(path.swimmingCapacity, { message: 'Yüzme turu kapasitesi gerekli.' });
-    min(path.swimmingCapacity, 0, { message: 'Yüzme turu kapasitesi negatif olamaz.' });
-    required(path.cityId, { message: 'Şehir seçin.' });
+    required(path.totalCapacity);
+    min(path.totalCapacity, 1);
+    required(path.diningCapacity);
+    min(path.diningCapacity, 0);
+    required(path.swimmingCapacity);
+    min(path.swimmingCapacity, 0);
+    required(path.minimumRentalDuration);
+    min(path.minimumRentalDuration, 1);
+    validate(path.minimumRentalDuration, (ctx) => {
+      const value = ctx.value();
+      return value !== null &&
+        value > 12 &&
+        ctx.valueOf(path.rentalType) === RentalType.Hourly
+        ? {
+            kind: 'hourlyMax',
+            message: 'Saatlik teknede minimum süre en fazla 12 saat olabilir.',
+          }
+        : undefined;
+    });
+    required(path.cityId);
     validate(path.harborIds, (ctx) =>
       ctx.value().length === 0
         ? { kind: 'minSelected', message: 'En az bir liman seçin.' }
         : undefined,
     );
-    required(path.primaryHarborId, { message: 'Bağlı olduğu limanı seçin.' });
+    required(path.primaryHarborId);
     validate(path.primaryHarborId, (ctx) => {
       const value = ctx.value();
       return value !== '' && !ctx.valueOf(path.harborIds).includes(Number(value))
@@ -178,7 +185,7 @@ export class BoatForm {
           }
         : undefined;
     });
-    maxLength(path.description, 1000, { message: 'Açıklama en fazla 1000 karakter olabilir.' });
+    maxLength(path.description, 1000);
   });
 
   onCityChange(): void {
@@ -197,14 +204,12 @@ export class BoatForm {
         diningCapacity: m.diningCapacity ?? 0,
         totalCapacity: m.totalCapacity ?? 0,
         swimmingCapacity: m.swimmingCapacity ?? 0,
+        minimumRentalDuration: m.minimumRentalDuration ?? 1,
         cityId: Number(m.cityId),
         primaryHarborId: Number(m.primaryHarborId),
         harborIds: m.harborIds,
         description: m.description.trim() || undefined,
       };
-      // try/catch bilinçli yok: mesajı errorInterceptor gösterir; başarısızlıkta
-      // navigate'e/emit'e ulaşılmaz, formda kalınır. Hatanın konsola/ErrorHandler'a
-      // düşmesi kabul edilmiştir.
       if (this.isUpdate()) {
         await firstValueFrom(this.boatService.update(Number(this.boatId()), input));
         this.toast.success('Tekne bilgileri güncellendi.');

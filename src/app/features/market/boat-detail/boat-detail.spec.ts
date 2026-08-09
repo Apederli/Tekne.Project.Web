@@ -23,6 +23,7 @@ function boat(photos: BoatPhotoOutputModel[]): BoatOutputModel {
     boatTypeLabel: 'Yelkenli',
     rentalType: RentalType.Hourly,
     rentalTypeLabel: 'Saatlik',
+    minimumRentalDuration: 1,
     manufactureYear: 2019,
     lengthInMeters: 12,
     diningCapacity: 0,

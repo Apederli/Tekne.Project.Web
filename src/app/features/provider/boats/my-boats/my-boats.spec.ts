@@ -14,6 +14,7 @@ function boat(id: number, name: string): BoatOutputModel {
     boatTypeLabel: 'Yelkenli',
     rentalType: RentalType.Hourly,
     rentalTypeLabel: 'Saatlik',
+    minimumRentalDuration: 1,
     lengthInMeters: 12,
     diningCapacity: 0,
     totalCapacity: 10,
