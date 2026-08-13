@@ -24,9 +24,18 @@ export class BoatService {
     return this.http.put<boolean>(`${this.baseUrl}/${id}`, model);
   }
 
+  /**
+   * Pazar yeri listesi. Filtre alanlarının hepsi opsiyonel; hiç gönderilmezse
+   * kart teknenin en düşük saat ücretini gösterir. Boş alanlar sorgu dizesine
+   * hiç yazılmaz — backend "alan yok" ile "alan boş"u ayırıyor.
+   */
   getList(filter?: BoatListFilterInputModel): Observable<BoatCardOutputModel[]> {
     const params: Record<string, string | number> = {};
-    if (filter?.harborId != null) params['harborId'] = filter.harborId;
+
+    for (const [key, value] of Object.entries(filter ?? {})) {
+      if (value != null && value !== '') params[key] = value;
+    }
+
     return this.http.get<BoatCardOutputModel[]>(this.baseUrl, { params });
   }
 

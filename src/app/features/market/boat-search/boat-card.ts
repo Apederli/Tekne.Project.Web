@@ -10,6 +10,13 @@ import { AuthStore } from '../../../core/auth/auth-store';
 import { AuthModalService } from '../auth-modal/auth-modal.service';
 import { BoatFavoriteService } from '@services';
 
+// Uygulama tr locale'ini kaydetmediği için Angular'ın number/currency pipe'ı
+// binlik ayıracını İngilizce basardı ("1,500"). Biçim burada doğrudan veriliyor.
+const priceFormat = new Intl.NumberFormat('tr-TR', {
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 2,
+});
+
 @Component({
   selector: 'app-boat-card',
   imports: [NgIcon, PhotoGallery, RouterLink],
@@ -27,7 +34,6 @@ export class BoatCard {
 
   departure = input('');
 
-  // Sunucudan gelen durumla başlar, kart başka tekneye geçerse sıfırlanır.
   favorite = linkedSignal(() => this.boat().isFavorite);
 
   detailUrl = computed(() => [
@@ -42,13 +48,16 @@ export class BoatCard {
     this.location() ? this.typeLabel() + ' — ' + this.location() : this.typeLabel(),
   );
 
+  priceLabel = computed(() => {
+    const { rate, rateUnitLabel } = this.boat();
+    return rate == null ? '' : `₺${priceFormat.format(rate)} / ${rateUnitLabel}`;
+  });
+
   swallowSwiperClick(event: Event): void {
     if (event.defaultPrevented) event.stopPropagation();
   }
 
-  // Optimistic: kalp anında boyanır, istek arkadan gider; hata olursa geri
-  // alınır (mesajı interceptor gösterir). Uçlar idempotent olduğundan hızlı
-  // art arda tıklamalar durum bozmaz.
+
   toggleFavorite(): void {
     if (!this.authStore.isAuthenticated()) {
       this.authModal.open('login');

@@ -50,19 +50,24 @@ export interface BoatFormModel {
 
 export interface BoatListFilterInputModel {
   harborId?: number;
+  date?: string;
+  startHour?: number;
+  hours?: number;
+  numberOfPeople?: number;
+  rentalType?: RentalType;
 }
 
 export interface BoatCardOutputModel {
   id: number;
   name: string;
-  boatType: BoatType;
   boatTypeLabel: string;
   totalCapacity: number;
-  primaryHarborId: number;
   primaryHarborName: string;
   cityName: string;
   photos: string[];
   isFavorite: boolean;
+  rate?: number;
+  rateUnitLabel: string;
 }
 
 export interface BoatOutputModel {
@@ -86,7 +91,6 @@ export interface BoatOutputModel {
   hullMaterial?: HullMaterial;
   hullMaterialLabel?: string;
   remainingPaymentMethods: PaymentMethod[];
-  /** Sunucuda türetilir (`ToLabel`) — istemci kendi etiket haritasını tutmaz. */
   remainingPaymentMethodLabels: string[];
   cityId: number;
   primaryHarborId: number;
