@@ -9,12 +9,13 @@ import { BoatAmenities } from '../boat-amenities/boat-amenities';
 import { BoatForm } from '../boat-form/boat-form';
 import { BoatPhotos } from '../boat-photos/boat-photos';
 import { BoatTerms } from '../boat-terms/boat-terms';
+import { BoatPricing } from '../boat-pricing/boat-pricing';
 import { BOAT_EDIT_TABS, ROUTE_PARTNER } from '../../../../core/routes.const';
 
 const TAB_SLUGS: string[] = Object.values(BOAT_EDIT_TABS);
 
 /**
- * Tekne düzenleme sayfası — dört sekmenin kapsayıcısı.
+ * Tekne düzenleme sayfası — beş sekmenin kapsayıcısı.
  *
  * Tekneyi yalnızca **başlık için** yükler; her sekme kendi verisini kendi
  * çeker (tasarım kararı: sekmeler birbirinden ve kapsayıcıdan bağımsız).
@@ -31,6 +32,7 @@ const TAB_SLUGS: string[] = Object.values(BOAT_EDIT_TABS);
     BoatPhotos,
     BoatTerms,
     BoatAmenities,
+    BoatPricing,
   ],
   templateUrl: './boat-edit.html',
 })

@@ -58,4 +58,5 @@ export const BOAT_EDIT_TABS = {
   photos: 'fotograflar',
   terms: 'sartlar',
   amenities: 'imkanlar',
+  pricing: 'fiyatlandirma',
 } as const;

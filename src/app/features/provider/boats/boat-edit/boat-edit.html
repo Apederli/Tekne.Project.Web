@@ -25,6 +25,7 @@
       <button [hlmTabsTrigger]="tabs.photos">Fotoğraflar</button>
       <button [hlmTabsTrigger]="tabs.terms">Şartlar</button>
       <button [hlmTabsTrigger]="tabs.amenities">İmkanlar</button>
+      <button [hlmTabsTrigger]="tabs.pricing">Fiyatlandırma</button>
     </hlm-paginated-tabs-list>
 
     <div [hlmTabsContent]="tabs.general" class="pt-4">
@@ -48,6 +49,12 @@
     <div [hlmTabsContent]="tabs.amenities" class="pt-4">
       <ng-template hlmTabsContentLazy>
         <app-boat-amenities />
+      </ng-template>
+    </div>
+
+    <div [hlmTabsContent]="tabs.pricing" class="pt-4">
+      <ng-template hlmTabsContentLazy>
+        <app-boat-pricing />
       </ng-template>
     </div>
   </hlm-tabs>

@@ -1,0 +1,234 @@
+@if (loading()) {
+  <div class="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-x-8" aria-hidden="true">
+    <div class="flex flex-col gap-6">
+      <hlm-skeleton class="h-44 w-full rounded-xl" />
+      <hlm-skeleton class="h-72 w-full rounded-xl" />
+    </div>
+    <hlm-skeleton class="h-56 w-full rounded-xl lg:self-start" />
+  </div>
+} @else if (failed() || !boat()) {
+  <p class="text-sm text-destructive">
+    Fiyat bilgisi yüklenemedi. Sayfayı yenileyip tekrar deneyin.
+  </p>
+} @else if (!isHourly()) {
+  <p class="text-sm text-muted-foreground">
+    Gecelik fiyatlandırma henüz hazır değil. Şimdilik yalnızca saatlik kiralama
+    yapan teknelere fiyat girilebiliyor.
+  </p>
+} @else {
+
+  <div class="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-x-8">
+    <div class="flex flex-col gap-6">
+      <section hlmCard>
+        <div hlmCardHeader>
+          <h2 hlmCardTitle>Temel saatlik ücret</h2>
+        </div>
+        <div hlmCardContent>
+          <!-- Kart başlığı görsel etiket; input etiketi ekran okuyucuya sr-only gider. -->
+          <app-amount-input
+            class="block sm:max-w-[12rem]"
+            hideLabel
+            label="Temel saatlik ücret"
+            [field]="pricingForm.baseRate"
+          />
+          <p class="mt-1.5 text-sm text-muted-foreground">
+            Teknenizin standart 1 saatlik kiralama ücretini girin. Farklı fiyat
+            belirtmediğiniz tüm gün ve saatlerde bu ücret uygulanır.
+          </p>
+
+          <div class="mt-4 flex min-h-10 items-center gap-3 border-t border-border pt-4">
+            <hlm-switch
+              inputId="use-matrix"
+              [checked]="useMatrix()"
+              (checkedChange)="useMatrix.set($event)"
+            />
+            <label for="use-matrix" class="cursor-pointer text-sm font-medium">
+              Gün ve saate göre farklı fiyat belirle
+            </label>
+          </div>
+        </div>
+      </section>
+
+      @if (useMatrix()) {
+        <section hlmCard>
+          <div hlmCardHeader>
+            <h2 hlmCardTitle>Gün ve saat farkları</h2>
+            <p hlmCardDescription>
+              Farklı fiyat uygulamak istediğiniz alanları doldurun. Boş
+              bıraktığınız alanlarda temel saatlik ücret geçerli olur.
+            </p>
+          </div>
+          <div hlmCardContent>
+            <!--
+              Matris: satırlar dilimler, sütunlar hafta içi/sonu. Etiketler grid
+              başlığında olduğu için input etiketleri sr-only (hideLabel) — ekran
+              okuyucu yine tam adı duyar.
+            -->
+            <!--
+              Hücre sütunları 16rem'de kapanıyor: kart artık panel genişliğinde
+              ve `1fr` bırakılsa tutar alanları ~400px'e uzayıp içinde kocaman
+              boşluk kalıyordu (sayı solda, "TL" soneki en sağda).
+            -->
+            <div
+              class="grid grid-cols-[minmax(5rem,auto)_minmax(0,16rem)_minmax(0,16rem)] items-center gap-x-3 gap-y-4"
+            >
+              <div></div>
+              <div>
+                <p class="text-sm font-medium">Hafta içi</p>
+                <p class="text-xs text-muted-foreground">Pazartesi–Cuma</p>
+              </div>
+              <div>
+                <p class="text-sm font-medium">Hafta sonu</p>
+                <p class="text-xs text-muted-foreground">Cumartesi–Pazar</p>
+              </div>
+
+              <div>
+                <p class="text-sm font-medium">Sabah</p>
+                <p class="text-xs text-muted-foreground">08:00–18:00</p>
+              </div>
+              <app-amount-input
+                cell
+                hideLabel
+                label="Hafta içi sabah ücreti"
+                [placeholder]="basePlaceholder()"
+                [field]="pricingForm.weekdayMorningRate"
+              />
+              <app-amount-input
+                cell
+                hideLabel
+                label="Hafta sonu sabah ücreti"
+                [placeholder]="basePlaceholder()"
+                [field]="pricingForm.weekendMorningRate"
+              />
+
+              <div>
+                <p class="text-sm font-medium">Akşam</p>
+                <p class="text-xs text-muted-foreground">18:00–24:00</p>
+              </div>
+              <app-amount-input
+                cell
+                hideLabel
+                label="Hafta içi akşam ücreti"
+                [placeholder]="basePlaceholder()"
+                [field]="pricingForm.weekdayEveningRate"
+              />
+              <app-amount-input
+                cell
+                hideLabel
+                label="Hafta sonu akşam ücreti"
+                [placeholder]="basePlaceholder()"
+                [field]="pricingForm.weekendEveningRate"
+              />
+
+              <div>
+                <p class="text-sm font-medium">Gece</p>
+                <p class="text-xs text-muted-foreground">00:00–08:00</p>
+              </div>
+              <app-amount-input
+                cell
+                hideLabel
+                label="Hafta içi gece ücreti"
+                [placeholder]="basePlaceholder()"
+                [field]="pricingForm.weekdayNightRate"
+              />
+              <app-amount-input
+                cell
+                hideLabel
+                label="Hafta sonu gece ücreti"
+                [placeholder]="basePlaceholder()"
+                [field]="pricingForm.weekendNightRate"
+              />
+            </div>
+          </div>
+        </section>
+      }
+    </div>
+
+    @if (examples().length || useMatrix()) {
+      <div class="flex flex-col gap-4 lg:self-start">
+        @if (examples().length) {
+          <div class="rounded-xl border border-primary/20 bg-primary/10 p-4">
+            <p class="text-sm font-semibold text-primary-deep">Örnek hesap</p>
+            <p class="mt-0.5 text-xs text-muted-foreground">
+              Girdiğiniz fiyatlarla güncellenir.
+            </p>
+
+            <!--
+              Hesap backend'den geldiği için ekrandaki rakam bir an bayat
+              kalabiliyor; başlık tam opaklıkta kalır, yalnız sayılar soluyor.
+            -->
+            <div class="transition-opacity" [class.opacity-60]="previewStale()">
+              @for (example of examples(); track example.title) {
+                <div class="mt-3 rounded-lg bg-background p-3">
+                  <p class="text-sm font-medium">{{ example.title }}</p>
+                  <ul class="mt-1 flex flex-col gap-0.5 text-sm text-muted-foreground">
+                    @for (group of example.groups; track $index) {
+                      <li>
+                        {{ group.hours }} saat × {{ format(group.hourRate) }} TL
+                        ({{ group.label }}) = {{ format(group.total) }} TL
+                      </li>
+                    }
+                  </ul>
+                  <p class="mt-1 text-sm font-medium">Toplam: {{ format(example.total) }} TL</p>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+
+        @if (useMatrix()) {
+          <div class="rounded-xl border border-border bg-muted/50 p-4">
+            <p class="text-sm font-semibold">Nasıl doldurmalıyım?</p>
+
+            <div class="mt-3 flex flex-col gap-4 text-sm">
+              <div>
+                <p class="font-medium">Her gün aynı fiyat geçerliyse</p>
+                <p class="mt-0.5 text-muted-foreground">
+                  Sadece temel saatlik ücreti girin. Diğer alanları boş bırakın.
+                </p>
+              </div>
+
+              <div>
+                <p class="font-medium">Hafta içi 4.000 TL, hafta sonu 5.000 TL olacaksa</p>
+                <p class="mt-0.5 text-muted-foreground">
+                  Temel saatlik ücret: 4.000 TL<br />
+                  Hafta sonu Sabah: 5.000 TL<br />
+                  Hafta sonu Akşam: 5.000 TL<br />
+                  Hafta sonu Gece: 5.000 TL<br />
+                  Hafta içi alanlarını boş bırakın.
+                </p>
+              </div>
+
+              <div>
+                <p class="font-medium">Yalnızca belirli saatlerde farklı fiyat uygulayacaksanız</p>
+                <p class="mt-0.5 text-muted-foreground">
+                  Sadece ilgili gün ve saat alanına farklı fiyatı girin. Örneğin hafta
+                  sonu akşamları 6.000 TL olacaksa yalnızca “Hafta sonu – Akşam”
+                  alanına 6.000 TL yazın.
+                </p>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <div class="lg:col-start-1">
+      <button
+        hlmBtn
+        size="lg"
+        class="h-12 w-full px-8 text-base sm:w-auto"
+        type="button"
+        [disabled]="pricingForm().submitting()"
+        (click)="save()"
+      >
+        @if (pricingForm().submitting()) {
+          Kaydediliyor…
+        } @else {
+          Kaydet
+        }
+      </button>
+    </div>
+  </div>
+}
