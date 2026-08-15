@@ -6,6 +6,7 @@ import { lucideSearch } from '@ng-icons/lucide';
 import {
   hasSearchFilter,
   fromIsoDate,
+  nightsBetween,
   parseSearchParams,
 } from '../../../core/util/boat-search-params';
 import { SearchPanelService } from './search-panel.service';
@@ -54,11 +55,15 @@ export class SearchTrigger {
     if (!this.searching()) return 'Bölge · Tarih · Misafir sayısı';
 
     const parts: string[] = [];
-    if (filter.date) {
-      parts.push(
-        fromIsoDate(filter.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' }),
-      );
+    if (filter.checkIn) {
+      const checkIn = fromIsoDate(filter.checkIn);
+      parts.push(this.dayLabel(checkIn));
+      if (filter.checkOut) {
+        const checkOut = fromIsoDate(filter.checkOut);
+        parts.push(`${this.dayLabel(checkOut)} · ${nightsBetween(checkIn, checkOut)} gece`);
+      }
     }
+    if (filter.date) parts.push(this.dayLabel(fromIsoDate(filter.date)));
     if (filter.startHour !== undefined) {
       const pad = (hour: number) => `${hour}`.padStart(2, '0');
       if (filter.hours === undefined) {
@@ -74,6 +79,9 @@ export class SearchTrigger {
 
     return parts.length > 0 ? parts.join(' · ') : 'Seçili konum';
   });
+
+  dayLabel = (date: Date): string =>
+    date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' });
 
   open(): void {
     this.searchPanelService.open();

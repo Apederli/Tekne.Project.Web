@@ -7,17 +7,19 @@ import { lucideAnchor, lucideBuilding2, lucideMoonStar, lucideSun } from '@ng-ic
 import { BrnCalendarI18n, MonthLabels, provideBrnCalendarI18n } from '@spartan-ng/brain/calendar';
 import { BrnDialogRef } from '@spartan-ng/brain/dialog';
 import { HlmButton } from '@ui/button';
-import { HlmCalendar } from '@ui/calendar';
+import { HlmCalendar, HlmCalendarRange } from '@ui/calendar';
 import { HlmComboboxImports } from '@ui/combobox';
 import { HlmDialogTitle } from '@ui/dialog';
 import { HlmFieldImports } from '@ui/field';
 import { AppStepper } from '@forms';
-import { BoatSearchFormModel, IconSelectOption } from '@models';
+import { RentalType } from '@enums';
+import { BoatSearchFormModel, IconSelectOption, SelectOption } from '@models';
 import { HarborService } from '@services';
 import { ROUTE_MARKET } from '../../../core/routes.const';
 import {
   SEARCH_MAX_HOURS,
   fromIsoDate,
+  nightsBetween,
   parseSearchParams,
   toIsoDate,
   toQueryParams,
@@ -69,6 +71,7 @@ function initialStep(model: BoatSearchFormModel): SearchStep {
     FormField,
     HlmButton,
     HlmCalendar,
+    HlmCalendarRange,
     HlmComboboxImports,
     HlmDialogTitle,
     HlmFieldImports,
@@ -102,9 +105,12 @@ export class SearchPanel {
         : filter.cityId
           ? `city:${filter.cityId}`
           : '',
+      rentalType: filter.rentalType ?? RentalType.Hourly,
       date: filter.date ? fromIsoDate(filter.date) : null,
       startHour: filter.startHour === undefined ? '' : `${filter.startHour}`,
       hours: filter.hours ?? null,
+      checkIn: filter.checkIn ? fromIsoDate(filter.checkIn) : null,
+      checkOut: filter.checkOut ? fromIsoDate(filter.checkOut) : null,
       people: filter.numberOfPeople ?? null,
     } satisfies BoatSearchFormModel;
   });
@@ -130,13 +136,22 @@ export class SearchPanel {
 
   locationSummary = computed(() => this.locationLabel(this.searchForm.location().value()) || 'Seç');
 
-  timeSummary = computed(() => {
+  nightly = computed(() => this.searchForm.rentalType().value() === RentalType.Nightly);
+
+  rentalTypeOptions: (SelectOption<RentalType> & { image: string })[] = [
+    { value: RentalType.Hourly, label: 'Saatlik', image: '/img/saatlik2-sm.png' },
+    { value: RentalType.Nightly, label: 'Gecelik', image: '/img/gece2-sm.png' },
+  ];
+
+  timeSummary = computed(() => (this.nightly() ? this.nightlySummary() : this.hourlySummary()));
+
+  hourlySummary = computed(() => {
     const date = this.searchForm.date().value();
     const startHour = this.searchForm.startHour().value();
     const hours = this.searchForm.hours().value();
 
     const parts: string[] = [];
-    if (date) parts.push(date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' }));
+    if (date) parts.push(this.dayLabel(date));
     if (startHour !== '') {
       const start = Number(startHour);
       parts.push(
@@ -148,6 +163,34 @@ export class SearchPanel {
 
     return parts.length > 0 ? parts.join(' · ') : 'Seç';
   });
+
+  checkInLabel = computed(() => {
+    const checkIn = this.searchForm.checkIn().value();
+    return checkIn ? this.dayLabel(checkIn) : 'Tarih seç';
+  });
+
+  checkOutLabel = computed(() => {
+    const checkOut = this.searchForm.checkOut().value();
+    return checkOut ? this.dayLabel(checkOut) : 'Tarih seç';
+  });
+
+  nightCount = computed(() => {
+    const checkIn = this.searchForm.checkIn().value();
+    const checkOut = this.searchForm.checkOut().value();
+    return checkIn && checkOut ? nightsBetween(checkIn, checkOut) : null;
+  });
+
+  nightlySummary = computed(() => {
+    const checkIn = this.searchForm.checkIn().value();
+    const checkOut = this.searchForm.checkOut().value();
+    if (!checkIn) return 'Seç';
+    if (!checkOut) return this.dayLabel(checkIn);
+
+    return `${this.dayLabel(checkIn)} → ${this.dayLabel(checkOut)} · ${nightsBetween(checkIn, checkOut)} gece`;
+  });
+
+  dayLabel = (date: Date): string =>
+    date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' });
 
   hourOptions = Array.from({ length: 24 }, (_, hour) => `${hour}`);
 
@@ -231,6 +274,10 @@ export class SearchPanel {
     return '';
   };
 
+  setRange(field: 'checkIn' | 'checkOut', date: Date | undefined): void {
+    this.searchForm[field]().value.set(date ?? null);
+  }
+
   setDate(date: Date | undefined): void {
     const value = date ?? null;
     this.searchForm.date().value.set(value);
@@ -246,15 +293,20 @@ export class SearchPanel {
     const [kind, rawId] = (value.location ?? '').split(':');
     const id = Number(rawId);
 
-    const timeSelected = value.date !== null && value.startHour !== '';
+    const nightly = value.rentalType === RentalType.Nightly;
+    const timeSelected = !nightly && value.date !== null && value.startHour !== '';
+    const rangeSelected = nightly && value.checkIn !== null && value.checkOut !== null;
 
     this.router.navigate(['/', ROUTE_MARKET.boats], {
       queryParams: toQueryParams({
         cityId: kind === 'city' ? id : undefined,
         harborId: kind === 'harbor' ? id : undefined,
-        date: value.date ? toIsoDate(value.date) : undefined,
+        rentalType: value.rentalType,
+        date: !nightly && value.date ? toIsoDate(value.date) : undefined,
         startHour: timeSelected ? Number(value.startHour) : undefined,
         hours: timeSelected ? (value.hours ?? undefined) : undefined,
+        checkIn: nightly && value.checkIn ? toIsoDate(value.checkIn) : undefined,
+        checkOut: rangeSelected ? toIsoDate(value.checkOut!) : undefined,
         numberOfPeople: value.people ?? undefined,
       }),
       queryParamsHandling: 'merge',
@@ -266,9 +318,12 @@ export class SearchPanel {
   clear(): void {
     this.searchModel.set({
       location: '',
+      rentalType: this.searchForm.rentalType().value(),
       date: null,
       startHour: '',
       hours: null,
+      checkIn: null,
+      checkOut: null,
       people: null,
     });
     this.openStep.set('location');

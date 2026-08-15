@@ -54,6 +54,10 @@ export interface BoatListFilterInputModel {
   date?: string;
   startHour?: number;
   hours?: number;
+  /** Gecelik: giriş günü (`YYYY-MM-DD`). */
+  checkIn?: string;
+  /** Gecelik: çıkış günü (`YYYY-MM-DD`). */
+  checkOut?: string;
   numberOfPeople?: number;
   rentalType?: RentalType;
   /** 1'den başlar; gönderilmezse backend ilk sayfayı döner. Sayfa boyutu sunucuda sabit. */

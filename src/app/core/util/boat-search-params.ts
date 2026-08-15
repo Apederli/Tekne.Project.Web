@@ -9,6 +9,9 @@ import { BoatListFilterInputModel } from '@models';
  */
 export const SEARCH_MAX_HOURS = 12;
 
+/** `?type=` değeri; yokluğu saatlik demektir. */
+export const NIGHTLY_PARAM = 'nightly';
+
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 function intInRange(raw: string | null, min: number, max: number): number | undefined {
@@ -41,10 +44,16 @@ export function parseSearchParams(map: ParamMap): BoatListFilterInputModel {
   const cityId =
     harborId === undefined ? intInRange(map.get('city'), 1, Number.MAX_SAFE_INTEGER) : undefined;
 
-  const date = isoDate(map.get('date'));
+  const nightly = map.get('type') === NIGHTLY_PARAM;
+
+  const date = nightly ? undefined : isoDate(map.get('date'));
   const startHour = date === undefined ? undefined : intInRange(map.get('startHour'), 0, 23);
   const hours =
     startHour === undefined ? undefined : intInRange(map.get('hours'), 1, SEARCH_MAX_HOURS);
+
+  const checkIn = nightly ? isoDate(map.get('checkIn')) : undefined;
+  const rawCheckOut = checkIn === undefined ? undefined : isoDate(map.get('checkOut'));
+  const checkOut = rawCheckOut !== undefined && rawCheckOut > checkIn! ? rawCheckOut : undefined;
 
   const filter: BoatListFilterInputModel = {
     cityId,
@@ -52,14 +61,18 @@ export function parseSearchParams(map: ParamMap): BoatListFilterInputModel {
     date,
     startHour,
     hours,
+    checkIn,
+    checkOut,
     numberOfPeople: intInRange(map.get('people'), 1, Number.MAX_SAFE_INTEGER),
     pageNumber: intInRange(map.get('page'), 1, Number.MAX_SAFE_INTEGER),
   };
 
-  // Panel saat cinsinden süre soruyor; gecelik tekneyi bu aramanın sonucunda
-  // göstermek tutarsız olurdu (fiyat birimi ₺/gece, startHour anlamsız).
-  // Aramasız /tekneler (yalnız ?page=) her tipi listelemeye devam eder.
-  if (hasSearchFilter(filter)) filter.rentalType = RentalType.Hourly;
+  // Zaman girdileri tipe göre biçimlendiği için tip aramanın parçası: saatlik
+  // aramada gecelik tekneyi (₺/gece, startHour anlamsız) göstermek tutarsız
+  // olurdu. Aramasız /tekneler (yalnız ?page=) her tipi listelemeye devam eder.
+  if (hasSearchFilter(filter)) {
+    filter.rentalType = nightly ? RentalType.Nightly : RentalType.Hourly;
+  }
 
   return filter;
 }
@@ -70,8 +83,15 @@ export function hasSearchFilter(filter: BoatListFilterInputModel): boolean {
     filter.cityId !== undefined ||
     filter.harborId !== undefined ||
     filter.date !== undefined ||
+    filter.checkIn !== undefined ||
     filter.numberOfPeople !== undefined
   );
+}
+
+/** Gece sayısı iki tarihin farkı; yalnız gösterim için. */
+export function nightsBetween(checkIn: Date, checkOut: Date): number {
+  const day = 24 * 60 * 60 * 1000;
+  return Math.round((checkOut.getTime() - checkIn.getTime()) / day);
 }
 
 /**
@@ -83,9 +103,12 @@ export function toQueryParams(filter: BoatListFilterInputModel): Params {
   return {
     city: filter.cityId ?? null,
     harbor: filter.harborId ?? null,
+    type: filter.rentalType === RentalType.Nightly ? NIGHTLY_PARAM : null,
     date: filter.date ?? null,
     startHour: filter.startHour ?? null,
     hours: filter.hours ?? null,
+    checkIn: filter.checkIn ?? null,
+    checkOut: filter.checkOut ?? null,
     people: filter.numberOfPeople ?? null,
     // Yeni arama 1. sayfadan başlar: eski ?page= taşınırsa iki sonuçlu bir
     // aramada kullanıcı boş ekrana düşer.

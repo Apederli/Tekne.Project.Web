@@ -7,14 +7,6 @@ import { HlmFieldImports } from '@ui/field';
 
 let nextId = 0;
 
-/**
- * Signal Forms alanına bağlı sayı sayacı: `− değer +`. Klavye girişi yok —
- * arama panelindeki süre ve misafir sayısı küçük aralıklarda hareket ediyor,
- * dokunmatikte iki butona basmak yazmaktan hızlı.
- *
- * Model `number | null` tutar: `null` "kullanıcı dokunmadı" demek, `min`
- * değil. Bu ayrım önemli — dokunulmamış alan URL'e hiç yazılmaz.
- */
 @Component({
   selector: 'app-stepper',
   imports: [HlmButton, HlmFieldImports, NgIcon],

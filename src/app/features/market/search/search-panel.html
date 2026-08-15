@@ -4,7 +4,7 @@
   <section class="rounded-xl border">
     @if (openStep() === 'location') {
       <div hlmField class="p-4">
-        <label hlmFieldLabel for="search-location">Nereden</label>
+        <label hlmFieldLabel for="search-location" class="text-primary-deep">Nereden</label>
         <hlm-combobox [formField]="searchForm.location" [itemToString]="locationLabel" state="open">
           <hlm-combobox-input
             inputId="search-location"
@@ -60,41 +60,99 @@
         class="flex min-h-12 w-full items-center justify-between gap-3 px-4 text-start"
         (click)="openStep.set('location')"
       >
-        <span class="text-sm font-medium">Nereden</span>
+        <span class="text-sm font-medium text-primary-deep">Nereden</span>
         <span class="min-w-0 truncate text-sm text-muted-foreground">{{ locationSummary() }}</span>
       </button>
     }
   </section>
 
+  <section class="rounded-xl border p-4">
+    <span class="text-sm font-medium text-primary-deep">Kiralama tipi</span>
+    <div role="radiogroup" aria-label="Kiralama tipi" class="mt-2 grid grid-cols-2 gap-3">
+      @for (option of rentalTypeOptions; track option.value) {
+        <button
+          type="button"
+          role="radio"
+          [attr.aria-checked]="searchForm.rentalType().value() === option.value"
+          class="flex items-center gap-3 overflow-hidden rounded-lg border text-start transition-colors"
+          [class]="
+            searchForm.rentalType().value() === option.value
+              ? 'border-primary-deep bg-accent'
+              : 'border-input hover:bg-accent/40'
+          "
+          (click)="searchForm.rentalType().value.set(option.value)"
+        >
+          <img
+            [src]="option.image"
+            alt=""
+            width="320"
+            height="240"
+            class="h-14 w-24 shrink-0 object-cover"
+          />
+          <span class="text-sm font-medium">{{ option.label }}</span>
+        </button>
+      }
+    </div>
+  </section>
+
   <section class="rounded-xl border">
     @if (openStep() === 'time') {
       <div class="flex flex-col gap-4 p-4">
-        <p class="text-sm font-medium">Ne zaman</p>
+        <p class="text-sm font-medium text-primary-deep">Ne zaman</p>
 
-        <div class="@container flex flex-col gap-4 sm:flex-row sm:items-stretch sm:gap-6">
-          <hlm-calendar
-            class="w-fit [--cell-size:calc((100cqw-1rem)/7)] sm:[--cell-size:--spacing(9)]"
-            [date]="searchForm.date().value() ?? undefined"
-            [min]="minDate"
-            (dateChange)="setDate($event)"
-          />
-
-          <div class="flex flex-col justify-center gap-4 sm:flex-1">
-            <app-hour-select
-              label="Başlangıç saati"
-              [field]="searchForm.startHour"
-              [options]="startHourOptions()"
-              placeholder="Saat seç"
+        @if (nightly()) {
+          <div class="@container flex flex-col gap-4 sm:flex-row sm:items-stretch sm:gap-6">
+            <hlm-calendar-range
+              class="w-fit [--cell-size:calc((100cqw-1rem)/7)] sm:[--cell-size:--spacing(9)]"
+              [startDate]="searchForm.checkIn().value() ?? undefined"
+              [endDate]="searchForm.checkOut().value() ?? undefined"
+              [min]="minDate"
+              (startDateChange)="setRange('checkIn', $event)"
+              (endDateChange)="setRange('checkOut', $event)"
             />
 
-            <app-hour-select
-              label="Bitiş saati"
-              [field]="searchForm.hours"
-              [options]="endHourOptions()"
-              placeholder="Saat seç"
-            />
+            <div class="flex flex-col justify-center gap-4 sm:flex-1">
+              <div class="flex flex-col gap-1">
+                <span class="text-sm font-medium">Giriş</span>
+                <span class="text-sm text-muted-foreground">{{ checkInLabel() }}</span>
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <span class="text-sm font-medium">Çıkış</span>
+                <span class="text-sm text-muted-foreground">{{ checkOutLabel() }}</span>
+              </div>
+
+              @if (nightCount(); as nights) {
+                <span class="text-sm font-medium text-primary-deep">{{ nights }} gece</span>
+              }
+            </div>
           </div>
-        </div>
+        } @else {
+          <div class="@container flex flex-col gap-4 sm:flex-row sm:items-stretch sm:gap-6">
+            <hlm-calendar
+              class="w-fit [--cell-size:calc((100cqw-1rem)/7)] sm:[--cell-size:--spacing(9)]"
+              [date]="searchForm.date().value() ?? undefined"
+              [min]="minDate"
+              (dateChange)="setDate($event)"
+            />
+
+            <div class="flex flex-col justify-center gap-4 sm:flex-1">
+              <app-hour-select
+                label="Başlangıç saati"
+                [field]="searchForm.startHour"
+                [options]="startHourOptions()"
+                placeholder="Saat seç"
+              />
+
+              <app-hour-select
+                label="Bitiş saati"
+                [field]="searchForm.hours"
+                [options]="endHourOptions()"
+                placeholder="Saat seç"
+              />
+            </div>
+          </div>
+        }
       </div>
     } @else {
       <button
@@ -102,13 +160,13 @@
         class="flex min-h-12 w-full items-center justify-between gap-3 px-4 text-start"
         (click)="openStep.set('time')"
       >
-        <span class="text-sm font-medium">Ne zaman</span>
+        <span class="text-sm font-medium text-primary-deep">Ne zaman</span>
         <span class="min-w-0 truncate text-sm text-muted-foreground">{{ timeSummary() }}</span>
       </button>
     }
   </section>
 
-  <section class="rounded-xl border p-4">
+  <section class="rounded-xl border p-4 [&_[data-slot=field-label]]:text-primary-deep">
     <app-stepper
       label="Misafir sayısı"
       [field]="searchForm.people"
