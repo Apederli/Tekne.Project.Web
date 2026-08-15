@@ -6,7 +6,27 @@
 </div>
 
 @if (loading()) {
-  <p class="mt-6 text-sm text-muted-foreground">Tekneler yükleniyor…</p>
+  <div
+    class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+    aria-hidden="true"
+  >
+    @for (card of skeletonCards; track card) {
+      <div>
+        <hlm-skeleton class="aspect-[5/4] w-full rounded-xl" />
+
+        <div class="pt-3">
+          <div class="flex items-start justify-between gap-2">
+            <hlm-skeleton class="h-4 w-40 max-w-[70%]" />
+            <hlm-skeleton class="h-4 w-12 shrink-0" />
+          </div>
+
+          <hlm-skeleton class="mt-2 h-3.5 w-28" />
+          <hlm-skeleton class="mt-2 h-3.5 w-36" />
+          <hlm-skeleton class="mt-2.5 h-4 w-24" />
+        </div>
+      </div>
+    }
+  </div>
 } @else if (boats().length === 0) {
   @if (page() > 1) {
     <!--

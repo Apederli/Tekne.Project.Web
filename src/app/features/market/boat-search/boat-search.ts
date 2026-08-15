@@ -13,6 +13,7 @@ import {
   HlmPaginationPrevious,
   createPageArray,
 } from '@ui/pagination';
+import { HlmSkeleton } from '@ui/skeleton';
 import { ROUTE_MARKET } from '../../../core/routes.const';
 import { hasSearchFilter, parseSearchParams } from '../../../core/util/boat-search-params';
 import { BoatCard } from './boat-card';
@@ -42,6 +43,7 @@ const PAGE_LINK_COUNT = 5;
     HlmPaginationPrevious,
     HlmPaginationNext,
     HlmPaginationEllipsis,
+    HlmSkeleton,
   ],
   templateUrl: './boat-search.html',
 })
@@ -105,6 +107,8 @@ export class BoatSearch {
 
     return createPageArray(result.pageNumber, result.pageSize, result.totalCount, PAGE_LINK_COUNT);
   });
+
+  skeletonCards = [0, 1, 2, 3];
 
   listUrl = `/${ROUTE_MARKET.boats}`;
 
