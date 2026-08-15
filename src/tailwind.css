@@ -62,6 +62,14 @@
 /* Dark tema kullanılmıyor (ürün kararı) — eski :root.dark iskeleti bilinçli
    kaldırıldı. Gerekirse spartan'ın shadcn şablonundan yeniden türetilir. */
 
+/* Market kabuğunun genişlik tavanı. `--container-*` namespace'i max-w-*
+   utility'lerini üretir, yani bu satır `max-w-8xl` demek — Tailwind'in hazır
+   basamakları 7xl'de (80rem) bitiyor. Başlık, arama çubuğu ve içerik aynı
+   tavanı paylaştığı için sihirli sayı üç yere dağılmasın diye burada. */
+@theme {
+  --container-8xl: 90rem;
+}
+
 /* text-primary-deep / text-secondary-deep utility'lerini üretir
    (hlm preset'in kalıbı: token :root'ta, eşleme @theme inline'da). */
 @theme inline {
