@@ -49,6 +49,7 @@ export interface BoatFormModel {
 }
 
 export interface BoatListFilterInputModel {
+  cityId?: number;
   harborId?: number;
   date?: string;
   startHour?: number;

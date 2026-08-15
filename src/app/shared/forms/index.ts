@@ -6,4 +6,5 @@ export * from './app-password-input';
 export * from './app-phone-input';
 export * from './app-select';
 export * from './app-single-check-group';
+export * from './app-stepper';
 export * from './app-toggle-group';

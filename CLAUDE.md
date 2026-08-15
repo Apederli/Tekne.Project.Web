@@ -97,6 +97,10 @@ Bir bileşende `interface` görürsen yanlış yerdedir; `core/models/` altına 
 
 Kod üretme aracı (ng-openapi-gen, NSwag vb.) kurulu değil — modeller elle yazılıyor. Swagger büyüdüğünde codegen değerlendirilebilir, ama şu an konvansiyon elle yazmak.
 
+## Kod stili
+
+**Koda yorum yazma.** Yorum çok nadir durumlar içindir: yalnız koddan okunamayan bir davranışı açıklayan tek kısa satır. Gerekçe, tarihçe, karar kaydı ve satırın zaten söylediğini anlatan yorumlar yazılmaz.
+
 ## Angular 22 konvansiyonları
 
 Bu sürümde değişmiş, kolayca eskisi gibi yazılan noktalar:

@@ -15,6 +15,7 @@ export * from './boat-amenity';
 export * from './boat-model';
 export * from './boat-photo';
 export * from './boat-pricing';
+export * from './boat-search';
 export * from './boat-usage-term';
 export * from './brand';
 export * from './confirm';

@@ -16,21 +16,10 @@
       <app-market-user-menu class="ml-auto hidden items-center gap-4 lg:flex" />
     </nav>
 
-    <!-- Arama başlığı — şimdilik görsel, tıklama bağlı değil. Açılacak panelin
-         planı: bölge seçimi; bölgeye göre kiralama tipine uygun girdiler —
-         günlükte tarih + başlangıç/bitiş saati, saatlikte başlangıç + tur
-         süresi (arttır/eksilt), ve misafir sayısı (arttır/eksilt). -->
+    <!-- Arama başlığı. Açılan panelin içeriği:
+         docs/superpowers/specs/2026-08-15-market-arama-paneli-design.md -->
     <div class="mx-auto max-w-8xl px-4 pb-3 sm:px-6 lg:px-10 lg:pb-4">
-      <button
-        type="button"
-        class="mx-auto flex w-full items-center gap-3 rounded-full border border-slate-200 px-4 py-2.5 text-start shadow-sm transition-shadow hover:shadow-md lg:max-w-md"
-      >
-        <ng-icon name="lucideSearch" size="18" class="shrink-0 text-slate-500" />
-        <span class="min-w-0">
-          <span class="block truncate text-sm font-medium">Nereye gitmek istiyorsun?</span>
-          <span class="block truncate text-xs text-slate-500">Bölge · Tarih · Misafir sayısı</span>
-        </span>
-      </button>
+      <app-search-trigger />
     </div>
   </header>
 

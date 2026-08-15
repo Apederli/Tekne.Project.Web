@@ -12,11 +12,13 @@
 export interface HarborOutputModel {
   id: number;
   name: string;
+  boatCount?: number;
 }
 
-/** `GET /api/Harbors` yanıtındaki dizinin eleman tipi. */
+/** `GET /api/Harbors` ve `GET /api/Harbors/market` yanıtlarındaki dizinin eleman tipi. */
 export interface CityHarborsOutputModel {
   cityId: number;
   cityName: string;
+  boatCount?: number;
   harbors: HarborOutputModel[];
 }

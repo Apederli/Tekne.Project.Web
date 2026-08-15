@@ -1,0 +1,186 @@
+<h2 hlmDialogTitle class="sr-only">Tekne ara</h2>
+
+<div class="mt-6 flex flex-col gap-3">
+  <section class="rounded-xl border">
+    @if (openStep() === 'location') {
+      <div hlmField class="p-4">
+        <label hlmFieldLabel for="search-location">Nereden</label>
+        <hlm-combobox [formField]="searchForm.location" [itemToString]="locationLabel" state="open">
+          <hlm-combobox-input
+            inputId="search-location"
+            placeholder="Liman"
+            showClear
+            class="h-11 w-full"
+          />
+
+          <hlm-combobox-content *hlmComboboxPortal>
+            <hlm-combobox-empty>Sonuç bulunamadı.</hlm-combobox-empty>
+            <div hlmComboboxList>
+              @for (city of cities(); track city.cityId) {
+                @if (!$first) {
+                  <div hlmComboboxSeparator></div>
+                }
+                <div hlmComboboxGroup>
+                  <hlm-combobox-item
+                    [value]="'city:' + city.cityId"
+                    class="min-h-11 font-medium text-primary-deep"
+                  >
+                    <ng-icon
+                      name="lucideBuilding2"
+                      class="size-4 text-primary-deep"
+                      aria-hidden="true"
+                    />
+                    {{ city.cityName }}
+                    @if (city.boatCount !== undefined) {
+                      <span class="ms-auto text-xs font-normal text-muted-foreground">
+                        {{ city.boatCount }} tekne
+                      </span>
+                    }
+                  </hlm-combobox-item>
+                  @for (harbor of city.harbors; track harbor.id) {
+                    <hlm-combobox-item [value]="'harbor:' + harbor.id" class="ps-6 min-h-11">
+                      <ng-icon name="lucideAnchor" class="size-4 text-primary" aria-hidden="true" />
+                      {{ harbor.name }}
+                      @if (harbor.boatCount !== undefined) {
+                        <span class="ms-auto text-xs text-muted-foreground">
+                          {{ harbor.boatCount }} tekne
+                        </span>
+                      }
+                    </hlm-combobox-item>
+                  }
+                </div>
+              }
+            </div>
+          </hlm-combobox-content>
+        </hlm-combobox>
+      </div>
+    } @else {
+      <button
+        type="button"
+        class="flex min-h-12 w-full items-center justify-between gap-3 px-4 text-start"
+        (click)="openStep.set('location')"
+      >
+        <span class="text-sm font-medium">Nereden</span>
+        <span class="min-w-0 truncate text-sm text-muted-foreground">{{ locationSummary() }}</span>
+      </button>
+    }
+  </section>
+
+  <section class="rounded-xl border">
+    @if (openStep() === 'time') {
+      <div class="flex flex-col gap-4 p-4">
+        <p class="text-sm font-medium">Ne zaman</p>
+
+        <div class="@container flex flex-col gap-4 sm:flex-row sm:items-stretch sm:gap-6">
+          <hlm-calendar
+            class="w-fit [--cell-size:calc((100cqw-1rem)/7)] sm:[--cell-size:--spacing(9)]"
+            [date]="searchForm.date().value() ?? undefined"
+            [min]="minDate"
+            (dateChange)="setDate($event)"
+          />
+
+          <div class="flex flex-col justify-center gap-4 sm:flex-1">
+            <div hlmField>
+              <label hlmFieldLabel for="search-start-hour">Başlangıç saati</label>
+              <hlm-select [formField]="searchForm.startHour" [itemToString]="hourLabel">
+                <hlm-select-trigger buttonId="search-start-hour" class="h-11 w-full">
+                  @if (searchForm.startHour().value(); as hour) {
+                    <ng-icon
+                      [name]="hourIcon(+hour)"
+                      [class]="'size-4 ' + hourIconColor(+hour)"
+                      aria-hidden="true"
+                    />
+                  }
+                  <hlm-select-value placeholder="Saat seç" />
+                </hlm-select-trigger>
+                <hlm-select-content *hlmSelectPortal class="max-h-80">
+                  <hlm-select-group>
+                    @for (hour of hourOptions; track hour) {
+                      <hlm-select-item [value]="hour" [disabled]="isHourDisabled(hour)">
+                        <ng-icon
+                          [name]="hourIcon(+hour)"
+                          [class]="'size-4 ' + hourIconColor(+hour)"
+                          aria-hidden="true"
+                        />
+                        {{ hourLabel(hour) }}
+                      </hlm-select-item>
+                    }
+                  </hlm-select-group>
+                </hlm-select-content>
+              </hlm-select>
+            </div>
+
+            <div hlmField>
+              <label hlmFieldLabel for="search-end-hour">Bitiş saati</label>
+              <hlm-select [formField]="searchForm.hours" [itemToString]="endHourLabel">
+                <hlm-select-trigger buttonId="search-end-hour" class="h-11 w-full">
+                  @if (searchForm.hours().value(); as duration) {
+                    <ng-icon
+                      [name]="endHourIcon(duration)"
+                      [class]="'size-4 ' + endHourIconColor(duration)"
+                      aria-hidden="true"
+                    />
+                  }
+                  <hlm-select-value placeholder="Saat seç" />
+                </hlm-select-trigger>
+                <hlm-select-content *hlmSelectPortal class="max-h-80">
+                  <hlm-select-group>
+                    @for (duration of durationOptions; track duration) {
+                      <hlm-select-item [value]="duration">
+                        <ng-icon
+                          [name]="endHourIcon(duration)"
+                          [class]="'size-4 ' + endHourIconColor(duration)"
+                          aria-hidden="true"
+                        />
+                        {{ endHourLabel(duration) }}
+                      </hlm-select-item>
+                    }
+                  </hlm-select-group>
+                </hlm-select-content>
+              </hlm-select>
+            </div>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <button
+        type="button"
+        class="flex min-h-12 w-full items-center justify-between gap-3 px-4 text-start"
+        (click)="openStep.set('time')"
+      >
+        <span class="text-sm font-medium">Ne zaman</span>
+        <span class="min-w-0 truncate text-sm text-muted-foreground">{{ timeSummary() }}</span>
+      </button>
+    }
+  </section>
+
+  <section class="rounded-xl border">
+    @if (openStep() === 'guests') {
+      <div class="p-4">
+        <app-stepper
+          label="Misafir sayısı"
+          [field]="searchForm.people"
+          [min]="1"
+          unit="kişi"
+          placeholder="Fark etmez"
+        />
+      </div>
+    } @else {
+      <button
+        type="button"
+        class="flex min-h-12 w-full items-center justify-between gap-3 px-4 text-start"
+        (click)="openStep.set('guests')"
+      >
+        <span class="text-sm font-medium">Misafir</span>
+        <span class="min-w-0 truncate text-sm text-muted-foreground">{{ guestsSummary() }}</span>
+      </button>
+    }
+  </section>
+</div>
+
+<div class="mt-8 flex items-center justify-between gap-3">
+  <button hlmBtn type="button" variant="ghost" class="h-11" (click)="clear()">Temizle</button>
+  <button hlmBtn type="button" class="h-11 flex-1 sm:flex-none sm:px-8" (click)="search()">
+    Ara
+  </button>
+</div>

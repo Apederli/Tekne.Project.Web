@@ -17,4 +17,8 @@ export class HarborService {
   getAll(): Observable<CityHarborsOutputModel[]> {
     return this.http.get<CityHarborsOutputModel[]>(this.baseUrl);
   }
+
+  getMarket(): Observable<CityHarborsOutputModel[]> {
+    return this.http.get<CityHarborsOutputModel[]>(`${this.baseUrl}/market`);
+  }
 }

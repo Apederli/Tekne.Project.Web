@@ -1,6 +1,6 @@
-import { Component, computed, inject, input } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
-import { Params, RouterLink } from '@angular/router';
+import { Component, computed, inject } from '@angular/core';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Params, RouterLink, convertToParamMap } from '@angular/router';
 import { BoatCardOutputModel } from '@models';
 import { BoatService } from '@services';
 import {
@@ -14,18 +14,19 @@ import {
   createPageArray,
 } from '@ui/pagination';
 import { ROUTE_MARKET } from '../../../core/routes.const';
+import { hasSearchFilter, parseSearchParams } from '../../../core/util/boat-search-params';
 import { BoatCard } from './boat-card';
 
 /** Şeritte aynı anda görünen numara sayısı — fazlası dar ekranda taşıyor. */
 const PAGE_LINK_COUNT = 5;
 
 /**
- * Tekne arama/listeleme sayfası. Filtreler henüz yok; şimdilik tüm ilanlar
- * kart ızgarasında listeleniyor. Konum adları backend'den hazır gelir —
- * sayfa şehir/liman lookup'ı yapmaz.
+ * Tekne arama/listeleme sayfası. Filtrenin tek kaynağı URL — kart ızgarası
+ * `filter`'a göre gelen sonucu gösterir. Konum adları backend'den hazır
+ * gelir — sayfa şehir/liman lookup'ı yapmaz.
  *
  * Sayfalama sunucu tarafında: sayfa boyutunu backend belirler, istemci yalnızca
- * `?sayfa=` ile sayfa numarasını taşır. Numara URL'de duruyor ki SSR ile
+ * `?page=` ile sayfa numarasını taşır. Numara URL'de duruyor ki SSR ile
  * render edilen her sayfa ayrı bir adres olsun — arama motoru ikinci sayfayı
  * da tarayabilsin, geri tuşu ve paylaşılan link doğru sayfaya düşsün.
  */
@@ -47,17 +48,24 @@ const PAGE_LINK_COUNT = 5;
 export class BoatSearch {
   boatService = inject(BoatService);
 
-  /** `?sayfa=` query paramı — `withComponentInputBinding` ile bağlanır. */
-  sayfa = input<string>('1');
+  route = inject(ActivatedRoute);
 
-  /** Bozuk ya da eksi değer 1'e düşer; elle yazılmış URL bozuk ekran üretmesin. */
-  page = computed(() => {
-    const parsed = Number(this.sayfa());
-    return Number.isInteger(parsed) && parsed > 0 ? parsed : 1;
-  });
+  /**
+   * Filtrenin tek kaynağı URL. `withComponentInputBinding` ile yedi ayrı string
+   * input almak yerine tek ParamMap okunuyor — ayrıştırma ve doğrulama
+   * `boat-search-params` içinde tek yerde kalsın.
+   */
+  queryParams = toSignal(this.route.queryParamMap, { initialValue: convertToParamMap({}) });
+
+  filter = computed(() => parseSearchParams(this.queryParams()));
+
+  /** Arama yapılmış mı — boş durum metnini ve "temizle" çıkışını belirler. */
+  searching = computed(() => hasSearchFilter(this.filter()));
+
+  page = computed(() => this.filter().pageNumber ?? 1);
 
   boatsResource = rxResource({
-    params: () => ({ pageNumber: this.page() }),
+    params: () => this.filter(),
     stream: ({ params }) => this.boatService.getList(params),
   });
 
@@ -76,7 +84,7 @@ export class BoatSearch {
   hasNext = computed(() => this.result()?.hasNext ?? false);
 
   /**
-   * Elle yazılmış, son sayfanın ötesindeki `?sayfa=`. Backend bu isteği son
+   * Elle yazılmış, son sayfanın ötesindeki `?page=`. Backend bu isteği son
    * sayfaya kırpmıyor, boş liste dönüyor — dolayısıyla `hasPrevious` de bir
    * önceki boş sayfayı işaret ediyor. Pager burada gizleniyor; çıkışı boş
    * durum mesajındaki "İlk sayfaya dön" linki veriyor.
@@ -100,9 +108,9 @@ export class BoatSearch {
 
   listUrl = `/${ROUTE_MARKET.boats}`;
 
-  /** İlk sayfa param'sız adreste kalır: `/tekneler` ile `?sayfa=1` aynı sayfayı iki URL yapmasın. */
+  /** İlk sayfa param'sız adreste kalır: `/tekneler` ile `?page=1` aynı sayfayı iki URL yapmasın. */
   queryParamsFor(page: number): Params {
-    return { sayfa: page === 1 ? null : page };
+    return { page: page === 1 ? null : page };
   }
 
   location(boat: BoatCardOutputModel): string {

@@ -8,14 +8,26 @@
 @if (loading()) {
   <p class="mt-6 text-sm text-muted-foreground">Tekneler yükleniyor…</p>
 } @else if (boats().length === 0) {
-  <!--
-    Aralık dışı `?sayfa=` elle yazılmış olabilir: liste boş ama katalog dolu.
-    Pager bu durumda gizlendiği için çıkış yolunu bu link veriyor.
-  -->
   @if (page() > 1) {
+    <!--
+      Aralık dışı `?page=` elle yazılmış olabilir: liste boş ama katalog dolu.
+      Pager bu durumda gizlendiği için çıkış yolunu bu link veriyor. Aramayı
+      koruyor — kullanıcı filtresini kaybetmesin.
+    -->
     <p class="mt-6 text-sm text-muted-foreground">
       Bu sayfada tekne yok.
-      <a class="underline underline-offset-4" [routerLink]="listUrl">İlk sayfaya dön</a>
+      <a
+        class="underline underline-offset-4"
+        [routerLink]="listUrl"
+        [queryParams]="{ page: null }"
+        queryParamsHandling="merge"
+        >İlk sayfaya dön</a
+      >
+    </p>
+  } @else if (searching()) {
+    <p class="mt-6 text-sm text-muted-foreground">
+      Aramana uygun tekne bulunamadı.
+      <a class="underline underline-offset-4" [routerLink]="listUrl">Filtreleri temizle</a>
     </p>
   } @else {
     <p class="mt-6 text-sm text-muted-foreground">Henüz listelenecek tekne yok.</p>
