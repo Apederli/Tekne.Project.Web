@@ -55,6 +55,8 @@ export interface BoatListFilterInputModel {
   hours?: number;
   numberOfPeople?: number;
   rentalType?: RentalType;
+  /** 1'den başlar; gönderilmezse backend ilk sayfayı döner. Sayfa boyutu sunucuda sabit. */
+  pageNumber?: number;
 }
 
 export interface BoatCardOutputModel {

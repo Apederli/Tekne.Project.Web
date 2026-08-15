@@ -9,6 +9,7 @@ import {
   BoatModelOutputModel,
   BoatOutputModel,
   BrandOutputModel,
+  PagedOutputModel,
 } from '@models';
 
 @Service()
@@ -25,18 +26,21 @@ export class BoatService {
   }
 
   /**
-   * Pazar yeri listesi. Filtre alanlarının hepsi opsiyonel; hiç gönderilmezse
-   * kart teknenin en düşük saat ücretini gösterir. Boş alanlar sorgu dizesine
-   * hiç yazılmaz — backend "alan yok" ile "alan boş"u ayırıyor.
+   * Pazar yeri listesi — sayfalı. Filtre alanlarının hepsi opsiyonel; hiç
+   * gönderilmezse kart teknenin en düşük saat ücretini gösterir. Boş alanlar
+   * sorgu dizesine hiç yazılmaz — backend "alan yok" ile "alan boş"u ayırıyor.
+   *
+   * Sayfa boyutunu sunucu belirler; istemci yalnızca `pageNumber` gönderir ve
+   * sayfa bilgisini yanıttan okur.
    */
-  getList(filter?: BoatListFilterInputModel): Observable<BoatCardOutputModel[]> {
+  getList(filter?: BoatListFilterInputModel): Observable<PagedOutputModel<BoatCardOutputModel>> {
     const params: Record<string, string | number> = {};
 
     for (const [key, value] of Object.entries(filter ?? {})) {
       if (value != null && value !== '') params[key] = value;
     }
 
-    return this.http.get<BoatCardOutputModel[]>(this.baseUrl, { params });
+    return this.http.get<PagedOutputModel<BoatCardOutputModel>>(this.baseUrl, { params });
   }
 
   getMine(): Observable<BoatOutputModel[]> {

@@ -20,6 +20,7 @@ export * from './brand';
 export * from './confirm';
 export * from './dial-code';
 export * from './harbor';
+export * from './paged';
 export * from './photo-lightbox';
 export * from './select-option';
 export * from './usage-term';

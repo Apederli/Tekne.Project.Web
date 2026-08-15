@@ -1,0 +1,90 @@
+<div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+  <h1 class="text-2xl font-semibold">Tekneler</h1>
+  @if (totalCount() > 0) {
+    <p class="text-sm text-muted-foreground">{{ totalCount() }} ilan</p>
+  }
+</div>
+
+@if (loading()) {
+  <p class="mt-6 text-sm text-muted-foreground">Tekneler yükleniyor…</p>
+} @else if (boats().length === 0) {
+  <!--
+    Aralık dışı `?sayfa=` elle yazılmış olabilir: liste boş ama katalog dolu.
+    Pager bu durumda gizlendiği için çıkış yolunu bu link veriyor.
+  -->
+  @if (page() > 1) {
+    <p class="mt-6 text-sm text-muted-foreground">
+      Bu sayfada tekne yok.
+      <a class="underline underline-offset-4" [routerLink]="listUrl">İlk sayfaya dön</a>
+    </p>
+  } @else {
+    <p class="mt-6 text-sm text-muted-foreground">Henüz listelenecek tekne yok.</p>
+  }
+} @else {
+  <!-- Mobile-first: tek sütun, ekranla birlikte genişler. -->
+  <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    @for (boat of boats(); track boat.id) {
+      <app-boat-card [boat]="boat" [location]="location(boat)" />
+    }
+  </div>
+}
+
+@if (totalPages() > 1 && !outOfRange()) {
+  <!--
+    Sayfalar gerçek <a href> — SSR çıktısında görünür, arama motoru her sayfayı
+    ayrı tarar, orta tıkla yeni sekmede açılır. Numara şeridi yalnızca sm
+    üstünde; mobilde yerini "Sayfa n / m" bilgisi alır, çünkü yedi numaralık
+    şerit dar ekranda dokunulamayacak kadar sıkışıyor.
+  -->
+  <nav hlmPagination aria-label="Sayfalar" class="mt-8">
+    <ul hlmPaginationContent>
+      @if (hasPrevious()) {
+        <li hlmPaginationItem>
+          <hlm-pagination-previous
+            class="h-11 sm:h-9"
+            [link]="listUrl"
+            [queryParams]="queryParamsFor(page() - 1)"
+            queryParamsHandling="merge"
+            text="Önceki"
+            aria-label="Önceki sayfa"
+          />
+        </li>
+      }
+
+      <li hlmPaginationItem class="px-3 text-sm text-muted-foreground sm:hidden">
+        Sayfa {{ page() }} / {{ totalPages() }}
+      </li>
+
+      <!-- `track $index`: kısaltma çubuğu şeritte iki kez geçebiliyor. -->
+      @for (item of pages(); track $index) {
+        <li hlmPaginationItem class="hidden sm:block">
+          @if (item === '...') {
+            <hlm-pagination-ellipsis srOnlyText="Diğer sayfalar" />
+          } @else {
+            <a
+              hlmPaginationLink
+              [link]="item === page() ? undefined : listUrl"
+              [queryParams]="queryParamsFor(item)"
+              queryParamsHandling="merge"
+              [isActive]="item === page()"
+              >{{ item }}</a
+            >
+          }
+        </li>
+      }
+
+      @if (hasNext()) {
+        <li hlmPaginationItem>
+          <hlm-pagination-next
+            class="h-11 sm:h-9"
+            [link]="listUrl"
+            [queryParams]="queryParamsFor(page() + 1)"
+            queryParamsHandling="merge"
+            text="Sonraki"
+            aria-label="Sonraki sayfa"
+          />
+        </li>
+      }
+    </ul>
+  </nav>
+}
