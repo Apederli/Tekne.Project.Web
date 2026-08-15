@@ -8,3 +8,11 @@ export interface SelectOption<T extends string | number = string | number> {
   value: T;
   label: string;
 }
+
+export interface IconSelectOption<
+  T extends string | number = string | number,
+> extends SelectOption<T> {
+  icon: string;
+  iconClass: string;
+  disabled?: boolean;
+}

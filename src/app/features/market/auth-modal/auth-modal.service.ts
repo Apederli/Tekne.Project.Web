@@ -1,6 +1,7 @@
 import { Service, inject } from '@angular/core';
 import { HlmDialogService } from '@ui/dialog';
 import { AuthModalContext, AuthView } from '@models';
+import { RESPONSIVE_DIALOG_CLASS } from '../../../shared/responsive-dialog';
 import { AuthModal } from './auth-modal';
 
 @Service()
@@ -16,16 +17,7 @@ export class AuthModalService {
       // Genel dialog perdesi şeffaf; oturum modalı odak istediği için istisna —
       // arka sayfa görünür kalacak kadar hafif bir karartma.
       backdropClass: 'bg-black/20',
-      // Mobile-first: tabanda tam ekran (alttan kayar), sm üstünde ortalanmış
-      // kart. CDK overlay paneli içeriğe göre daraldığı için genişlik max-w
-      // ile DEĞİL, belirli w ile verilir (max-w yalnız tavan olurdu ve içerik
-      // o tavana hiç ulaşmazdı). sm:max-w-none şart: tailwind-merge çakışmayı
-      // variant başına çözdüğü için taban max-w-none, Helm varsayılanındaki
-      // sm:max-w-sm'i silmez — o tavan kalırsa sm:w-[...] hiç görünmez.
-      contentClass:
-        'fixed inset-0 max-w-none content-start overflow-y-auto rounded-none ' +
-        'data-open:slide-in-from-bottom-8 data-closed:slide-out-to-bottom-8 ' +
-        'sm:static sm:inset-auto sm:max-w-none sm:w-[42rem] sm:content-normal sm:rounded-xl sm:p-6',
+      contentClass: `${RESPONSIVE_DIALOG_CLASS} sm:w-[42rem]`,
     });
   }
 }

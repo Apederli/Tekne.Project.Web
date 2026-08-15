@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { booleanAttribute, Component, computed, input } from '@angular/core';
 import { FieldTree } from '@angular/forms/signals';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideMinus, lucidePlus } from '@ng-icons/lucide';
@@ -21,8 +21,10 @@ let nextId = 0;
   viewProviders: [provideIcons({ lucideMinus, lucidePlus })],
   template: `
     <div hlmField>
-      <label hlmFieldLabel [for]="valueId()">{{ label() }}</label>
-      <div class="flex items-center gap-3">
+      <label hlmFieldLabel [for]="valueId()" [class.justify-center]="centered()">
+        {{ label() }}
+      </label>
+      <div class="flex items-center gap-3" [class.justify-center]="centered()">
         <!-- size-11 = 44px: dokunma hedefi. -->
         <button
           hlmBtn
@@ -71,6 +73,8 @@ export class AppStepper {
 
   /** Alan boşken gösterilen metin. */
   placeholder = input('Seçilmedi');
+
+  centered = input(false, { transform: booleanAttribute });
 
   valueId = input(`app-stepper-${nextId++}`);
 

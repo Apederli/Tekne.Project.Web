@@ -3,14 +3,7 @@ import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { FormField, disabled, form } from '@angular/forms/signals';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import {
-  lucideAnchor,
-  lucideBuilding2,
-  lucideMoon,
-  lucideSun,
-  lucideSunrise,
-  lucideSunset,
-} from '@ng-icons/lucide';
+import { lucideAnchor, lucideBuilding2, lucideMoonStar, lucideSun } from '@ng-icons/lucide';
 import { BrnCalendarI18n, MonthLabels, provideBrnCalendarI18n } from '@spartan-ng/brain/calendar';
 import { BrnDialogRef } from '@spartan-ng/brain/dialog';
 import { HlmButton } from '@ui/button';
@@ -18,9 +11,8 @@ import { HlmCalendar } from '@ui/calendar';
 import { HlmComboboxImports } from '@ui/combobox';
 import { HlmDialogTitle } from '@ui/dialog';
 import { HlmFieldImports } from '@ui/field';
-import { HlmSelectImports } from '@ui/select';
 import { AppStepper } from '@forms';
-import { BoatSearchFormModel } from '@models';
+import { BoatSearchFormModel, IconSelectOption } from '@models';
 import { HarborService } from '@services';
 import { ROUTE_MARKET } from '../../../core/routes.const';
 import {
@@ -30,6 +22,7 @@ import {
   toIsoDate,
   toQueryParams,
 } from '../../../core/util/boat-search-params';
+import { HourSelect } from './hour-select';
 
 function referenceWeekday(index: number): Date {
   return new Date(2024, 0, 7 + index);
@@ -62,7 +55,7 @@ const TR_CALENDAR_I18N: Partial<BrnCalendarI18n> = {
   firstDayOfWeek: () => 1,
 };
 
-type SearchStep = 'location' | 'time' | 'guests';
+type SearchStep = 'location' | 'time';
 
 function initialStep(model: BoatSearchFormModel): SearchStep {
   if (!model.location) return 'location';
@@ -79,20 +72,11 @@ function initialStep(model: BoatSearchFormModel): SearchStep {
     HlmComboboxImports,
     HlmDialogTitle,
     HlmFieldImports,
-    HlmSelectImports,
+    HourSelect,
     NgIcon,
   ],
   providers: [provideBrnCalendarI18n(TR_CALENDAR_I18N)],
-  viewProviders: [
-    provideIcons({
-      lucideAnchor,
-      lucideBuilding2,
-      lucideMoon,
-      lucideSun,
-      lucideSunrise,
-      lucideSunset,
-    }),
-  ],
+  viewProviders: [provideIcons({ lucideAnchor, lucideBuilding2, lucideMoonStar, lucideSun })],
   templateUrl: './search-panel.html',
 })
 export class SearchPanel {
@@ -165,30 +149,18 @@ export class SearchPanel {
     return parts.length > 0 ? parts.join(' · ') : 'Seç';
   });
 
-  guestsSummary = computed(() => {
-    const people = this.searchForm.people().value();
-    return people === null ? 'Fark etmez' : `${people} kişi`;
-  });
-
   hourOptions = Array.from({ length: 24 }, (_, hour) => `${hour}`);
 
   formatHour = (hour: number): string => `${`${hour}`.padStart(2, '0')}:00`;
 
   hourLabel = (hour: string): string => this.formatHour(Number(hour));
 
-  hourIcon = (hour: number): string => {
-    if (hour < 6) return 'lucideMoon';
-    if (hour < 12) return 'lucideSunrise';
-    if (hour < 18) return 'lucideSun';
-    return 'lucideSunset';
-  };
+  isDaytime = (hour: number): boolean => hour >= 8 && hour <= 19;
 
-  hourIconColor = (hour: number): string => {
-    if (hour < 6) return 'text-indigo-500';
-    if (hour < 12) return 'text-amber-500';
-    if (hour < 18) return 'text-yellow-500';
-    return 'text-orange-500';
-  };
+  hourIcon = (hour: number): string => (this.isDaytime(hour) ? 'lucideSun' : 'lucideMoonStar');
+
+  hourIconColor = (hour: number): string =>
+    this.isDaytime(hour) ? 'text-amber-500' : 'text-indigo-500';
 
   durationOptions = Array.from({ length: SEARCH_MAX_HOURS }, (_, i) => i + 1);
 
@@ -222,6 +194,25 @@ export class SearchPanel {
     const minHour = this.minHourToday();
     return minHour !== null && Number(hour) < minHour;
   };
+
+  startHourOptions = computed<IconSelectOption<string>[]>(() =>
+    this.hourOptions.map((hour) => ({
+      value: hour,
+      label: this.hourLabel(hour),
+      icon: this.hourIcon(Number(hour)),
+      iconClass: this.hourIconColor(Number(hour)),
+      disabled: this.isHourDisabled(hour),
+    })),
+  );
+
+  endHourOptions = computed<IconSelectOption<number>[]>(() =>
+    this.durationOptions.map((duration) => ({
+      value: duration,
+      label: this.endHourLabel(duration),
+      icon: this.endHourIcon(duration),
+      iconClass: this.endHourIconColor(duration),
+    })),
+  );
 
   cityLabel(cityName: string): string {
     return `${cityName} — tüm limanlar`;

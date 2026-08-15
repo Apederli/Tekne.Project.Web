@@ -80,65 +80,19 @@
           />
 
           <div class="flex flex-col justify-center gap-4 sm:flex-1">
-            <div hlmField>
-              <label hlmFieldLabel for="search-start-hour">Başlangıç saati</label>
-              <hlm-select [formField]="searchForm.startHour" [itemToString]="hourLabel">
-                <hlm-select-trigger buttonId="search-start-hour" class="h-11 w-full">
-                  @if (searchForm.startHour().value(); as hour) {
-                    <ng-icon
-                      [name]="hourIcon(+hour)"
-                      [class]="'size-4 ' + hourIconColor(+hour)"
-                      aria-hidden="true"
-                    />
-                  }
-                  <hlm-select-value placeholder="Saat seç" />
-                </hlm-select-trigger>
-                <hlm-select-content *hlmSelectPortal class="max-h-80">
-                  <hlm-select-group>
-                    @for (hour of hourOptions; track hour) {
-                      <hlm-select-item [value]="hour" [disabled]="isHourDisabled(hour)">
-                        <ng-icon
-                          [name]="hourIcon(+hour)"
-                          [class]="'size-4 ' + hourIconColor(+hour)"
-                          aria-hidden="true"
-                        />
-                        {{ hourLabel(hour) }}
-                      </hlm-select-item>
-                    }
-                  </hlm-select-group>
-                </hlm-select-content>
-              </hlm-select>
-            </div>
+            <app-hour-select
+              label="Başlangıç saati"
+              [field]="searchForm.startHour"
+              [options]="startHourOptions()"
+              placeholder="Saat seç"
+            />
 
-            <div hlmField>
-              <label hlmFieldLabel for="search-end-hour">Bitiş saati</label>
-              <hlm-select [formField]="searchForm.hours" [itemToString]="endHourLabel">
-                <hlm-select-trigger buttonId="search-end-hour" class="h-11 w-full">
-                  @if (searchForm.hours().value(); as duration) {
-                    <ng-icon
-                      [name]="endHourIcon(duration)"
-                      [class]="'size-4 ' + endHourIconColor(duration)"
-                      aria-hidden="true"
-                    />
-                  }
-                  <hlm-select-value placeholder="Saat seç" />
-                </hlm-select-trigger>
-                <hlm-select-content *hlmSelectPortal class="max-h-80">
-                  <hlm-select-group>
-                    @for (duration of durationOptions; track duration) {
-                      <hlm-select-item [value]="duration">
-                        <ng-icon
-                          [name]="endHourIcon(duration)"
-                          [class]="'size-4 ' + endHourIconColor(duration)"
-                          aria-hidden="true"
-                        />
-                        {{ endHourLabel(duration) }}
-                      </hlm-select-item>
-                    }
-                  </hlm-select-group>
-                </hlm-select-content>
-              </hlm-select>
-            </div>
+            <app-hour-select
+              label="Bitiş saati"
+              [field]="searchForm.hours"
+              [options]="endHourOptions()"
+              placeholder="Saat seç"
+            />
           </div>
         </div>
       </div>
@@ -154,27 +108,15 @@
     }
   </section>
 
-  <section class="rounded-xl border">
-    @if (openStep() === 'guests') {
-      <div class="p-4">
-        <app-stepper
-          label="Misafir sayısı"
-          [field]="searchForm.people"
-          [min]="1"
-          unit="kişi"
-          placeholder="Fark etmez"
-        />
-      </div>
-    } @else {
-      <button
-        type="button"
-        class="flex min-h-12 w-full items-center justify-between gap-3 px-4 text-start"
-        (click)="openStep.set('guests')"
-      >
-        <span class="text-sm font-medium">Misafir</span>
-        <span class="min-w-0 truncate text-sm text-muted-foreground">{{ guestsSummary() }}</span>
-      </button>
-    }
+  <section class="rounded-xl border p-4">
+    <app-stepper
+      label="Misafir sayısı"
+      [field]="searchForm.people"
+      [min]="1"
+      unit="kişi"
+      placeholder="Fark etmez"
+      centered
+    />
   </section>
 </div>
 
