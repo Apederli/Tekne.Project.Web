@@ -1,8 +1,9 @@
 import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { ActivatedRoute, RouterLink, convertToParamMap } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideSearch } from '@ng-icons/lucide';
+import { ROUTE_MARKET } from '../../../core/routes.const';
 import {
   hasSearchFilter,
   fromIsoDate,
@@ -17,20 +18,29 @@ import { SearchPanelService } from './search-panel.service';
  */
 @Component({
   selector: 'app-search-trigger',
-  imports: [NgIcon],
+  imports: [NgIcon, RouterLink],
   viewProviders: [provideIcons({ lucideSearch })],
   template: `
-    <button
-      type="button"
-      class="mx-auto flex w-full items-center gap-3 rounded-full border border-slate-200 px-4 py-2.5 text-start shadow-sm transition-shadow hover:shadow-md lg:max-w-md"
-      (click)="open()"
+    <div
+      class="mx-auto flex w-full items-center rounded-full border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md lg:max-w-md"
     >
-      <ng-icon name="lucideSearch" size="18" class="shrink-0 text-slate-500" aria-hidden="true" />
-      <span class="min-w-0">
+      <button
+        type="button"
+        class="min-w-0 flex-1 rounded-full py-2.5 ps-4 text-start"
+        (click)="open()"
+      >
         <span class="block truncate text-sm font-medium">{{ title() }}</span>
         <span class="block truncate text-xs text-slate-500">{{ subtitle() }}</span>
-      </span>
-    </button>
+      </button>
+
+      <a
+        [routerLink]="listUrl"
+        class="mx-1.5 flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-deep text-white hover:bg-primary-deep-hover"
+        aria-label="Filtresiz tüm tekneleri göster"
+      >
+        <ng-icon name="lucideSearch" size="18" aria-hidden="true" />
+      </a>
+    </div>
   `,
 })
 export class SearchTrigger {
@@ -79,6 +89,8 @@ export class SearchTrigger {
 
     return parts.length > 0 ? parts.join(' · ') : 'Seçili konum';
   });
+
+  listUrl = `/${ROUTE_MARKET.boats}`;
 
   dayLabel = (date: Date): string =>
     date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' });
