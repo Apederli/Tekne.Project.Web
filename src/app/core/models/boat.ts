@@ -4,6 +4,7 @@ import { PaymentMethod } from '@enums/payment-method';
 import { RentalType } from '@enums/rental-type';
 import { AmenityOutputModel } from '@models/amenity';
 import { BoatPhotoOutputModel } from '@models/boat-photo';
+import { HarborOutputModel } from '@models/harbor';
 import { UsageTermOutputModel } from '@models/usage-term';
 
 export interface BoatInputModel {
@@ -101,8 +102,9 @@ export interface BoatOutputModel {
   remainingPaymentMethodLabels: string[];
   cityId: number;
   primaryHarborId: number;
-  harborIds: number[];
+  harbors: HarborOutputModel[];
   ownerId: number;
+  ownerName: string;
   description?: string;
   isActive: boolean;
   photos: BoatPhotoOutputModel[];

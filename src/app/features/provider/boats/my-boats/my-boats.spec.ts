@@ -28,8 +28,9 @@ function boat(id: number, name: string): BoatOutputModel {
     remainingPaymentMethodLabels: ['Nakit'],
     cityId: 1,
     primaryHarborId: 3,
-    harborIds: [3],
+    harbors: [{ id: 3, name: 'Bodrum Limanı' }],
     ownerId: 7,
+    ownerName: 'Şevki',
     isActive: true,
     photos: [],
   };

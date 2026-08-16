@@ -1,6 +1,7 @@
 import { Service, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { SILENT_ERRORS } from '@interceptors/error.interceptor';
 import { API_BASE_URL } from '../api/api.config';
 import {
   BoatCardOutputModel,
@@ -8,6 +9,8 @@ import {
   BoatListFilterInputModel,
   BoatModelOutputModel,
   BoatOutputModel,
+  BoatQuoteInputModel,
+  BoatQuoteOutputModel,
   BrandOutputModel,
   PagedOutputModel,
 } from '@models';
@@ -49,6 +52,20 @@ export class BoatService {
 
   getById(id: number): Observable<BoatOutputModel> {
     return this.http.get<BoatOutputModel>(`${this.baseUrl}/${id}`);
+  }
+
+  /**
+   * Seçilen tarih/saat/süre için fiyat teklifi. Üçü de zorunlu; eksik istek
+   * 422 döner, bu yüzden çağıran seçim tamamlanmadan uğramaz.
+   *
+   * SILENT_ERRORS: kullanıcı süreyi adım adım değiştirirken tarifeye uymayan
+   * her seçim için toast çıkmasın — kart hatayı kendi metniyle anlatıyor.
+   */
+  getQuote(id: number, input: BoatQuoteInputModel): Observable<BoatQuoteOutputModel> {
+    return this.http.get<BoatQuoteOutputModel>(`${this.baseUrl}/${id}/quote`, {
+      params: { ...input },
+      context: new HttpContext().set(SILENT_ERRORS, true),
+    });
   }
 
   getBrands(): Observable<BrandOutputModel[]> {

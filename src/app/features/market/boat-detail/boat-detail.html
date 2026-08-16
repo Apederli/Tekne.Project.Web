@@ -7,7 +7,28 @@
     <a [routerLink]="boatsUrl" class="mt-4 inline-block text-sm underline">Teknelere dön</a>
   </div>
 } @else if (loading()) {
-  <p class="text-sm text-muted-foreground">Tekne yükleniyor…</p>
+  <hlm-skeleton class="aspect-[4/3] w-full rounded-xl lg:hidden" />
+  <hlm-skeleton class="hidden aspect-[20/7] w-full rounded-xl lg:block" />
+
+  <div
+    class="mt-6 flex flex-col gap-8 lg:grid lg:grid-cols-[1fr_400px] lg:items-start lg:gap-10"
+    aria-hidden="true"
+  >
+    <div class="order-1 lg:col-start-1 lg:row-start-1">
+      <hlm-skeleton class="h-8 w-72 max-w-full" />
+      <hlm-skeleton class="mt-2 h-5 w-52 max-w-full" />
+      <hlm-skeleton class="mt-2 h-5 w-60 max-w-full" />
+      <hlm-skeleton class="mt-3.5 h-4 w-44 max-w-full" />
+
+      <div class="mt-5 flex max-w-2xl flex-col gap-2">
+        <hlm-skeleton class="h-4 w-full" />
+        <hlm-skeleton class="h-4 w-full" />
+        <hlm-skeleton class="h-4 w-2/3" />
+      </div>
+    </div>
+
+    <hlm-skeleton class="order-2 h-96 w-full rounded-2xl lg:col-start-2 lg:row-start-1" />
+  </div>
 } @else if (boat(); as b) {
   <!-- Mobil: kaydırmalı galeri. Masaüstü: mozaik. Geçiş saf CSS. -->
   <app-photo-gallery
@@ -76,19 +97,79 @@
     }
   </div>
 
-  <div class="mt-6">
-    <h1 class="text-2xl font-semibold">{{ b.name }}</h1>
-    @if (location()) {
-      <p class="mt-1 text-slate-600">{{ location() }}</p>
-    }
-    <p class="mt-3 text-sm text-slate-600">
-      {{ typeLabel() }} · {{ b.totalCapacity }} kişi · {{ b.lengthInMeters }} m
-      @if (b.manufactureYear) {
-        · {{ b.manufactureYear }}
+  <!-- Mobilde tek sütun; kart özetin hemen altına, imkanların üstüne alınıyor
+       (order) — rezervasyon kutusu sayfanın dibinde kalmasın. -->
+  <div class="mt-6 flex flex-col gap-8 lg:grid lg:grid-cols-[1fr_400px] lg:items-start lg:gap-10">
+    <div class="order-1 lg:col-start-1 lg:row-start-1">
+      <h1 class="text-2xl font-semibold">{{ b.name }}</h1>
+      @if (location()) {
+        <p class="mt-1 text-slate-600">{{ location() }}</p>
       }
-    </p>
-    @if (b.description) {
-      <p class="mt-4 max-w-2xl whitespace-pre-line text-slate-700">{{ b.description }}</p>
+      <p class="mt-1 text-slate-700">{{ typeLabel() }} Sahibi: {{ b.ownerName }}</p>
+      <p class="mt-3 text-sm text-slate-600">
+        {{ b.totalCapacity }} kişi · {{ b.lengthInMeters }} m
+        @if (b.manufactureYear) {
+          · {{ b.manufactureYear }}
+        }
+      </p>
+      @if (b.description) {
+        <p class="mt-4 max-w-2xl whitespace-pre-line text-slate-700">{{ b.description }}</p>
+      }
+    </div>
+
+    @if (hourly()) {
+      <app-booking-card
+        [boat]="b"
+        class="order-2 block lg:sticky lg:top-6 lg:col-start-2 lg:row-span-2 lg:row-start-1"
+      />
     }
+
+    <div class="order-3 lg:col-start-1 lg:row-start-2">
+      @if (amenities().length > 0) {
+        <section class="max-w-3xl border-t border-slate-200 pt-6">
+          <h2 class="text-lg font-semibold">İmkanlar</h2>
+          <ul class="mt-3 grid gap-2 sm:grid-cols-2">
+            @for (amenity of visibleAmenities(); track amenity.id) {
+              <li class="flex items-center gap-3 text-sm text-slate-700">
+                <ng-icon
+                  name="lucideCheck"
+                  size="18"
+                  class="shrink-0 text-primary-deep"
+                  aria-hidden="true"
+                />
+                {{ amenity.name }}
+              </li>
+            }
+          </ul>
+
+          @if (hasMoreAmenities()) {
+            <button hlmBtn variant="outline" class="mt-4" (click)="toggleAmenities()">
+              {{
+                showAllAmenities()
+                  ? 'Daha az göster'
+                  : 'Tüm imkanları göster (' + amenities().length + ')'
+              }}
+            </button>
+          }
+        </section>
+      }
+
+      @if (usageTerms().length > 0) {
+        <section class="mt-6 max-w-3xl border-t border-slate-200 pt-6">
+          <h2 class="text-lg font-semibold">Kullanım şartları</h2>
+          <ul class="mt-3 grid gap-2 sm:grid-cols-2">
+            @for (term of usageTerms(); track term.id) {
+              <li class="flex items-start gap-3 text-sm text-slate-700">
+                <span
+                  class="mt-1.5 size-1.5 shrink-0 rounded-full bg-slate-400"
+                  aria-hidden="true"
+                ></span>
+                {{ term.name }}
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
   </div>
 }

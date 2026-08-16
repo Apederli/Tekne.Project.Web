@@ -38,8 +38,9 @@ function boat(photos: BoatPhotoOutputModel[]): BoatOutputModel {
     remainingPaymentMethodLabels: ['Nakit'],
     cityId: 1,
     primaryHarborId: 3,
-    harborIds: [3],
+    harbors: [{ id: 3, name: 'Bodrum Limanı' }],
     ownerId: 7,
+    ownerName: 'Şevki',
     description: 'Ege koylarına günlük turlar.',
     isActive: true,
     photos,
@@ -63,14 +64,33 @@ describe('BoatDetail', () => {
     fixture.detectChanges();
   }
 
-  afterEach(() => http.verify());
+  afterEach(() => {
+    flushQuotes();
+    http.verify();
+  });
+
+  /**
+   * Rezervasyon kartı açılışta teklif isteği atıyor; açık istek `whenStable`'ı
+   * bekletir, bu yüzden kararlılığı beklemeden önce boşaltılıyor.
+   */
+  function flushQuotes(): number {
+    const requests = http.match((r) => r.url.includes('/quote'));
+    requests.forEach((r) => r.flush({ rate: 1000, hours: 1, total: 1000, prePayment: 400 }));
+    return requests.length;
+  }
 
   async function flush(model: BoatOutputModel): Promise<void> {
     http.expectOne((r) => r.url.endsWith('/Boats/5')).flush(model);
     http
       .expectOne((r) => r.url.endsWith('/Harbors'))
       .flush([{ cityId: 1, cityName: 'Muğla', harbors: [{ id: 3, name: 'Bodrum Limanı' }] }]);
-    await fixture.whenStable();
+
+    for (let i = 0; i < 5; i++) {
+      fixture.detectChanges();
+      await new Promise((resolve) => setTimeout(resolve));
+      if (flushQuotes() === 0) break;
+    }
+
     fixture.detectChanges();
   }
 

@@ -1,4 +1,5 @@
 export * from './app-amount-input';
+export * from './app-datetime-picker';
 export * from './app-input';
 export * from './error-message-pipe';
 export * from './app-multi-select';

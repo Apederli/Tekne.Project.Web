@@ -16,14 +16,14 @@ let nextId = 0;
       <label hlmFieldLabel [for]="valueId()" [class.justify-center]="centered()">
         {{ label() }}
       </label>
-      <div class="flex items-center gap-3" [class.justify-center]="centered()">
-        <!-- size-11 = 44px: dokunma hedefi. -->
+      <div class="flex items-center gap-2" [class.justify-center]="centered()">
+        <!-- size-11 = 44px: dokunma hedefi. Dar kaplarda (compact) 40px'e iner. -->
         <button
           hlmBtn
           type="button"
           variant="outline"
           size="icon"
-          class="size-11 rounded-full"
+          [class]="buttonClass()"
           [disabled]="disabled() || !canDecrease()"
           [attr.aria-label]="label() + ' azalt'"
           (click)="step(-1)"
@@ -31,7 +31,7 @@ let nextId = 0;
           <ng-icon name="lucideMinus" />
         </button>
 
-        <output [id]="valueId()" class="min-w-28 text-center text-sm" aria-live="polite">
+        <output [id]="valueId()" [class]="valueClass()" aria-live="polite">
           {{ display() }}
         </output>
 
@@ -40,7 +40,7 @@ let nextId = 0;
           type="button"
           variant="outline"
           size="icon"
-          class="size-11 rounded-full"
+          [class]="buttonClass()"
           [disabled]="disabled() || !canIncrease()"
           [attr.aria-label]="label() + ' artır'"
           (click)="step(1)"
@@ -67,6 +67,14 @@ export class AppStepper {
   placeholder = input('Seçilmedi');
 
   centered = input(false, { transform: booleanAttribute });
+
+  compact = input(false, { transform: booleanAttribute });
+
+  buttonClass = computed(() => (this.compact() ? 'size-9 rounded-full' : 'size-11 rounded-full'));
+
+  valueClass = computed(() =>
+    this.compact() ? 'min-w-14 text-center text-sm' : 'min-w-28 text-center text-sm',
+  );
 
   valueId = input(`app-stepper-${nextId++}`);
 

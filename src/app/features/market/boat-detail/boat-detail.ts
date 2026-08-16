@@ -1,14 +1,23 @@
-import { Component, computed, effect, inject, input } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { rxResource } from '@angular/core/rxjs-interop';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideCheck } from '@ng-icons/lucide';
+import { RentalType } from '@enums';
 import { sortBoatPhotos } from '@models';
 import { BoatService, HarborService } from '@services';
+import { HlmButton } from '@ui/button';
+import { HlmSkeleton } from '@ui/skeleton';
+import { BookingCard } from './booking-card';
 import { PhotoGallery } from '../../../shared/photo-gallery/photo-gallery';
 import { PhotoLightboxService } from '../../../shared/photo-lightbox/photo-lightbox.service';
 import { formatBoatLocation } from '../../../core/util/boat-location';
 import { parseBoatIdFromSlug } from '../../../core/util/boat-slug';
 import { ROUTE_MARKET } from '../../../core/routes.const';
+
+/** Katlanmadan gösterilen imkan sayısı — katalog 26 satıra kadar çıkıyor. */
+const AMENITY_PREVIEW_COUNT = 8;
 
 /**
  * Herkese açık tekne detayı. Masaüstünde foto mozaiği, mobilde kaydırmalı
@@ -16,7 +25,8 @@ import { ROUTE_MARKET } from '../../../core/routes.const';
  */
 @Component({
   selector: 'app-boat-detail',
-  imports: [RouterLink, PhotoGallery],
+  imports: [RouterLink, PhotoGallery, NgIcon, HlmButton, HlmSkeleton, BookingCard],
+  viewProviders: [provideIcons({ lucideCheck })],
   templateUrl: './boat-detail.html',
 })
 export class BoatDetail {
@@ -99,6 +109,25 @@ export class BoatDetail {
   });
 
   typeLabel = computed(() => this.boat()?.boatTypeLabel ?? '');
+
+  /** Rezervasyon kartı saatlik tarifeye göre kurulu; gecelikte hiç çizilmiyor. */
+  hourly = computed(() => this.boat()?.rentalType === RentalType.Hourly);
+
+  amenities = computed(() => this.boat()?.amenities ?? []);
+
+  usageTerms = computed(() => this.boat()?.usageTerms ?? []);
+
+  showAllAmenities = signal(false);
+
+  hasMoreAmenities = computed(() => this.amenities().length > AMENITY_PREVIEW_COUNT);
+
+  visibleAmenities = computed(() =>
+    this.showAllAmenities() ? this.amenities() : this.amenities().slice(0, AMENITY_PREVIEW_COUNT),
+  );
+
+  toggleAmenities(): void {
+    this.showAllAmenities.update((shown) => !shown);
+  }
 
   constructor() {
     // SEO: başlık tekne adına çekilir; Title servisi SSR'da da çalışır.

@@ -50,7 +50,7 @@ export function toBoatFormModel(boat: BoatOutputModel): BoatFormModel {
     remainingPaymentMethods: [...boat.remainingPaymentMethods],
     cityId: String(boat.cityId),
     primaryHarborId: String(boat.primaryHarborId),
-    harborIds: [...boat.harborIds],
+    harborIds: boat.harbors.map((harbor) => harbor.id),
     description: boat.description ?? '',
   };
 }
