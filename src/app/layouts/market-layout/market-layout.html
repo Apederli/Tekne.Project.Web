@@ -1,7 +1,7 @@
 <!-- Kök: mobilde altta sabit sekme çubuğu var; içerik onun arkasında
      kalmasın diye taban `pb-16`, çubuğun kalktığı `lg:`'de sıfırlanıyor. -->
-<div class="flex min-h-screen flex-col bg-white pb-16 text-slate-900 lg:pb-0">
-  <header class="border-b border-slate-200">
+<div class="flex min-h-screen flex-col overflow-x-clip bg-white pb-16 text-slate-900 lg:pb-0">
+  <header [class]="overlayHeader() ? 'absolute inset-x-0 top-0 z-30' : 'border-b border-slate-200'">
     <nav class="mx-auto flex max-w-8xl items-center gap-6 px-4 py-4 sm:px-6 lg:px-10">
       <a routerLink="/" class="text-lg font-semibold">Tekne</a>
       <a
@@ -17,13 +17,19 @@
     </nav>
 
     <!-- Arama başlığı. Açılan panelin içeriği:
-         docs/superpowers/specs/2026-08-15-market-arama-paneli-design.md -->
-    <div class="mx-auto max-w-8xl px-4 pb-3 sm:px-6 lg:px-10 lg:pb-4">
-      <app-search-trigger />
-    </div>
+         docs/superpowers/specs/2026-08-15-market-arama-paneli-design.md
+         Anasayfada arama hero'nun ortasında duruyor, başlıkta tekrarlanmıyor. -->
+    @if (!overlayHeader()) {
+      <div class="mx-auto max-w-8xl px-4 pb-3 sm:px-6 lg:px-10 lg:pb-4">
+        <app-search-trigger />
+      </div>
+    }
   </header>
 
-  <main class="mx-auto w-full max-w-8xl flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
+  <main
+    class="mx-auto w-full max-w-8xl flex-1 px-4 sm:px-6 lg:px-10"
+    [class]="overlayHeader() ? 'pb-6 lg:pb-10' : 'py-6 lg:py-10'"
+  >
     <router-outlet />
   </main>
 
